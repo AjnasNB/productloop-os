@@ -1,0 +1,44 @@
+{
+  "subject": {
+    "id": "release-ajnas-approvals-0.1.0",
+    "kind": "package-release",
+    "title": "Release ajnas-approvals@0.1.0",
+    "summary": "Publish the original Ajnas approval workflow package after release-owner review.",
+    "risk": "critical",
+    "requestedAction": "package.publish",
+    "destinations": ["npm"],
+    "dataClasses": ["release-artifact", "package-metadata"],
+    "artifactDigests": ["sha256:fixture-release-artifact"],
+    "metadata": {
+      "packageName": "ajnas-approvals",
+      "version": "0.1.0",
+      "releaseGate": "waiting_for_user_approval"
+    }
+  },
+  "requestedBy": "release-bot",
+  "reason": "External publishing requires explicit human approval.",
+  "policyDecision": {
+    "decision": "require_approval",
+    "reason": "external package publishing requires release-owner approval",
+    "approvalPrompt": "Review package release artifacts before npm publish."
+  },
+  "connectorTrust": {
+    "decision": "require_approval",
+    "connectorId": "com.ajnas.npm-publisher",
+    "connectorVersion": "1.0.0",
+    "manifestDigest": "sha256:fixture-connector-manifest",
+    "risk": "critical",
+    "operation": "publish",
+    "capabilityId": "npm.publish",
+    "dataClasses": ["release-artifact"],
+    "destinations": ["npm"],
+    "reasons": ["Operation publish requires approval."]
+  },
+  "provenance": {
+    "bundleDigest": "sha256:fixture-provenance-bundle",
+    "signatureRequired": true
+  },
+  "metadata": {
+    "source": "daily-oss-skill-and-crawler-research"
+  }
+}

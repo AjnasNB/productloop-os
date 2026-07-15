@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ajnas.skill.v1",
+  "id": "com.ajnas.research-brief",
+  "name": "Research Brief",
+  "version": "1.0.0",
+  "description": "Turns approved research notes into a concise internal brief.",
+  "license": "MIT",
+  "entrypoint": {
+    "type": "module",
+    "value": "./dist/research-brief.js"
+  },
+  "compatibility": {
+    "ajnasRuntime": "^0.1.0"
+  },
+  "capabilities": [
+    {
+      "name": "research.summarize",
+      "description": "Summarize reviewed research notes.",
+      "risk": "medium"
+    }
+  ],
+  "permissions": {
+    "network": "none",
+    "filesystem": "read",
+    "externalPublish": false,
+    "humanApproval": "on_high_risk"
+  },
+  "trust": {
+    "source": "first-party",
+    "publisher": "ajnas",
+    "repository": "https://github.com/ajnas/examples",
+    "licenseEvidence": {
+      "kind": "repository",
+      "checkedAt": "2026-07-05T02:00:00.000Z",
+      "url": "https://github.com/ajnas/examples/blob/main/LICENSE"
+    }
+  }
+}

@@ -1,0 +1,96 @@
+[
+  {
+    "stepId": "find-browser-automation-controls",
+    "action": "search",
+    "output": {
+      "results": [
+        {
+          "url": "https://www.npmjs.com/package/playwright",
+          "title": "playwright",
+          "snippet": "Apache-2.0 package metadata describes a high-level API for browser automation.",
+          "rank": 1
+        },
+        {
+          "url": "https://www.npmjs.com/package/crawlee",
+          "title": "crawlee",
+          "snippet": "Apache-2.0 package metadata describes scalable crawling and browser automation jobs.",
+          "rank": 2
+        },
+        {
+          "url": "https://www.npmjs.com/package/@browserbasehq/stagehand",
+          "title": "@browserbasehq/stagehand",
+          "snippet": "MIT package metadata describes an AI web browsing framework focused on extensibility.",
+          "rank": 3
+        }
+      ]
+    }
+  },
+  {
+    "stepId": "inspect-playwright-metadata",
+    "action": "open",
+    "output": {
+      "url": "https://www.npmjs.com/package/playwright",
+      "title": "playwright npm metadata",
+      "text": "Public npm metadata checked on 2026-07-13 reports playwright version 1.61.1 with Apache-2.0 license and a high-level API to automate web browsers.",
+      "citations": [
+        {
+          "url": "https://www.npmjs.com/package/playwright",
+          "title": "playwright npm metadata",
+          "locator": "npm view playwright",
+          "quote": "version 1.61.1; license Apache-2.0; high-level API to automate web browsers"
+        }
+      ]
+    }
+  },
+  {
+    "stepId": "extract-crawler-lessons",
+    "action": "extract",
+    "output": {
+      "url": "https://www.npmjs.com/package/crawlee",
+      "title": "crawlee npm metadata",
+      "claims": [
+        {
+          "text": "Browser research infrastructure should keep crawling and browser execution behind adapter boundaries.",
+          "confidence": 0.82,
+          "citation": {
+            "url": "https://www.npmjs.com/package/crawlee",
+            "title": "crawlee npm metadata",
+            "locator": "npm view crawlee",
+            "quote": "Apache-2.0 metadata describes scalable crawling and browser automation jobs."
+          }
+        },
+        {
+          "text": "Ajnas should remain original by storing deterministic policy, citation, and provenance records rather than adopting crawler APIs.",
+          "confidence": 0.86,
+          "citation": {
+            "url": "https://www.npmjs.com/package/@browserbasehq/stagehand",
+            "title": "Stagehand npm metadata",
+            "locator": "npm view @browserbasehq/stagehand",
+            "quote": "MIT metadata describes an AI web browsing framework focused on simplicity and extensibility."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "stepId": "record-release-note",
+    "action": "note",
+    "output": {
+      "note": "Ajnas Browser Research is a governed harness, not a browser engine. It records replayable step logs, policy decisions, citations, and provenance bundles around adapter-provided browsing.",
+      "citations": [
+        {
+          "url": "https://www.npmjs.com/package/playwright",
+          "title": "playwright npm metadata",
+          "locator": "research-note:browser-engine-boundary",
+          "quote": "Browser engines remain adapter-side dependencies."
+        },
+        {
+          "url": "https://www.npmjs.com/package/robots-parser",
+          "title": "robots-parser npm metadata",
+          "locator": "research-note:compliance-defaults",
+          "quote": "MIT package metadata describes a robots.txt parser."
+        }
+      ]
+    }
+  }
+]

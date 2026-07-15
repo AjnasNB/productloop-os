@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "ajnas.provenance.bundle.v1",
+  "generatedAt": "2026-07-06T06:31:00.000Z",
+  "generatedBy": "daily-oss-skill-and-crawler-research",
+  "purpose": "release-gate",
+  "eventCount": 3,
+  "rootHash": "0dfb7323ba49b1e31ddf5b695fe2cb63eba1dcc05c072a039163c009978422d8",
+  "events": [
+    {
+      "schemaVersion": "ajnas.provenance.event.v1",
+      "traceId": "trace_release_gate_fixture",
+      "sequence": 1,
+      "timestamp": "2026-07-06T06:30:00.000Z",
+      "actor": "daily-oss-skill-and-crawler-research",
+      "action": "approval.requested",
+      "subject": {
+        "type": "package",
+        "id": "ajnas-provenance@0.1.0"
+      },
+      "source": {
+        "system": "ajnas-provenance",
+        "id": "release-gate"
+      },
+      "data": {
+        "dataClasses": [
+          "public"
+        ],
+        "destination": "npm",
+        "token": "[redacted]"
+      },
+      "links": [],
+      "receipt": {
+        "eventHash": "52360e4ed96e47a78eec836be8c8c11153b61f2d2695f4d2df3d29d2952bf558",
+        "previousHash": null,
+        "canonicalJson": "{\"action\":\"approval.requested\",\"actor\":\"daily-oss-skill-and-crawler-research\",\"data\":{\"dataClasses\":[\"public\"],\"destination\":\"npm\",\"token\":\"[redacted]\"},\"links\":[],\"receipt\":{\"previousHash\":null},\"schemaVersion\":\"ajnas.provenance.event.v1\",\"sequence\":1,\"source\":{\"id\":\"release-gate\",\"system\":\"ajnas-provenance\"},\"subject\":{\"id\":\"ajnas-provenance@0.1.0\",\"type\":\"package\"},\"timestamp\":\"2026-07-06T06:30:00.000Z\",\"traceId\":\"trace_release_gate_fixture\"}"
+      }
+    },
+    {
+      "schemaVersion": "ajnas.provenance.event.v1",
+      "traceId": "trace_release_gate_fixture",
+      "sequence": 2,
+      "timestamp": "2026-07-06T06:30:00.000Z",
+      "actor": "ajnas-runtime",
+      "action": "runtime.policy.evaluated",
+      "subject": {
+        "type": "runtime-event",
+        "id": "run_fixture_001:1"
+      },
+      "source": {
+        "system": "ajnas-runtime",
+        "id": "run_fixture_001"
+      },
+      "data": {
+        "payload": {
+          "decision": "require_approval",
+          "gate": "publish"
+        },
+        "runtimeEventType": "policy.evaluated",
+        "runtimeSequence": 1,
+        "runtimeTimestamp": "2026-07-06T06:29:00.000Z"
+      },
+      "links": [
+        {
+          "rel": "source-receipt",
+          "href": "ajnas-runtime:run_fixture_001:1",
+          "digest": "sha256:runtime_fixture_hash"
+        }
+      ],
+      "receipt": {
+        "eventHash": "f671c48c5f34e79ea11457fe47e78c39e5e825f9f29749f79142dfdcb8f79efb",
+        "previousHash": "52360e4ed96e47a78eec836be8c8c11153b61f2d2695f4d2df3d29d2952bf558",
+        "canonicalJson": "{\"action\":\"runtime.policy.evaluated\",\"actor\":\"ajnas-runtime\",\"data\":{\"payload\":{\"decision\":\"require_approval\",\"gate\":\"publish\"},\"runtimeEventType\":\"policy.evaluated\",\"runtimeSequence\":1,\"runtimeTimestamp\":\"2026-07-06T06:29:00.000Z\"},\"links\":[{\"digest\":\"sha256:runtime_fixture_hash\",\"href\":\"ajnas-runtime:run_fixture_001:1\",\"rel\":\"source-receipt\"}],\"receipt\":{\"previousHash\":\"52360e4ed96e47a78eec836be8c8c11153b61f2d2695f4d2df3d29d2952bf558\"},\"schemaVersion\":\"ajnas.provenance.event.v1\",\"sequence\":2,\"source\":{\"id\":\"run_fixture_001\",\"system\":\"ajnas-runtime\"},\"subject\":{\"id\":\"run_fixture_001:1\",\"type\":\"runtime-event\"},\"timestamp\":\"2026-07-06T06:30:00.000Z\",\"traceId\":\"trace_release_gate_fixture\"}"
+      }
+    },
+    {
+      "schemaVersion": "ajnas.provenance.event.v1",
+      "traceId": "trace_release_gate_fixture",
+      "sequence": 3,
+      "timestamp": "2026-07-06T06:30:00.000Z",
+      "actor": "registry",
+      "action": "skills-registry.skill.registered",
+      "subject": {
+        "type": "skill",
+        "id": "com.ajnas.release-review@1.0.0"
+      },
+      "source": {
+        "system": "ajnas-skills-registry",
+        "id": "com.ajnas.release-review"
+      },
+      "data": {
+        "digest": "sha256:skill_fixture_digest",
+        "payload": {
+          "source": "fixture"
+        },
+        "skillAuditType": "skill.registered",
+        "skillSequence": 1,
+        "skillTimestamp": "2026-07-06T06:28:00.000Z"
+      },
+      "links": [
+        {
+          "rel": "source-receipt",
+          "href": "ajnas-skills-registry:com.ajnas.release-review@1.0.0:1",
+          "digest": "sha256:skill_fixture_hash"
+        }
+      ],
+      "receipt": {
+        "eventHash": "0dfb7323ba49b1e31ddf5b695fe2cb63eba1dcc05c072a039163c009978422d8",
+        "previousHash": "f671c48c5f34e79ea11457fe47e78c39e5e825f9f29749f79142dfdcb8f79efb",
+        "canonicalJson": "{\"action\":\"skills-registry.skill.registered\",\"actor\":\"registry\",\"data\":{\"digest\":\"sha256:skill_fixture_digest\",\"payload\":{\"source\":\"fixture\"},\"skillAuditType\":\"skill.registered\",\"skillSequence\":1,\"skillTimestamp\":\"2026-07-06T06:28:00.000Z\"},\"links\":[{\"digest\":\"sha256:skill_fixture_hash\",\"href\":\"ajnas-skills-registry:com.ajnas.release-review@1.0.0:1\",\"rel\":\"source-receipt\"}],\"receipt\":{\"previousHash\":\"f671c48c5f34e79ea11457fe47e78c39e5e825f9f29749f79142dfdcb8f79efb\"},\"schemaVersion\":\"ajnas.provenance.event.v1\",\"sequence\":3,\"source\":{\"id\":\"com.ajnas.release-review\",\"system\":\"ajnas-skills-registry\"},\"subject\":{\"id\":\"com.ajnas.release-review@1.0.0\",\"type\":\"skill\"},\"timestamp\":\"2026-07-06T06:30:00.000Z\",\"traceId\":\"trace_release_gate_fixture\"}"
+      }
+    }
+  ],
+  "digest": "sha256:1d34d87688acd0d450d949066794a5d9d5cacf5f1ffbf9999219e9167a338b37"
+}

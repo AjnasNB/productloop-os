@@ -1,0 +1,30 @@
+{
+  "name": "productloop-os-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Workspace for ProductLoop OS governance primitives and its public umbrella package.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "workspaces": [
+    "ajnas-runtime",
+    "ajnas-skills-registry",
+    "ajnas-provenance",
+    "ajnas-policy",
+    "ajnas-evals",
+    "ajnas-connectors",
+    "ajnas-approvals",
+    "ajnas-browser-research",
+    "productloop-os"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run build && npm run test:workspaces",
+    "test:workspaces": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "pack": "npm run pack:dry --workspaces --if-present",
+    "integration": "npm run build && npm run test --workspace=productloop-os && npm run example --workspace=productloop-os && npm run cli:doctor --workspace=productloop-os",
+    "verify": "npm run build && npm run test:workspaces && npm run typecheck && npm run integration && npm run pack"
+  }
+}

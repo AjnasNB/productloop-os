@@ -1,0 +1,18 @@
+{
+  "runId": "run_release_gate",
+  "stepId": "publish",
+  "tool": {
+    "name": "packages.publish",
+    "description": "Publish package release artifacts.",
+    "risk": "critical"
+  },
+  "input": {
+    "destination": "npm",
+    "dataClasses": ["release-artifact"],
+    "publisher": "ajnas"
+  },
+  "metadata": {
+    "purpose": "release",
+    "capabilities": ["publish"]
+  }
+}

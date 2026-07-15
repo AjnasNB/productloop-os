@@ -1,0 +1,25 @@
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+/ajnas-*/package-lock.json
+coverage/
+**/coverage/
+.nyc_output/
+*.log
+*.tgz
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+.ajnas-runs/
+.productloop/
+.cache/
+.turbo/
+.npmrc.local
+
+# Local release coordination records are not product documentation.
+status.md
+*-release-gate.md
+docs/superpowers/

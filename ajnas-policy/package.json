@@ -1,0 +1,80 @@
+{
+  "name": "ajnas-policy",
+  "version": "0.1.0",
+  "description": "Declarative policy bundles, runtime decisions, approval gates, and audit receipts for Ajnas agent infrastructure.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ajnas NB",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AjnasNB/productloop-os.git",
+    "directory": "ajnas-policy"
+  },
+  "homepage": "https://github.com/AjnasNB/productloop-os/tree/main/ajnas-policy#readme",
+  "bugs": {
+    "url": "https://github.com/AjnasNB/productloop-os/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "agents",
+    "policy",
+    "governance",
+    "audit",
+    "approval",
+    "compliance",
+    "human-in-the-loop"
+  ],
+  "bin": {
+    "ajnas-policy": "./bin/ajnas-policy.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "docs",
+    "examples",
+    "fixtures"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "example:basic": "node examples/basic-policy.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "pack:dry": "npm pack --dry-run",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run test && npm run typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "ajnas-runtime": "^0.1.0",
+    "ajnas-provenance": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "ajnas-runtime": {
+      "optional": true
+    },
+    "ajnas-provenance": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

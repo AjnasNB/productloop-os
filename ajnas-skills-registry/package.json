@@ -1,0 +1,75 @@
+{
+  "name": "ajnas-skills-registry",
+  "version": "0.1.0",
+  "description": "Signed enterprise skill manifest registry with policy and provenance hooks for Ajnas runtimes.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ajnas NB",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AjnasNB/productloop-os.git",
+    "directory": "ajnas-skills-registry"
+  },
+  "homepage": "https://github.com/AjnasNB/productloop-os/tree/main/ajnas-skills-registry#readme",
+  "bugs": {
+    "url": "https://github.com/AjnasNB/productloop-os/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "agents",
+    "skills",
+    "registry",
+    "policy",
+    "provenance",
+    "human-in-the-loop"
+  ],
+  "bin": {
+    "ajnas-skills": "./bin/ajnas-skills.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "docs",
+    "examples",
+    "fixtures"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "example:basic": "node examples/basic-registry.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "pack:dry": "npm pack --dry-run",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run test && npm run typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "ajnas-runtime": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "ajnas-runtime": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

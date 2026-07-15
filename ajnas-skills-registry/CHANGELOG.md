@@ -1,0 +1,13 @@
+# Changelog
+
+## 0.1.0 - 2026-07-15
+
+- Added `ajnas.skill.v1` manifest validation for capability, permission, trust, license, and runtime compatibility metadata.
+- Added deterministic manifest digests and Ed25519 signed manifest envelopes.
+- Added `SkillRegistry` with duplicate conflict protection and optional signature verification.
+- Added `SkillAuditLedger` with replayable hash-chained receipts.
+- Added `createSkillInstallPolicy` for Ajnas runtime-compatible install gates.
+- Added `SkillApprovalQueue` for resumable human review workflows.
+- Added `ajnas-skills` CLI with `validate` and `digest` commands.
+- Added sample manifest, runnable example, security notes, architecture notes, and publish checklist.
+- Added bounded canonical JSON validation and defensive cloning for manifests, queues, registry records, and audit data.

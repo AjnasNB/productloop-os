@@ -1,0 +1,88 @@
+{
+  "name": "productloop-os",
+  "version": "0.1.0",
+  "description": "Composable governance, policy, approvals, provenance, evals, connectors, skills, browser research, and Maqam agent tooling.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ajnas NB",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AjnasNB/productloop-os.git",
+    "directory": "productloop-os"
+  },
+  "homepage": "https://github.com/AjnasNB/productloop-os/tree/main/productloop-os#readme",
+  "bugs": {
+    "url": "https://github.com/AjnasNB/productloop-os/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "agents",
+    "agent-runtime",
+    "governance",
+    "policy",
+    "approvals",
+    "provenance",
+    "evals",
+    "connectors",
+    "skills",
+    "crawler",
+    "human-in-the-loop"
+  ],
+  "bin": {
+    "productloop-os": "./bin/productloop-os.js",
+    "productloop": "./bin/productloop-os.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "example": "node examples/end-to-end.mjs",
+    "cli:doctor": "node bin/productloop-os.js doctor --json",
+    "pack:dry": "npm pack --dry-run",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run test && npm run typecheck"
+  },
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "dependencies": {
+    "maqam": "^0.2.0",
+    "ajnas-runtime": "^0.1.0",
+    "ajnas-skills-registry": "^0.1.0",
+    "ajnas-provenance": "^0.1.0",
+    "ajnas-policy": "^0.1.0",
+    "ajnas-evals": "^0.1.0",
+    "ajnas-connectors": "^0.1.0",
+    "ajnas-approvals": "^0.1.0",
+    "ajnas-browser-research": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

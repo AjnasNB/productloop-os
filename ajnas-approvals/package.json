@@ -1,0 +1,89 @@
+{
+  "name": "ajnas-approvals",
+  "version": "0.1.0",
+  "description": "Human approval workflows, deterministic review tickets, escalation, delegation, and audit receipts for Ajnas agent infrastructure.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ajnas NB",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AjnasNB/productloop-os.git",
+    "directory": "ajnas-approvals"
+  },
+  "homepage": "https://github.com/AjnasNB/productloop-os/tree/main/ajnas-approvals#readme",
+  "bugs": {
+    "url": "https://github.com/AjnasNB/productloop-os/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "agents",
+    "approval",
+    "human-in-the-loop",
+    "policy",
+    "provenance",
+    "audit",
+    "governance",
+    "workflow"
+  ],
+  "bin": {
+    "ajnas-approvals": "./bin/ajnas-approvals.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "docs",
+    "examples",
+    "fixtures"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "example:basic": "node examples/basic-approvals.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "pack:dry": "npm pack --dry-run",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run test && npm run typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "ajnas-runtime": "^0.1.0",
+    "ajnas-policy": "^0.1.0",
+    "ajnas-provenance": "^0.1.0",
+    "ajnas-connectors": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "ajnas-runtime": {
+      "optional": true
+    },
+    "ajnas-policy": {
+      "optional": true
+    },
+    "ajnas-provenance": {
+      "optional": true
+    },
+    "ajnas-connectors": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

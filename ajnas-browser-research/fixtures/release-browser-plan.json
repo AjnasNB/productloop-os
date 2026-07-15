@@ -1,0 +1,60 @@
+{
+  "schema": "ajnas.browser.research.plan.v1",
+  "id": "ajnas-browser-research-release-plan",
+  "objective": "Collect governed browser research evidence for the Ajnas browser research release candidate.",
+  "createdAt": "2026-07-13T12:45:00.000Z",
+  "policy": {
+    "allowedOrigins": [
+      "https://github.com",
+      "https://www.npmjs.com",
+      "https://example.com"
+    ],
+    "allowedActions": [
+      "search",
+      "open",
+      "extract",
+      "crawl",
+      "note"
+    ],
+    "maxSteps": 5,
+    "citationRequired": true,
+    "retainFullText": false
+  },
+  "steps": [
+    {
+      "id": "find-browser-automation-controls",
+      "action": "search",
+      "purpose": "Locate permissive browser automation projects that inform adapter boundaries.",
+      "query": "permissive browser automation trace citation harness"
+    },
+    {
+      "id": "inspect-playwright-metadata",
+      "action": "open",
+      "purpose": "Capture browser automation trace design evidence from public metadata.",
+      "url": "https://www.npmjs.com/package/playwright"
+    },
+    {
+      "id": "extract-crawler-lessons",
+      "action": "extract",
+      "purpose": "Extract crawler governance lessons from permissive crawling metadata.",
+      "url": "https://www.npmjs.com/package/crawlee"
+    },
+    {
+      "id": "record-release-note",
+      "action": "note",
+      "purpose": "Record the original Ajnas release positioning with citations.",
+      "metadata": {
+        "release": "ajnas-browser-research@0.1.0"
+      }
+    }
+  ],
+  "output": {
+    "requireCitations": true,
+    "exportProvenance": true,
+    "format": "json"
+  },
+  "metadata": {
+    "product": "Ajnas Browser Research",
+    "approvalGate": "release-candidate"
+  }
+}

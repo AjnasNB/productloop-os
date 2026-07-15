@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-07-09T06:30:00.000Z",
+  "generatedBy": "daily-oss-skill-and-crawler-research",
+  "artifacts": {
+    "release_publish_gate": {
+      "schemaVersion": "ajnas.run.artifact.v1",
+      "runId": "run_release_001",
+      "status": "waiting_for_approval",
+      "output": {
+        "release": {
+          "packageName": "ajnas-policy",
+          "version": "0.1.0",
+          "approvalGate": "waiting"
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "type": "run.started",
+          "timestamp": "2026-07-09T06:29:58.000Z",
+          "data": {
+            "workflow": "release-governance"
+          }
+        },
+        {
+          "sequence": 2,
+          "type": "tool.requested",
+          "timestamp": "2026-07-09T06:29:59.000Z",
+          "data": {
+            "toolName": "npm.publish"
+          }
+        },
+        {
+          "sequence": 3,
+          "type": "approval.requested",
+          "timestamp": "2026-07-09T06:30:00.000Z",
+          "data": {
+            "toolName": "npm.publish",
+            "status": "pending"
+          }
+        }
+      ],
+      "policyDecisions": [
+        {
+          "toolName": "npm.publish",
+          "decision": "require_approval",
+          "reason": "External publishing requires explicit approval",
+          "receiptHash": "policy_hash_001"
+        }
+      ],
+      "approvals": [
+        {
+          "toolName": "npm.publish",
+          "status": "pending",
+          "requestedBy": "daily-oss-skill-and-crawler-research",
+          "reason": "Release approval gate"
+        }
+      ],
+      "provenance": {
+        "valid": true,
+        "rootHash": "root_hash_001",
+        "eventCount": 3,
+        "bundleDigest": "sha256:fixture-release-bundle"
+      },
+      "connectorCalls": [
+        {
+          "connectorId": "npm",
+          "operation": "publish",
+          "trustTier": "verified",
+          "destination": "npm",
+          "dataClasses": ["public-package-metadata"]
+        }
+      ],
+      "browserSteps": [
+        {
+          "stepId": "inspect_npm_package",
+          "type": "inspect",
+          "status": "passed",
+          "url": "https://www.npmjs.com/package/ajnas-policy"
+        }
+      ],
+      "metadata": {
+        "releaseGate": "waiting_for_approval"
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ajnas.policy.bundle.v1",
+  "id": "com.ajnas.enterprise-release",
+  "version": "1.0.0",
+  "description": "Controls package publishing, provenance exports, and low-risk read-only research tools.",
+  "owner": "security-platform",
+  "defaultEffect": "deny",
+  "rules": [
+    {
+      "id": "allow-low-risk-observation",
+      "description": "Low-risk observation tools can run without human review.",
+      "effect": "allow",
+      "reason": "low-risk observation is allowed",
+      "priority": 10,
+      "match": {
+        "risks": ["low"],
+        "capabilities": ["observe"]
+      }
+    },
+    {
+      "id": "review-external-release",
+      "description": "Publishing release artifacts externally requires release-owner approval.",
+      "effect": "require_approval",
+      "reason": "external package publishing requires release-owner approval",
+      "approvalPrompt": "Review {toolName} for {destination} with data classes {dataClasses}.",
+      "priority": 50,
+      "match": {
+        "toolNamePatterns": ["packages.*", "npm.*"],
+        "destinations": ["npm"],
+        "dataClasses": ["release-artifact"]
+      }
+    },
+    {
+      "id": "deny-untrusted-publisher",
+      "description": "Unknown publishers cannot publish release artifacts.",
+      "effect": "deny",
+      "reason": "publisher is outside the trusted release allowlist",
+      "priority": 100,
+      "match": {
+        "publishers": ["unknown-vendor", "unverified"],
+        "dataClasses": ["release-artifact"]
+      }
+    },
+    {
+      "id": "review-sensitive-provenance-export",
+      "description": "Sensitive provenance exports require a reviewer.",
+      "effect": "require_approval",
+      "reason": "sensitive provenance export requires approval",
+      "approvalPrompt": "Review provenance export to {destination}; data classes: {dataClasses}.",
+      "priority": 40,
+      "match": {
+        "toolNames": ["provenance.export"],
+        "destinations": ["partner-archive", "customer-audit"],
+        "dataClasses": ["secret-redacted", "customer-evidence", "release-artifact"]
+      }
+    }
+  ],
+  "metadata": {
+    "compliance": ["SOC2", "internal-release-control"],
+    "reviewCadence": "quarterly"
+  }
+}

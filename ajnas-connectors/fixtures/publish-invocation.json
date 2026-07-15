@@ -1,0 +1,18 @@
+{
+  "runId": "run_release_001",
+  "stepId": "step_publish_npm",
+  "connectorId": "com.ajnas.connectors.release-publisher",
+  "capabilityId": "npm.publish.approved",
+  "operation": "publish",
+  "purpose": "Publish ajnas-connectors only after explicit user approval.",
+  "requestedBy": "daily-oss-skill-and-crawler-research",
+  "input": {
+    "packageName": "ajnas-connectors",
+    "version": "0.1.0",
+    "artifactDigest": "sha256:release-candidate-placeholder",
+    "dryRunCompleted": true
+  },
+  "metadata": {
+    "approvalGate": "external-publishing"
+  }
+}

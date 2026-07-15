@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "ajnas.connector.manifest.v1",
+  "id": "com.ajnas.connectors.release-publisher",
+  "version": "1.0.0",
+  "name": "Ajnas Release Publisher",
+  "description": "Approval-gated connector manifest for npm package publishing and GitHub release metadata.",
+  "kind": "publish",
+  "publisher": {
+    "name": "Ajnas",
+    "contact": "security@ajnas.invalid"
+  },
+  "runtime": {
+    "transport": "local",
+    "entrypoint": "ajnas-release-publisher",
+    "node": ">=20",
+    "protocol": "ajnas.connector.manifest.v1"
+  },
+  "auth": {
+    "type": "bearer",
+    "secretRefs": [
+      "NPM_TOKEN",
+      "GITHUB_TOKEN"
+    ],
+    "scopes": [
+      "npm:publish",
+      "github:releases:write"
+    ]
+  },
+  "permissions": [
+    {
+      "id": "npm-release-write",
+      "purpose": "Publish approved Ajnas packages to npm.",
+      "operations": [
+        "read",
+        "publish"
+      ],
+      "resources": [
+        "npm:ajnas-*"
+      ],
+      "dataClasses": [
+        "public",
+        "internal"
+      ],
+      "destinations": [
+        "registry.npmjs.org"
+      ],
+      "risk": "high"
+    },
+    {
+      "id": "github-release-write",
+      "purpose": "Create release notes for approved Ajnas packages.",
+      "operations": [
+        "write",
+        "publish"
+      ],
+      "resources": [
+        "github:ajnas/*:releases"
+      ],
+      "dataClasses": [
+        "public",
+        "internal"
+      ],
+      "destinations": [
+        "api.github.com"
+      ],
+      "risk": "high"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "npm.publish.dry-run",
+      "name": "npm publish dry run",
+      "description": "Prepare and inspect an npm publish dry run without external release.",
+      "operations": [
+        "read"
+      ],
+      "dataClasses": [
+        "public",
+        "internal"
+      ],
+      "destinations": [
+        "registry.npmjs.org"
+      ],
+      "risk": "medium"
+    },
+    {
+      "id": "npm.publish.approved",
+      "name": "npm publish approved package",
+      "description": "Publish an already approved package version to npm.",
+      "operations": [
+        "publish"
+      ],
+      "dataClasses": [
+        "public",
+        "internal"
+      ],
+      "destinations": [
+        "registry.npmjs.org"
+      ],
+      "risk": "high",
+      "requiresApproval": true
+    },
+    {
+      "id": "github.release.notes",
+      "name": "GitHub release notes",
+      "description": "Create approved release notes and release metadata.",
+      "operations": [
+        "write",
+        "publish"
+      ],
+      "dataClasses": [
+        "public",
+        "internal"
+      ],
+      "destinations": [
+        "api.github.com"
+      ],
+      "risk": "high",
+      "requiresApproval": true
+    }
+  ],
+  "trust": {
+    "license": "MIT",
+    "reviewStatus": "approved",
+    "sourceUrl": "local:ajnas-product-loop/ajnas-connectors",
+    "reviewedBy": "daily-oss-skill-and-crawler-research",
+    "reviewedAt": "2026-07-11T06:30:00.000Z",
+    "provenance": {
+      "statementType": "ajnas.connector.manifest.v1"
+    },
+    "sandbox": {
+      "network": "restricted",
+      "filesystem": "read",
+      "secrets": "read",
+      "egressDestinations": [
+        "registry.npmjs.org",
+        "api.github.com"
+      ]
+    },
+    "attestations": [
+      {
+        "id": "license-review",
+        "kind": "license",
+        "statement": "The Ajnas connector manifest and package are MIT licensed.",
+        "signedBy": "Ajnas product loop",
+        "issuedAt": "2026-07-11T06:30:00.000Z"
+      },
+      {
+        "id": "release-gate-review",
+        "kind": "security-review",
+        "statement": "External publishing capabilities require explicit human approval before use.",
+        "signedBy": "Ajnas product loop",
+        "issuedAt": "2026-07-11T06:30:00.000Z"
+      }
+    ]
+  },
+  "policyHints": {
+    "approvalRequiredFor": {
+      "operations": [
+        "write",
+        "publish"
+      ],
+      "risks": [
+        "high",
+        "critical"
+      ]
+    },
+    "deniedFor": {
+      "dataClasses": [
+        "credential",
+        "secret"
+      ]
+    },
+    "defaultPurpose": "approval-gated release automation"
+  },
+  "metadata": {
+    "product": "ajnas-connectors",
+    "fixture": "release-governance"
+  }
+}

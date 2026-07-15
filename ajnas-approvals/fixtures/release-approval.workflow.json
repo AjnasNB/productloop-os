@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "ajnas.approval.workflow.v1",
+  "id": "ajnas.release-approval",
+  "version": "1.0.0",
+  "name": "Ajnas release approval workflow",
+  "owner": "release-governance",
+  "description": "Approval workflow for external package publishing and high-risk release automation.",
+  "policy": {
+    "defaultTtlHours": 48,
+    "requireReasonForRejection": true,
+    "preventRequesterSelfApproval": true,
+    "maxDelegationDepth": 2,
+    "allowedRiskLevels": ["medium", "high", "critical"],
+    "sensitiveDataClasses": ["credential", "secret", "release-artifact"]
+  },
+  "stages": [
+    {
+      "id": "security-review",
+      "name": "Security review",
+      "reviewers": [
+        {
+          "id": "security-lead",
+          "kind": "role",
+          "displayName": "Security lead"
+        }
+      ],
+      "quorum": {
+        "strategy": "any"
+      },
+      "escalation": {
+        "afterHours": 12,
+        "notify": ["release-owner", "security-manager"],
+        "stageId": "release-owner-review"
+      }
+    },
+    {
+      "id": "release-owner-review",
+      "name": "Release owner review",
+      "reviewers": [
+        {
+          "id": "release-owner",
+          "kind": "role",
+          "displayName": "Release owner"
+        },
+        {
+          "id": "compliance-reviewer",
+          "kind": "role",
+          "displayName": "Compliance reviewer"
+        }
+      ],
+      "quorum": {
+        "strategy": "count",
+        "required": 2
+      },
+      "escalation": {
+        "afterHours": 24,
+        "notify": ["engineering-director"]
+      }
+    }
+  ],
+  "metadata": {
+    "approvalGate": "external-publishing",
+    "packages": ["ajnas-runtime", "ajnas-policy", "ajnas-connectors", "ajnas-approvals"]
+  }
+}
