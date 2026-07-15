@@ -1,6 +1,6 @@
 {
   "name": "productloop-os",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Composable governance, policy, approvals, provenance, evals, connectors, skills, browser research, and Maqam agent tooling.",
   "type": "module",
   "license": "MIT",
@@ -31,8 +31,8 @@
     "human-in-the-loop"
   ],
   "bin": {
-    "productloop-os": "./bin/productloop-os.js",
-    "productloop": "./bin/productloop-os.js"
+    "productloop-os": "bin/productloop-os.js",
+    "productloop": "bin/productloop-os.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -72,13 +72,13 @@
   "dependencies": {
     "maqam": "^0.2.0",
     "ajnas-runtime": "^0.1.0",
-    "ajnas-skills-registry": "^0.1.0",
-    "ajnas-provenance": "^0.1.0",
+    "ajnas-skills-registry": "^0.1.1",
+    "ajnas-provenance": "^0.1.1",
     "ajnas-policy": "^0.1.0",
     "ajnas-evals": "^0.1.0",
     "ajnas-connectors": "^0.1.0",
     "ajnas-approvals": "^0.1.0",
-    "ajnas-browser-research": "^0.1.0"
+    "ajnas-browser-research": "^0.1.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",

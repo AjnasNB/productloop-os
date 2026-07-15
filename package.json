@@ -1,6 +1,6 @@
 {
   "name": "productloop-os-monorepo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Workspace for ProductLoop OS governance primitives and its public umbrella package.",
   "license": "MIT",
@@ -25,7 +25,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "pack": "npm run pack:dry --workspaces --if-present",
     "integration": "npm run build && npm run test --workspace=productloop-os && npm run example --workspace=productloop-os && npm run cli:doctor --workspace=productloop-os",
-    "verify": "npm run build && npm run test:workspaces && npm run typecheck && npm run integration && npm run pack"
+    "test:consumer-types": "node scripts/test-clean-consumer-types.mjs",
+    "verify": "npm run build && npm run test:workspaces && npm run typecheck && npm run integration && npm run test:consumer-types && npm run pack"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.62.2"

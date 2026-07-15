@@ -96,4 +96,4 @@ The harness does not bypass access controls, paywalls, CAPTCHA, anti-bot systems
 
 ## Publish
 
-Version `0.1.0` is the initial public release, authorized for the public npm registry on 2026-07-15. A different version or registry target requires fresh authorization.
+Version `0.1.1` is the current supported public release. It supersedes `0.1.0` for clean TypeScript consumer installs by declaring the Node.js types used by its public API.

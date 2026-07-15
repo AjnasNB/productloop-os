@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 - 2026-07-15
+
+- Added the Node.js declaration dependency required by clean TypeScript consumers of the public `node:crypto` and `Buffer` types.
+
 ## 0.1.0 - 2026-07-15
 
 - Added `ajnas.skill.v1` manifest validation for capability, permission, trust, license, and runtime compatibility metadata.

@@ -2,15 +2,16 @@
 
 This monorepo is designed for deliberate, inspectable npm releases. Publishing is a human-authorized external side effect and is not part of the build or test scripts.
 
-## Initial release order
+## Published release order
 
 1. Publish and verify `maqam@0.2.0` from its own repository.
 2. Publish the eight `ajnas-*@0.1.0` packages. `ajnas-runtime` first is convenient because several packages declare it as an optional peer.
 3. Publish `productloop-os@0.1.0` last, after every declared dependency resolves from the public registry.
+4. For the clean-consumer declaration patch, publish `ajnas-skills-registry@0.1.1`, `ajnas-provenance@0.1.1`, and `ajnas-browser-research@0.1.1` before `productloop-os@0.1.1`.
 
 The packages use normal semver dependencies in publishable manifests. Do not publish a manifest containing a local `file:` path, workspace-only alias, or unpublished version.
 
-For later releases, publish only changed packages. Publish `productloop-os` last whenever one of its declared dependency versions changes.
+For later releases, publish only changed packages. Publish dependencies before dependents, and publish `productloop-os` last whenever one of its declared dependency versions changes.
 
 ## Per-package gate
 

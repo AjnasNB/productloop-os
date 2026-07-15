@@ -1,8 +1,8 @@
 # Publish Checklist
 
-Package: `ajnas-provenance@0.1.0`
+Package: `ajnas-provenance@0.1.1`
 
-`ajnas-provenance@0.1.0` was authorized for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
+`ajnas-provenance@0.1.1` was authorized for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
 
 ## Required Verification
 
@@ -22,7 +22,7 @@ npm view ajnas-provenance version --json
 
 ## Approval Gate
 
-The initial release approval is recorded. Confirm the exact version is absent before publishing; if it already exists, stop because npm versions are immutable.
+The `0.1.1` patch release approval is recorded. Confirm the exact version is absent before publishing; if it already exists, stop because npm versions are immutable.
 
 Approved publish command:
 

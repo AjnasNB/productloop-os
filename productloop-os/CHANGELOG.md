@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 - 2026-07-15
+
+- Raised the `ajnas-skills-registry`, `ajnas-provenance`, and `ajnas-browser-research` dependency floors to `^0.1.1` so clean consumers receive their Node.js declaration dependency fixes.
+
 ## 0.1.0 - 2026-07-15
 
 - Added named namespaces for Maqam and all eight Ajnas packages.

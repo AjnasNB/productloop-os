@@ -1,6 +1,6 @@
 {
   "name": "ajnas-provenance",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Append-only provenance traces, signed evidence bundles, redaction, and export gates for Ajnas agent infrastructure.",
   "type": "module",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "supply-chain"
   ],
   "bin": {
-    "ajnas-provenance": "./bin/ajnas-provenance.js"
+    "ajnas-provenance": "bin/ajnas-provenance.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -60,6 +60,9 @@
   "engines": {
     "node": ">=20"
   },
+  "dependencies": {
+    "@types/node": "^20.19.43"
+  },
   "peerDependencies": {
     "ajnas-runtime": "^0.1.0",
     "ajnas-skills-registry": "^0.1.0"
@@ -73,7 +76,6 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^24.0.10",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }

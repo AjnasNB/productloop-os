@@ -31,5 +31,7 @@ jobs:
         run: npm run typecheck
       - name: Integration smoke test
         run: npm run integration
+      - name: Clean consumer declaration test
+        run: npm run test:consumer-types
       - name: Inspect publish contents
         run: npm run pack

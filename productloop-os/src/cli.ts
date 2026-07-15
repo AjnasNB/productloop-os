@@ -1,7 +1,7 @@
 import { runDeterministicDemo } from "./demo.js";
 import { inspectModules } from "./namespaces.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 
 export interface ProductLoopCliIo {
   stdout(message: string): void;

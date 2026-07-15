@@ -28,6 +28,8 @@ describe("package readiness", () => {
     expect(await read("README.md")).toContain("approval");
     expect(await read("SECURITY.md")).toContain("robots.txt");
     expect(await read("docs/provenance-and-licenses.md")).toContain("No third-party implementation code");
-    expect(await read("CHANGELOG.md")).toContain("0.1.0");
+    const manifest = JSON.parse(await read("package.json"));
+    expect(manifest.version).toBe("0.1.1");
+    expect(await read("CHANGELOG.md")).toContain("## 0.1.1 - 2026-07-15");
   });
 });

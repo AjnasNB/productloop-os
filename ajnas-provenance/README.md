@@ -20,7 +20,7 @@ The package is designed for enterprise agent infrastructure where teams need det
 npm install ajnas-provenance
 ```
 
-This package has no runtime dependencies. `ajnas-runtime` and `ajnas-skills-registry` are optional peer packages because imports accept compatible receipt shapes.
+This package has no runtime code dependencies. It installs `@types/node` because its public declarations expose Node.js crypto key and buffer types. `ajnas-runtime` and `ajnas-skills-registry` remain optional peers because imports accept compatible receipt shapes.
 
 ## Basic Usage
 

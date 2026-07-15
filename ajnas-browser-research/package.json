@@ -1,6 +1,6 @@
 {
   "name": "ajnas-browser-research",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Governed browser research harness with deterministic step logs, citation capture, policy hooks, approvals, and provenance exports for Ajnas agent infrastructure.",
   "type": "module",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "agent-governance"
   ],
   "bin": {
-    "ajnas-browser-research": "./bin/ajnas-browser-research.js"
+    "ajnas-browser-research": "bin/ajnas-browser-research.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -63,6 +63,9 @@
   "engines": {
     "node": ">=20"
   },
+  "dependencies": {
+    "@types/node": "^20.19.43"
+  },
   "peerDependencies": {
     "ajnas-runtime": "^0.1.0",
     "ajnas-policy": "^0.1.0",
@@ -88,7 +91,6 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^24.0.10",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }
