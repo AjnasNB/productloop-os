@@ -40,7 +40,7 @@ function normalize(value: unknown, state: NormalizeState, depth: number, path: s
   for (const key of Reflect.ownKeys(value).sort(comparePropertyKeys)) {
     if (typeof key !== "string") throw new TypeError("JSON objects must not contain symbol properties");
     const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    if (!descriptor?.enumerable || !("value" in descriptor)) throw new TypeError("JSON objects must contain only enumerable data properties");
+    if (!isEnumerableDataDescriptor(descriptor)) throw new TypeError("JSON objects must contain only enumerable data properties");
     accountBytes(state, key);
     entries.push([key, normalize(descriptor.value, state, depth + 1, `${path}.${key}`)]);
   }
@@ -50,8 +50,9 @@ function assertPlainObject(value: object): void { const prototype = Object.getPr
 function assertDenseDataArray(value: unknown[]): void {
   const keys = Reflect.ownKeys(value);
   if (keys.length !== value.length + 1 || !keys.includes("length")) throw new TypeError("JSON arrays must be dense and must not contain extra properties");
-  for (let index = 0; index < value.length; index += 1) { const descriptor = Object.getOwnPropertyDescriptor(value, String(index)); if (!descriptor?.enumerable || !("value" in descriptor)) throw new TypeError("JSON arrays must contain only enumerable data elements"); }
+  for (let index = 0; index < value.length; index += 1) { const descriptor = Object.getOwnPropertyDescriptor(value, String(index)); if (!isEnumerableDataDescriptor(descriptor)) throw new TypeError("JSON arrays must contain only enumerable data elements"); }
 }
+function isEnumerableDataDescriptor(descriptor: PropertyDescriptor | undefined): descriptor is PropertyDescriptor & { enumerable: true; value: unknown } { return descriptor !== undefined && Object.hasOwn(descriptor, "enumerable") && descriptor.enumerable === true && Object.hasOwn(descriptor, "value"); }
 function createObject(entries: Array<[string, JsonValue]>): JsonObject { const output = Object.create(null) as JsonObject; for (const [key, value] of entries) Object.defineProperty(output, key, { value, enumerable: true, configurable: true, writable: true }); return output; }
 function accountBytes(state: NormalizeState, value: string): void { state.bytes += Buffer.byteLength(value, "utf8"); if (state.bytes > MAX_UTF8_BYTES) throw new RangeError("JSON string and key data exceeds the 8 MiB limit"); }
 function comparePropertyKeys(left: PropertyKey, right: PropertyKey): number { if (typeof left === "symbol") return 1; if (typeof right === "symbol") return -1; return String(left) < String(right) ? -1 : String(left) > String(right) ? 1 : 0; }

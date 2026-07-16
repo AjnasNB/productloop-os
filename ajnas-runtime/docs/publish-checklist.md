@@ -1,11 +1,11 @@
 # Publish Checklist
 
-`ajnas-runtime@0.1.0` was authorized for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
+`ajnas-runtime@0.2.0` is the selected security-boundary release candidate for the public npm registry. Publishing still requires explicit release authorization after all gates pass.
 
 ## Preflight
 
 - [x] Package name selected: `ajnas-runtime`
-- [x] Version selected: `0.1.0`
+- [x] Version selected: `0.2.0`
 - [x] License selected: MIT
 - [x] README present
 - [x] CHANGELOG present

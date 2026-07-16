@@ -14,6 +14,8 @@ npm install ajnas-skills-registry
 
 `ajnas-runtime` is an optional peer dependency. The registry policy helper is structurally compatible with the runtime `PolicyEngine` contract and can be used without importing runtime types.
 
+`createSkillInstallPolicy()` is deliberately scoped to the configured installation tool and denies every other tool. Compose unrelated tool rules in a separate explicit policy; never use an allow-on-miss policy as a runtime-wide fallback.
+
 ## Quick Start
 
 ```ts
@@ -33,7 +35,7 @@ const manifest = {
   description: "Turns approved research notes into a concise internal brief.",
   license: "MIT",
   entrypoint: { type: "module", value: "./dist/research-brief.js" },
-  compatibility: { ajnasRuntime: "^0.1.0" },
+  compatibility: { ajnasRuntime: "^0.2.0" },
   capabilities: [
     {
       name: "research.summarize",
@@ -120,4 +122,4 @@ npm run pack:dry
 
 ## Release Status
 
-Version `0.1.1` is the current supported public release. It supersedes `0.1.0` for clean TypeScript consumer installs by declaring the Node.js types used by its public API.
+Version `0.2.0` is the current release candidate. It intentionally removes executable callbacks from runtime policy projections and adds strict, immutable Ed25519 signed-manifest verification.

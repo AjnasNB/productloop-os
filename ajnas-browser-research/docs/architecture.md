@@ -7,9 +7,9 @@
 - Plan validation: validates `ajnas.browser.research.plan.v1` and computes deterministic digests.
 - Policy evaluator: checks action, origin, blocked origin, step count, citation, and approval rules before execution.
 - Adapter interface: accepts browser/search/crawl implementations without making any browser engine a package dependency.
-- Harness: runs approved steps, records output digests, summarizes output, extracts citations, and fails closed on missing approval or missing required citations.
+- Harness: snapshots and freezes a canonical plan, runs approved steps using detached adapter inputs, records output digests, summarizes output, extracts citations, and fails closed on missing approval or missing required citations.
 - Audit ledger: writes hash-chained receipts for run start, policy decision, approval request, approval resolution, step completion, and run completion.
-- Provenance bundle: exports citations and receipts with deterministic bundle digests and optional signatures.
+- Provenance bundle: exports citations and receipts with deterministic bundle digests and optional metadata-bound Ed25519, RSA, RSA-PSS, or ECDSA signatures.
 - CLI: exposes validation, digesting, replayed runs, report verification, and provenance export.
 
 ## Design Decisions

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 - 2026-07-15
+
+- Raised all security-patched dependency floors, including Maqam `^0.2.2`.
+- Raised the breaking runtime and skills-registry dependency floors to `^0.2.0`.
+- Raised `ajnas-evals` to the registry-consistent `^0.1.1` peer-floor patch.
+- Made configured Maqam crawler defaults immutable against per-call attempts to broaden network policy or resource ceilings.
+- Integrated sanitized policy requests, strict approval semantics, fail-closed signatures, and malformed-policy rejection.
+
 ## 0.1.1 - 2026-07-15
 
 - Raised the `ajnas-skills-registry`, `ajnas-provenance`, and `ajnas-browser-research` dependency floors to `^0.1.1` so clean consumers receive their Node.js declaration dependency fixes.

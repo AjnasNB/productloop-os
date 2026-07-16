@@ -1,5 +1,9 @@
 # Security
 
+Connector approval resolutions are runtime-validated. Values such as `"yes"` are never treated as approval, approver identities must be non-empty, and optional resolution metadata must be bounded JSON.
+
+Canonical JSON normalization accepts only own enumerable data descriptors. Accessors and inherited descriptor fields are rejected without invoking getters, including when `Object.prototype` is polluted.
+
 `ajnas-connectors` is governance infrastructure. It does not open network connections, execute connector code, publish packages, or read secrets by itself.
 
 ## Trust Boundary

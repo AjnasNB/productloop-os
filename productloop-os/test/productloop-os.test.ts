@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { describe, expect, it } from "vitest";
 import {
+  PRODUCTLOOP_OS_VERSION,
   createMaqamCrawlerTool,
   createProductLoopOS,
   inspectModules,
@@ -8,6 +9,10 @@ import {
 } from "../src/index.js";
 
 describe("productloop-os", () => {
+  it("exports the published package version", () => {
+    expect(PRODUCTLOOP_OS_VERSION).toBe("0.2.0");
+  });
+
   it("loads Maqam and every Ajnas package namespace", () => {
     const modules = inspectModules();
     expect(modules).toHaveLength(9);
@@ -40,9 +45,9 @@ describe("productloop-os", () => {
   });
 
   it("marks the Maqam live crawler bridge high risk without executing it", () => {
-    const crawler = createMaqamCrawlerTool({
-      defaults: { obeyRobots: true, maxPages: 2 }
-    });
+    const defaults = { obeyRobots: true, maxPages: 2 };
+    const crawler = createMaqamCrawlerTool({ defaults });
+    defaults.maxPages = 999;
     expect(crawler.name).toBe("maqam.crawl");
     expect(crawler.risk).toBe("high");
   });
@@ -66,19 +71,24 @@ describe("productloop-os", () => {
     try {
       const address = server.address();
       if (!address || typeof address === "string") throw new Error("Expected a TCP test server address.");
-      const crawler = createMaqamCrawlerTool({
-        defaults: {
-          allowPrivateNetworks: true,
-          includeSitemaps: false,
-          maxPages: 1,
-          obeyRobots: true
-        }
-      });
+      const deploymentDefaults = {
+        allowPrivateNetworks: true,
+        includeSitemaps: false,
+        maxPages: 1,
+        obeyRobots: true
+      };
+      const crawler = createMaqamCrawlerTool({ defaults: deploymentDefaults });
+      deploymentDefaults.allowPrivateNetworks = false;
+      deploymentDefaults.maxPages = 99;
       const pages = await crawler.execute({
         runId: "run_crawler_bridge",
         stepId: "crawl",
         toolName: crawler.name,
-        input: { seeds: [`http://127.0.0.1:${address.port}/`] },
+        input: {
+          seeds: [`http://127.0.0.1:${address.port}/`],
+          allowPrivateNetworks: false,
+          maxPages: 99
+        },
         metadata: {}
       });
 

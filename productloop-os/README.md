@@ -95,7 +95,11 @@ npx productloop-os demo
 
 This package is not a model, browser engine, hosted crawler fleet, identity system, secret manager, sandbox, database, distributed scheduler, or guarantee of safety. `ajnas-browser-research` includes deterministic replay, not a live browser. Maqam has a real HTTP crawler and process-backed CLI-agent adapters, which require network, command, filesystem, and credential controls at deployment time.
 
+`createMaqamCrawlerTool({ defaults })` treats every supplied default as a deployment-enforced value: per-call input cannot override those network or resource limits. Put seeds and ordinary request-specific fields in tool input; put private-network policy, allowlists, robots behavior, and ceilings in `defaults`.
+
 See the repository's [architecture](https://github.com/AjnasNB/productloop-os/blob/main/docs/architecture.md), [comparison](https://github.com/AjnasNB/productloop-os/blob/main/docs/comparison.md), and [release guide](https://github.com/AjnasNB/productloop-os/blob/main/docs/releasing.md).
+
+The current coordinated release candidate is `productloop-os@0.2.0`.
 
 ## License
 

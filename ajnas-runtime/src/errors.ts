@@ -28,6 +28,16 @@ export class PolicyDeniedError extends AjnasRuntimeError {
   }
 }
 
+export class InvalidPolicyDecisionError extends AjnasRuntimeError {
+  constructor(toolName: string, reason: string) {
+    super(
+      "AJNAS_POLICY_DECISION_INVALID",
+      `Policy returned an invalid decision for tool call ${toolName}: ${reason}`,
+      { toolName, reason }
+    );
+  }
+}
+
 export class ApprovalRequiredError extends AjnasRuntimeError {
   constructor(toolName: string, reason: string) {
     super("AJNAS_APPROVAL_REQUIRED", `Tool call ${toolName} requires approval: ${reason}`, { toolName, reason });

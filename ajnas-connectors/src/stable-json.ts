@@ -66,7 +66,7 @@ function normalize(value: unknown, state: NormalizeState, depth: number): JsonVa
   for (const key of Reflect.ownKeys(value).sort(comparePropertyKeys)) {
     if (typeof key !== "string") throw new TypeError("JSON objects must not contain symbol properties");
     const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    if (!descriptor?.enumerable || !("value" in descriptor)) throw new TypeError("JSON objects must contain only enumerable data properties");
+    if (!isEnumerableDataDescriptor(descriptor)) throw new TypeError("JSON objects must contain only enumerable data properties");
     accountBytes(state, key);
     entries.push([key, normalize(descriptor.value, state, depth + 1)]);
   }
@@ -83,8 +83,12 @@ function assertDenseDataArray(value: unknown[]): void {
   if (keys.length !== value.length + 1 || !keys.includes("length")) throw new TypeError("JSON arrays must be dense and must not contain extra properties");
   for (let index = 0; index < value.length; index += 1) {
     const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
-    if (!descriptor?.enumerable || !("value" in descriptor)) throw new TypeError("JSON arrays must contain only enumerable data elements");
+    if (!isEnumerableDataDescriptor(descriptor)) throw new TypeError("JSON arrays must contain only enumerable data elements");
   }
+}
+
+function isEnumerableDataDescriptor(descriptor: PropertyDescriptor | undefined): descriptor is PropertyDescriptor & { enumerable: true; value: unknown } {
+  return descriptor !== undefined && Object.hasOwn(descriptor, "enumerable") && descriptor.enumerable === true && Object.hasOwn(descriptor, "value");
 }
 
 function createObject(entries: Array<[string, JsonValue]>): JsonObject {

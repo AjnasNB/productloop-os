@@ -1,6 +1,6 @@
 {
   "name": "ajnas-policy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Declarative policy bundles, runtime decisions, approval gates, and audit receipts for Ajnas agent infrastructure.",
   "type": "module",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "human-in-the-loop"
   ],
   "bin": {
-    "ajnas-policy": "./bin/ajnas-policy.js"
+    "ajnas-policy": "bin/ajnas-policy.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -61,8 +61,8 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "ajnas-runtime": "^0.1.0",
-    "ajnas-provenance": "^0.1.0"
+    "ajnas-provenance": "^0.1.2",
+    "ajnas-runtime": "^0.2.0"
   },
   "peerDependenciesMeta": {
     "ajnas-runtime": {

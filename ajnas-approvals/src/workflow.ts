@@ -17,6 +17,7 @@ import type {
 } from "./types.js";
 
 export function createApprovalTicket(input: ApprovalRequestInput): ApprovalTicket {
+  assertRequestInput(input);
   assertValidWorkflow(input.workflow);
   assertValidSubject(input.subject);
   assertRiskAllowed(input.workflow, input.subject.risk);
@@ -69,6 +70,7 @@ export function createApprovalTicket(input: ApprovalRequestInput): ApprovalTicke
 
 export function reviewApprovalTicket(workflow: ApprovalWorkflow, ticket: ApprovalTicket, input: ApprovalReviewInput): ApprovalTicket {
   assertTicketCanChange(workflow, ticket);
+  assertReviewInput(input);
   const reviewedAt = toIso(input.reviewedAt ?? new Date());
   const stage = getStage(workflow, ticket.stageId);
   const reviewer = getAuthorizedReviewer(ticket, stage, input.reviewerId);
@@ -158,8 +160,43 @@ export function reviewApprovalTicket(workflow: ApprovalWorkflow, ticket: Approva
   };
 }
 
+function assertReviewInput(input: unknown): asserts input is ApprovalReviewInput {
+  if (input === null || typeof input !== "object" || Array.isArray(input)) throw new TypeError("Approval review input must be a JSON object.");
+  const value = input as Record<string, unknown>;
+  if (typeof value.reviewerId !== "string" || !value.reviewerId.trim()) throw new TypeError("Approval reviewerId must be a non-empty string.");
+  if (value.decision !== "approve" && value.decision !== "reject") throw new TypeError("Approval decision must be approve or reject.");
+  if (value.comment !== undefined && typeof value.comment !== "string") throw new TypeError("Approval comment must be a string.");
+  assertOptionalTimestamp(value.reviewedAt, "Approval reviewedAt");
+  if (value.metadata !== undefined) {
+    if (value.metadata === null || typeof value.metadata !== "object" || Array.isArray(value.metadata)) throw new TypeError("Approval metadata must be a JSON object.");
+    toJsonObject(value.metadata);
+  }
+}
+
+function assertRequestInput(input: unknown): asserts input is ApprovalRequestInput {
+  if (input === null || typeof input !== "object" || Array.isArray(input)) throw new TypeError("Approval request input must be a JSON object.");
+  const value = input as Record<string, unknown>;
+  assertNonEmptyString(value.requestedBy, "Approval requestedBy");
+  assertNonEmptyString(value.reason, "Approval reason");
+  assertOptionalTimestamp(value.createdAt, "Approval createdAt");
+  if (value.policyDecision !== undefined) assertPolicyDecision(value.policyDecision);
+  if (value.connectorTrust !== undefined) assertJsonObject(value.connectorTrust, "Approval connectorTrust");
+  if (value.provenance !== undefined) assertJsonObject(value.provenance, "Approval provenance");
+  if (value.metadata !== undefined) assertJsonObject(value.metadata, "Approval metadata");
+}
+
+function assertPolicyDecision(value: unknown): void {
+  assertJsonObject(value, "Approval policyDecision");
+  const decision = value as Record<string, unknown>;
+  if (decision.decision !== "allow" && decision.decision !== "deny" && decision.decision !== "require_approval") throw new TypeError("Approval policyDecision.decision must be allow, deny, or require_approval.");
+  assertNonEmptyString(decision.reason, "Approval policyDecision.reason");
+  if (decision.approvalPrompt !== undefined && (decision.decision !== "require_approval" || typeof decision.approvalPrompt !== "string" || !decision.approvalPrompt.trim())) throw new TypeError("Approval policyDecision.approvalPrompt must be a non-empty string on require_approval.");
+  if (decision.metadata !== undefined) assertJsonObject(decision.metadata, "Approval policyDecision.metadata");
+}
+
 export function delegateApprovalTicket(workflow: ApprovalWorkflow, ticket: ApprovalTicket, input: ApprovalDelegationInput): ApprovalTicket {
   assertTicketCanChange(workflow, ticket);
+  assertDelegationInput(input);
   const delegatedAt = toIso(input.delegatedAt ?? new Date());
   const stage = getStage(workflow, ticket.stageId);
   getAuthorizedReviewer(ticket, stage, input.fromReviewerId);
@@ -257,6 +294,7 @@ export function expireApprovalTicket(workflow: ApprovalWorkflow, ticket: Approva
 
 export function cancelApprovalTicket(workflow: ApprovalWorkflow, ticket: ApprovalTicket, input: ApprovalCancelInput): ApprovalTicket {
   assertTicketCanChange(workflow, ticket);
+  assertCancelInput(input);
   const cancelledAt = toIso(input.cancelledAt ?? new Date());
   return appendHistory(
     {
@@ -296,6 +334,46 @@ export function summarizeApprovalTicket(ticket: ApprovalTicket): JsonObject {
     delegations: ticket.delegations.length,
     digest: computeApprovalTicketDigest(ticket)
   };
+}
+
+function assertDelegationInput(input: unknown): asserts input is ApprovalDelegationInput {
+  if (input === null || typeof input !== "object" || Array.isArray(input)) throw new TypeError("Approval delegation input must be a JSON object.");
+  const value = input as Record<string, unknown>;
+  assertNonEmptyString(value.fromReviewerId, "Approval delegation fromReviewerId");
+  assertNonEmptyString(value.reason, "Approval delegation reason");
+  assertOptionalTimestamp(value.delegatedAt, "Approval delegatedAt");
+  assertJsonObject(value.toReviewer, "Approval delegated reviewer");
+  const reviewer = value.toReviewer as Record<string, unknown>;
+  assertNonEmptyString(reviewer.id, "Approval delegated reviewer id");
+  if (reviewer.kind !== "user" && reviewer.kind !== "group" && reviewer.kind !== "role") throw new TypeError("Approval delegated reviewer kind must be user, group, or role.");
+  if (reviewer.displayName !== undefined && (typeof reviewer.displayName !== "string" || !reviewer.displayName.trim())) throw new TypeError("Approval delegated reviewer displayName must be a non-empty string.");
+  if (reviewer.required !== undefined && typeof reviewer.required !== "boolean") throw new TypeError("Approval delegated reviewer required must be a boolean.");
+  if (value.metadata !== undefined) assertJsonObject(value.metadata, "Approval delegation metadata");
+}
+
+function assertCancelInput(input: unknown): asserts input is ApprovalCancelInput {
+  if (input === null || typeof input !== "object" || Array.isArray(input)) throw new TypeError("Approval cancellation input must be a JSON object.");
+  const value = input as Record<string, unknown>;
+  assertNonEmptyString(value.actorId, "Approval cancellation actorId");
+  assertNonEmptyString(value.reason, "Approval cancellation reason");
+  assertOptionalTimestamp(value.cancelledAt, "Approval cancelledAt");
+  if (value.metadata !== undefined) assertJsonObject(value.metadata, "Approval cancellation metadata");
+}
+
+function assertJsonObject(value: unknown, label: string): asserts value is JsonObject {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) throw new TypeError(`${label} must be a JSON object.`);
+  toJsonObject(value);
+}
+
+function assertNonEmptyString(value: unknown, label: string): asserts value is string {
+  if (typeof value !== "string" || !value.trim()) throw new TypeError(`${label} must be a non-empty string.`);
+}
+
+function assertOptionalTimestamp(value: unknown, label: string): void {
+  if (value === undefined) return;
+  if (!(typeof value === "string" || value instanceof Date)) throw new TypeError(`${label} must be an ISO timestamp string or Date.`);
+  const date = value instanceof Date ? value : new Date(value);
+  if (!Number.isFinite(date.getTime())) throw new TypeError(`${label} must be a valid timestamp.`);
 }
 
 function appendHistory(

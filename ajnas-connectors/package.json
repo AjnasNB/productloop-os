@@ -1,6 +1,6 @@
 {
   "name": "ajnas-connectors",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Connector manifests, trust metadata, policy context, approvals, and audit receipts for Ajnas agent infrastructure.",
   "type": "module",
   "license": "MIT",
@@ -28,7 +28,7 @@
     "governance"
   ],
   "bin": {
-    "ajnas-connectors": "./bin/ajnas-connectors.js"
+    "ajnas-connectors": "bin/ajnas-connectors.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -62,9 +62,9 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "ajnas-runtime": "^0.1.0",
-    "ajnas-policy": "^0.1.0",
-    "ajnas-provenance": "^0.1.0"
+    "ajnas-policy": "^0.1.1",
+    "ajnas-provenance": "^0.1.2",
+    "ajnas-runtime": "^0.2.0"
   },
   "peerDependenciesMeta": {
     "ajnas-runtime": {

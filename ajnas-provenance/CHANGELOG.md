@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.2 - 2026-07-15
+
+- Recompute bundle integrity during signature verification, defensively clone signed bundles, and fail closed for non-canonical values, malformed algorithms/signatures/keys, or tampered contents.
+- Enforce Ed25519 private/public key types for `KeyObject`, PEM string, and PEM buffer signing and verification inputs.
+- Made the provenance export policy deny unrelated tools instead of allowing on a non-match.
+- Raised peer floors to `ajnas-runtime` and `ajnas-skills-registry` `^0.2.0`.
+- Hardened canonical JSON descriptor checks against inherited `Object.prototype.value` pollution for accessor-backed objects and arrays.
+
 ## 0.1.1 - 2026-07-15
 
 - Added the Node.js declaration dependency required by clean TypeScript consumers of the public `node:crypto` and `Buffer` types.

@@ -3,6 +3,7 @@ import {
   ApprovalRejectedError,
   ApprovalRequiredError,
   InvalidRunIdError,
+  InvalidPolicyDecisionError,
   PolicyDeniedError,
   RunIdCollisionError
 } from "./errors.js";
@@ -189,13 +190,18 @@ export class AgentRuntime {
       metadata: toJsonObject(metadata)
     });
 
-    const decision = await this.policy.evaluate({
+    const rawDecision = await this.policy.evaluate({
       runId: request.runId,
       stepId: request.stepId,
-      tool,
+      tool: Object.freeze({
+        name: tool.name,
+        description: tool.description,
+        risk
+      }),
       input: normalizeJson(input),
       metadata: normalizeJson(metadata) as ToolCallMetadata
     });
+    const decision = normalizePolicyDecision(rawDecision, tool.name);
     await request.emit("policy.evaluated", policyEventData(tool.name, decision));
 
     if (decision.decision === "deny") {
@@ -275,11 +281,11 @@ export class AgentRuntime {
       reason: decision.reason,
       prompt: decision.approvalPrompt ?? null
     });
-    const response = await this.approver.requestApproval({
+    const rawResponse = await this.approver.requestApproval({
       runId: request.runId,
       stepId: request.stepId,
       toolName: tool.name,
-      risk: tool.risk,
+      risk: risk as ToolDefinition["risk"],
       input: normalizeJson(request.input),
       reason: decision.reason,
       ...(decision.approvalPrompt === undefined ? {} : { prompt: decision.approvalPrompt }),
@@ -287,12 +293,7 @@ export class AgentRuntime {
       bindingDigest
     });
 
-    if (response.bindingDigest !== bindingDigest) {
-      throw new ApprovalBindingError(tool.name);
-    }
-    if (typeof response.approved !== "boolean" || typeof response.approverId !== "string" || !response.approverId.trim()) {
-      throw new ApprovalBindingError(tool.name);
-    }
+    const response = normalizeApprovalResponse(rawResponse, tool.name, bindingDigest);
     const boundResponse: ApprovalResponse = {
       approved: response.approved,
       approverId: response.approverId,
@@ -323,6 +324,66 @@ export class AgentRuntime {
 
   private now(): string {
     return this.clock().toISOString();
+  }
+}
+
+function normalizePolicyDecision(value: unknown, toolName: string): PolicyDecision {
+  try {
+    const normalized = normalizeJson(value);
+    if (normalized === null || typeof normalized !== "object" || Array.isArray(normalized)) {
+      throw new TypeError("decision must be a JSON object");
+    }
+    const record = normalized as JsonObject;
+    if (record.decision !== "allow" && record.decision !== "deny" && record.decision !== "require_approval") {
+      throw new TypeError("decision must be allow, deny, or require_approval");
+    }
+    if (typeof record.reason !== "string" || !record.reason.trim()) {
+      throw new TypeError("reason must be a non-empty string");
+    }
+    if (record.metadata !== undefined && (record.metadata === null || typeof record.metadata !== "object" || Array.isArray(record.metadata))) {
+      throw new TypeError("metadata must be a JSON object");
+    }
+    if (record.approvalPrompt !== undefined) {
+      if (record.decision !== "require_approval" || typeof record.approvalPrompt !== "string" || !record.approvalPrompt.trim()) {
+        throw new TypeError("approvalPrompt must be a non-empty string on require_approval decisions");
+      }
+    }
+    const allowed = new Set(record.decision === "require_approval"
+      ? ["decision", "reason", "approvalPrompt", "metadata"]
+      : ["decision", "reason", "metadata"]);
+    if (Object.keys(record).some((key) => !allowed.has(key))) {
+      throw new TypeError("decision contains unsupported fields");
+    }
+    return normalized as unknown as PolicyDecision;
+  } catch (error) {
+    if (error instanceof InvalidPolicyDecisionError) throw error;
+    throw new InvalidPolicyDecisionError(toolName, error instanceof Error ? error.message : String(error));
+  }
+}
+
+function normalizeApprovalResponse(value: unknown, toolName: string, bindingDigest: string): ApprovalResponse {
+  try {
+    const normalized = normalizeJson(value);
+    if (normalized === null || typeof normalized !== "object" || Array.isArray(normalized)) {
+      throw new TypeError("approval response must be a JSON object");
+    }
+    const response = normalized as JsonObject;
+    if (response.bindingDigest !== bindingDigest) throw new TypeError("binding digest does not match");
+    if (typeof response.approved !== "boolean") throw new TypeError("approved must be a boolean");
+    if (typeof response.approverId !== "string" || !response.approverId.trim()) {
+      throw new TypeError("approverId must be a non-empty string");
+    }
+    if (response.comment !== undefined && typeof response.comment !== "string") {
+      throw new TypeError("comment must be a string");
+    }
+    if (response.metadata !== undefined && (response.metadata === null || typeof response.metadata !== "object" || Array.isArray(response.metadata))) {
+      throw new TypeError("metadata must be a JSON object");
+    }
+    const allowed = new Set(["approved", "approverId", "bindingDigest", "comment", "metadata"]);
+    if (Object.keys(response).some((key) => !allowed.has(key))) throw new TypeError("approval response contains unsupported fields");
+    return normalized as unknown as ApprovalResponse;
+  } catch {
+    throw new ApprovalBindingError(toolName);
   }
 }
 

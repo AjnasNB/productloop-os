@@ -27,15 +27,30 @@ export function computePolicyBundleDigest(bundle: PolicyBundle): string {
   return sha256Digest(bundle);
 }
 
-export function evaluatePolicyBundle(bundle: PolicyBundle, request: RuntimePolicyRequest): RuntimePolicyDecision {
-  const validation = validatePolicyBundle(bundle);
-  if (!validation.valid) {
+export function evaluatePolicyBundle(inputBundle: PolicyBundle, request: RuntimePolicyRequest): RuntimePolicyDecision {
+  let bundle: PolicyBundle;
+  try {
+    bundle = toJsonObject(inputBundle) as unknown as PolicyBundle;
+  } catch {
     return {
       decision: "deny",
       reason: "policy bundle failed validation",
       metadata: {
-        policyBundleId: bundle.id ?? "unknown",
-        policyBundleVersion: bundle.version ?? "unknown",
+        policyBundleId: "unknown",
+        policyBundleVersion: "unknown",
+        validationIssues: ["bundle.json"]
+      }
+    };
+  }
+  const validation = validatePolicyBundle(bundle);
+  if (!validation.valid) {
+    const identity = bundle as unknown as Record<string, unknown>;
+    return {
+      decision: "deny",
+      reason: "policy bundle failed validation",
+      metadata: {
+        policyBundleId: typeof identity.id === "string" ? identity.id : "unknown",
+        policyBundleVersion: typeof identity.version === "string" ? identity.version : "unknown",
         validationIssues: validation.issues.map((item) => item.code)
       }
     };

@@ -21,9 +21,17 @@ These digests are deterministic for the supported JavaScript JSON model. They ar
 
 `AgentRuntime` denies every tool call when no policy engine is configured. A configured policy receives a cloned request, and each tool receives separately cloned JSON input and metadata. Call metadata may raise but never lower a tool's declared risk. Run IDs use a path-safe grammar, and one runtime instance permanently reserves every issued ID so concurrent or sequential reuse fails instead of overwriting persisted history.
 
+Policy code receives only immutable tool name, description, and effective risk metadata—never the execution callback. Policy return values are runtime-validated as exact `allow`, `deny`, or `require_approval` decisions with a non-empty reason and JSON metadata; malformed values fail before tool execution. Approval providers receive the effective raised risk and must return a semantically valid response bound to the exact digest.
+
 For `require_approval`, the runtime computes a SHA-256 binding over the run ID, step ID, tool, risk, input, metadata, policy reason, and prompt. An approver must echo the exact `bindingDigest`; missing or mismatched values fail before tool execution. The `ajnas-approvals` runtime adapter records that binding in the review subject and verifies that the subject did not change while the ticket was resolved.
 
 Queues, registries, in-memory provenance sinks, and audit ledgers clone values on ingress and egress. Mutating a submitted object or a returned snapshot does not mutate their internal state.
+
+## Browser research and signatures
+
+The browser-research harness takes one canonical immutable snapshot of the complete plan before validation, digesting, policy evaluation, approval, or iteration. Approval providers and browser adapters receive detached clones, preventing asynchronous caller or extension mutation from changing the internal authorized plan. Provenance signatures bind a fixed purpose, bundle digest, algorithm, and key id, and each Ed25519, RSA, RSA-PSS, or EC algorithm label requires its exact key type.
+
+Skills-registry and trace-bundle signatures accept only Ed25519 key material. Signed skill manifests are normalized before verification and use a defensive manifest snapshot; malformed envelopes fail through the package signature-verification error rather than leaking lower-level crypto errors.
 
 ## Remaining host responsibilities
 

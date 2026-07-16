@@ -125,6 +125,52 @@ describe("policy bundle validation and digests", () => {
     expect(result.valid).toBe(false);
     expect(result.issues.map((issue) => issue.code)).toEqual(["rule.duplicate_id", "rule.empty_match"]);
   });
+
+  test("rejects mistyped and unknown match criteria instead of falling through to allow", () => {
+    const malformed = baseBundle({
+      defaultEffect: "allow",
+      rules: [{
+        id: "deny-publish",
+        effect: "deny",
+        reason: "publishing is denied",
+        match: { toolNames: [123] } as never
+      }]
+    });
+    const result = validatePolicyBundle(malformed);
+    expect(result.valid).toBe(false);
+    expect(result.issues.map((entry) => entry.code)).toContain("rule.match_value");
+    expect(evaluatePolicyBundle(malformed, request())).toMatchObject({
+      decision: "deny",
+      reason: "policy bundle failed validation"
+    });
+
+    const typo = baseBundle({
+      rules: [{ id: "typo", effect: "deny", reason: "deny", match: { toolNmaes: ["packages.publish"] } as never }]
+    });
+    expect(validatePolicyBundle(typo).issues.map((entry) => entry.code)).toContain("rule.match_unknown_field");
+  });
+
+  test("rejects non-canonical object descriptors without invoking accessors", () => {
+    let invoked = false;
+    const malformed = baseBundle() as unknown as Record<string, unknown>;
+    Object.defineProperty(malformed, "rules", {
+      enumerable: true,
+      get() {
+        invoked = true;
+        return [];
+      }
+    });
+
+    expect(validatePolicyBundle(malformed)).toMatchObject({
+      valid: false,
+      issues: [{ code: "bundle.json" }]
+    });
+    expect(evaluatePolicyBundle(malformed as never, request())).toMatchObject({
+      decision: "deny",
+      reason: "policy bundle failed validation"
+    });
+    expect(invoked).toBe(false);
+  });
 });
 
 describe("declarative policy evaluation", () => {
@@ -239,5 +285,18 @@ describe("human review queue", () => {
         }
       ]
     });
+  });
+
+  test("rejects non-boolean approval flags and invalid resolution metadata", () => {
+    const queue = new PolicyApprovalQueue({ clock: () => new Date("2026-07-07T06:45:00.000Z") });
+    const item = queue.enqueue({ policyBundleId: "bundle", reason: "review", requestedBy: "automation", request: request() });
+    expect(() => queue.resolve(item.id, { approved: "yes", approverId: "owner" } as never)).toThrow(/boolean/);
+    expect(() => queue.resolve(item.id, { approved: true, approverId: "", metadata: {} })).toThrow(/non-empty/);
+    let invoked = false;
+    const accessorResolution = { approverId: "owner" } as Record<string, unknown>;
+    Object.defineProperty(accessorResolution, "approved", { enumerable: true, get: () => { invoked = true; return true; } });
+    expect(() => queue.resolve(item.id, accessorResolution as never)).toThrow(/data properties/);
+    expect(invoked).toBe(false);
+    expect(queue.pending()).toHaveLength(1);
   });
 });

@@ -1,4 +1,5 @@
 import {
+  type ApprovalGateRequest,
   type ApprovalGateResolution,
   type BrowserAdapterOutput,
   type BrowserResearchAdapterInput,
@@ -42,7 +43,7 @@ function summarizeOutput(output: BrowserAdapterOutput, retainFullText: boolean):
     return {
       kind: "extract",
       url: output.url,
-      title: output.title,
+      ...(output.title === undefined ? {} : { title: output.title }),
       claimCount: output.claims.length,
       claims: output.claims.map((claim) => claim.text)
     };
@@ -56,7 +57,7 @@ function summarizeOutput(output: BrowserAdapterOutput, retainFullText: boolean):
   return {
     kind: "open",
     url: output.url,
-    title: output.title,
+    ...(output.title === undefined ? {} : { title: output.title }),
     textLength: output.text?.length ?? 0,
     ...(retainFullText && output.text !== undefined ? { text: output.text } : {})
   };
@@ -151,6 +152,25 @@ function computeStepDigest(step: Omit<BrowserStepLog, "digest">): string {
   return sha256Digest(step);
 }
 
+function freezeSnapshot<T>(value: T): T {
+  if (value === null || typeof value !== "object" || Object.isFrozen(value)) return value;
+  for (const child of Object.values(value)) freezeSnapshot(child);
+  return Object.freeze(value);
+}
+
+function immutableJsonObject<T>(value: unknown): T {
+  return freezeSnapshot(toJsonObject(value) as unknown as T);
+}
+
+function detachedJsonObject<T>(value: unknown): T {
+  return toJsonObject(value) as unknown as T;
+}
+
+function snapshotBrowserResearchPlan(value: unknown): BrowserResearchPlan {
+  const snapshot = detachedJsonObject<BrowserResearchPlan>(value);
+  return freezeSnapshot(assertBrowserResearchPlan(snapshot));
+}
+
 export function computeBrowserResearchReportDigest(report: Omit<BrowserResearchReport, "digest"> | BrowserResearchReport): string {
   const { digest: _digest, ...withoutDigest } = report as BrowserResearchReport;
   return sha256Digest(withoutDigest);
@@ -195,7 +215,7 @@ export class BrowserResearchHarness {
   }
 
   async run(planInput: unknown): Promise<BrowserResearchReport> {
-    const plan = assertBrowserResearchPlan(planInput);
+    const plan = snapshotBrowserResearchPlan(planInput);
     const now = this.options.now ?? (() => new Date().toISOString());
     const auditLedger = this.options.auditLedger ?? new BrowserResearchAuditLedger({ now });
     const planDigest = computeBrowserResearchPlanDigest(plan);
@@ -234,16 +254,16 @@ export class BrowserResearchHarness {
       let approvalResolution: ApprovalGateResolution | undefined;
       let error: string | undefined;
       let stepCitations: ResearchCitation[] = [];
-      const approvalRequest =
+      const approvalRequest: ApprovalGateRequest | undefined =
         decision.effect === "require_approval"
-          ? createApprovalGateRequest({
+          ? immutableJsonObject<ApprovalGateRequest>(createApprovalGateRequest({
               runId,
               plan,
               step,
               decision,
               inputDigest,
               createdAt: stepStartedAt
-            })
+            }))
           : undefined;
 
       if (decision.effect === "deny") {
@@ -258,11 +278,15 @@ export class BrowserResearchHarness {
           at: stepStartedAt,
           payload: toJsonObject({ approvalRequest })
         });
-        approvalResolution = await this.options.approvalProvider?.(approvalRequest);
-        if (!approvalResolution || approvalResolution.status !== "approved") {
+        const suppliedResolution = await this.options.approvalProvider?.(
+          detachedJsonObject<ApprovalGateRequest>(approvalRequest)
+        );
+        const checkedResolution = normalizeApprovalResolution(approvalRequest, suppliedResolution);
+        approvalResolution = checkedResolution.resolution;
+        if (!approvalResolution) {
           stepStatus = "awaiting_approval";
           status = "awaiting_approval";
-          error = approvalResolution?.reason ?? "approval required before step execution";
+          error = checkedResolution.error ?? "approval required before step execution";
         } else {
           auditLedger.record({
             type: "approval_resolved",
@@ -271,6 +295,11 @@ export class BrowserResearchHarness {
             at: approvalResolution.decidedAt,
             payload: toJsonObject({ approvalResolution })
           });
+          if (approvalResolution.status !== "approved") {
+            stepStatus = "denied";
+            status = "denied";
+            error = approvalResolution.reason ?? "browser research step approval was rejected";
+          }
         }
       }
 
@@ -279,8 +308,8 @@ export class BrowserResearchHarness {
           const output = await executeAdapterStep(
             {
               runId,
-              plan,
-              step,
+              plan: detachedJsonObject<BrowserResearchPlan>(plan),
+              step: detachedJsonObject<BrowserResearchStep>(step),
               inputDigest
             },
             this.options
@@ -381,6 +410,34 @@ export class BrowserResearchHarness {
       digest: computeBrowserResearchReportDigest(withoutDigest)
     };
   }
+}
+
+function normalizeApprovalResolution(
+  request: { id: string },
+  value: unknown
+): { resolution?: ApprovalGateResolution; error?: string } {
+  if (value === undefined) return { error: "approval required before step execution" };
+  try {
+    if (value === null || typeof value !== "object" || Array.isArray(value)) throw new TypeError("approval resolution must be a JSON object");
+    const normalized = toJsonObject(value);
+    const allowed = new Set(["requestId", "status", "reviewer", "decidedAt", "reason", "metadata"]);
+    if (Object.keys(normalized).some((key) => !allowed.has(key))) throw new TypeError("approval resolution contains unsupported fields");
+    if (normalized.requestId !== request.id) throw new TypeError("approval resolution requestId does not match the pending request");
+    if (normalized.status !== "approved" && normalized.status !== "rejected") throw new TypeError("approval resolution status must be approved or rejected");
+    if (typeof normalized.reviewer !== "string" || !normalized.reviewer.trim()) throw new TypeError("approval resolution reviewer must be a non-empty string");
+    if (!isIsoTimestamp(normalized.decidedAt)) throw new TypeError("approval resolution decidedAt must be a canonical ISO timestamp");
+    if (normalized.reason !== undefined && typeof normalized.reason !== "string") throw new TypeError("approval resolution reason must be a string");
+    if (normalized.metadata !== undefined && (normalized.metadata === null || typeof normalized.metadata !== "object" || Array.isArray(normalized.metadata))) throw new TypeError("approval resolution metadata must be a JSON object");
+    return { resolution: normalized as unknown as ApprovalGateResolution };
+  } catch (caught) {
+    return { error: caught instanceof Error ? caught.message : String(caught) };
+  }
+}
+
+function isIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== "string" || !value) return false;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date.toISOString() === value;
 }
 
 export function runBrowserResearchPlan(plan: unknown, options: BrowserResearchHarnessOptions): Promise<BrowserResearchReport> {

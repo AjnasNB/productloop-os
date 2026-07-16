@@ -20,8 +20,9 @@ export class ManifestValidationError extends AjnasSkillsRegistryError {
 }
 
 export class SignatureVerificationError extends AjnasSkillsRegistryError {
-  constructor(keyId: string) {
-    super("ERR_SKILL_SIGNATURE_INVALID", `Skill manifest signature could not be verified with key '${keyId}'.`);
+  constructor(keyId?: string) {
+    const displayKeyId = typeof keyId === "string" && keyId.trim() ? keyId : "<unknown>";
+    super("ERR_SKILL_SIGNATURE_INVALID", `Skill manifest signature could not be verified with key '${displayKeyId}'.`);
   }
 }
 

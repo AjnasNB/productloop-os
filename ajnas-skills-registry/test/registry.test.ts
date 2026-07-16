@@ -2,6 +2,7 @@ import { generateKeyPairSync } from "node:crypto";
 import { describe, expect, test } from "vitest";
 import {
   DuplicateSkillError,
+  SignatureVerificationError,
   SkillApprovalQueue,
   SkillAuditLedger,
   SkillRegistry,
@@ -26,7 +27,7 @@ function baseManifest(overrides: Partial<SkillManifest> = {}): SkillManifest {
       value: "./dist/research-brief.js"
     },
     compatibility: {
-      ajnasRuntime: "^0.1.0"
+      ajnasRuntime: "^0.2.0"
     },
     capabilities: [
       {
@@ -121,6 +122,125 @@ describe("signed manifest envelopes", () => {
     expect(verifySkillSignature(signed, publicKey)).toBe(true);
     expect(verifySkillSignature({ ...signed, manifest: { ...signed.manifest, version: "1.0.1" } }, publicKey)).toBe(false);
   });
+
+  test("snapshots manifests and strictly validates signed-envelope fields without invoking accessors", () => {
+    const manifest = baseManifest();
+    const { privateKey, publicKey } = generateKeyPairSync("ed25519");
+    const signed = signSkillManifest(manifest, {
+      algorithm: "ed25519",
+      keyId: "ajnas-local-test-key",
+      privateKey,
+      signedAt: "2026-07-05T02:00:00.000Z"
+    });
+
+    manifest.description = "mutated after signing";
+    expect(signed.manifest.description).toBe("Turns approved research notes into a concise internal brief.");
+    expect(verifySkillSignature(signed, publicKey)).toBe(true);
+
+    expect(verifySkillSignature({
+      ...signed,
+      signature: { ...signed.signature, algorithm: "rsa-sha256" as never }
+    }, publicKey)).toBe(false);
+    expect(verifySkillSignature({
+      ...signed,
+      signature: { ...signed.signature, keyId: "   " }
+    }, publicKey)).toBe(false);
+    expect(verifySkillSignature({
+      ...signed,
+      signature: { ...signed.signature, signedAt: "2026-07-05T02:00:00Z" }
+    }, publicKey)).toBe(false);
+    expect(verifySkillSignature({
+      ...signed,
+      signature: { ...signed.signature, value: "not-base64" }
+    }, publicKey)).toBe(false);
+    expect(verifySkillSignature({ ...signed, unsignedMetadata: true } as never, publicKey)).toBe(false);
+    expect(verifySkillSignature({
+      ...signed,
+      signature: { ...signed.signature, unsignedMetadata: true }
+    } as never, publicKey)).toBe(false);
+
+    let invoked = false;
+    const accessorEnvelope = { ...signed } as unknown as Record<string, unknown>;
+    Object.defineProperty(accessorEnvelope, "signature", {
+      enumerable: true,
+      get() {
+        invoked = true;
+        return signed.signature;
+      }
+    });
+    expect(verifySkillSignature(accessorEnvelope as never, publicKey)).toBe(false);
+    expect(invoked).toBe(false);
+
+    expect(() => signSkillManifest(baseManifest(), {
+      algorithm: "rsa-sha256" as never,
+      keyId: "key",
+      privateKey,
+      signedAt: "2026-07-05T02:00:00.000Z"
+    })).toThrow(/ed25519/);
+    expect(() => signSkillManifest(baseManifest(), {
+      algorithm: "ed25519",
+      keyId: " key ",
+      privateKey,
+      signedAt: "2026-07-05T02:00:00.000Z"
+    })).toThrow(/keyId/);
+    expect(() => signSkillManifest(baseManifest(), {
+      algorithm: "ed25519",
+      keyId: "key",
+      privateKey,
+      signedAt: "2026-07-05T02:00:00Z"
+    })).toThrow(/canonical ISO/);
+  });
+
+  test("accepts Ed25519 PEM strings and buffers while rejecting RSA and EC key material", () => {
+    const ed25519 = generateKeyPairSync("ed25519");
+    const privatePem = ed25519.privateKey.export({ format: "pem", type: "pkcs8" }).toString();
+    const publicPem = ed25519.publicKey.export({ format: "pem", type: "spki" }).toString();
+
+    for (const privateKey of [ed25519.privateKey, privatePem, Buffer.from(privatePem)]) {
+      const signed = signSkillManifest(baseManifest(), {
+        algorithm: "ed25519",
+        keyId: "ajnas-local-test-key",
+        privateKey,
+        signedAt: "2026-07-05T02:00:00.000Z"
+      });
+      for (const publicKey of [ed25519.publicKey, publicPem, Buffer.from(publicPem)]) {
+        expect(verifySkillSignature(signed, publicKey)).toBe(true);
+      }
+    }
+
+    const signed = signSkillManifest(baseManifest(), {
+      algorithm: "ed25519",
+      keyId: "ajnas-local-test-key",
+      privateKey: ed25519.privateKey,
+      signedAt: "2026-07-05T02:00:00.000Z"
+    });
+    const rsa = generateKeyPairSync("rsa", { modulusLength: 2048 });
+    const ec = generateKeyPairSync("ec", { namedCurve: "P-256" });
+
+    for (const keyPair of [rsa, ec]) {
+      const wrongPrivatePem = keyPair.privateKey.export({ format: "pem", type: "pkcs8" }).toString();
+      const wrongPublicPem = keyPair.publicKey.export({ format: "pem", type: "spki" }).toString();
+      for (const privateKey of [keyPair.privateKey, wrongPrivatePem, Buffer.from(wrongPrivatePem)]) {
+        expect(() => signSkillManifest(baseManifest(), {
+          algorithm: "ed25519",
+          keyId: "wrong-key",
+          privateKey,
+          signedAt: "2026-07-05T02:00:00.000Z"
+        })).toThrow(/Ed25519/);
+      }
+      for (const publicKey of [keyPair.publicKey, wrongPublicPem, Buffer.from(wrongPublicPem)]) {
+        expect(verifySkillSignature(signed, publicKey)).toBe(false);
+      }
+    }
+
+    expect(() => signSkillManifest(baseManifest(), {
+      algorithm: "ed25519",
+      keyId: "public-key-is-not-private",
+      privateKey: ed25519.publicKey,
+      signedAt: "2026-07-05T02:00:00.000Z"
+    })).toThrow(/private key/);
+    expect(verifySkillSignature(signed, ed25519.privateKey)).toBe(false);
+  });
 });
 
 describe("skill registry", () => {
@@ -160,6 +280,54 @@ describe("skill registry", () => {
       signedAt: "2026-07-05T02:00:00.000Z"
     });
     expect(() => registry.register(conflicting, { actor: "automation", source: "unit-test" })).toThrow(DuplicateSkillError);
+  });
+
+  test("reports malformed, tampered, accessor-backed, and wrong-key envelopes as signature errors", () => {
+    const ed25519 = generateKeyPairSync("ed25519");
+    const signed = signSkillManifest(baseManifest(), {
+      algorithm: "ed25519",
+      keyId: "ajnas-local-test-key",
+      privateKey: ed25519.privateKey,
+      signedAt: "2026-07-05T02:00:00.000Z"
+    });
+    const registry = new SkillRegistry({
+      keyResolver: (keyId) => keyId === "ajnas-local-test-key" ? ed25519.publicKey : null
+    });
+    const register = (input: unknown) => registry.register(input as never, { actor: "test", source: "unit-test" });
+
+    for (const malformed of [
+      { ...signed, signature: { ...signed.signature, algorithm: "rsa-sha256" } },
+      { ...signed, signature: { ...signed.signature, keyId: "" } },
+      { ...signed, signature: { ...signed.signature, signedAt: "yesterday" } },
+      { ...signed, signature: { ...signed.signature, value: "not-base64" } },
+      { manifest: signed.manifest, digest: signed.digest },
+      { ...signed, unexpected: true }
+    ]) {
+      expect(() => register(malformed)).toThrow(SignatureVerificationError);
+    }
+
+    expect(() => register({
+      ...signed,
+      manifest: { ...signed.manifest, version: "1.0.1" }
+    })).toThrow(SignatureVerificationError);
+
+    let invoked = false;
+    const accessorEnvelope = { ...signed } as unknown as Record<string, unknown>;
+    Object.defineProperty(accessorEnvelope, "signature", {
+      enumerable: true,
+      get() {
+        invoked = true;
+        return signed.signature;
+      }
+    });
+    expect(() => register(accessorEnvelope)).toThrow(SignatureVerificationError);
+    expect(invoked).toBe(false);
+
+    const rsa = generateKeyPairSync("rsa", { modulusLength: 2048 });
+    const wrongKeyRegistry = new SkillRegistry({ keyResolver: () => rsa.publicKey });
+    expect(() => wrongKeyRegistry.register(signed, { actor: "test", source: "unit-test" }))
+      .toThrow(SignatureVerificationError);
+    expect(registry.list()).toEqual([]);
   });
 });
 
@@ -236,6 +404,14 @@ describe("runtime integration helpers", () => {
       decision: "deny",
       reason: "skill manifest failed validation"
     });
+
+    await expect(trustedPolicy.evaluate({
+      runId: "run_1",
+      stepId: "publish",
+      tool: { name: "npm.publish", description: "Publish", risk: "critical" },
+      input: {},
+      metadata: {}
+    })).resolves.toMatchObject({ decision: "deny", reason: expect.stringContaining("scoped") });
   });
 
   test("serializes human review requests for resumable approval workflows", () => {
@@ -270,5 +446,28 @@ describe("runtime integration helpers", () => {
         }
       ]
     });
+
+    expect(() => queue.resolve(request.id, { approved: false, approverId: "other" }))
+      .toThrow(/already approved/);
+  });
+
+  test("rejects truthy approval flags and malformed reviewer identity", () => {
+    const queue = new SkillApprovalQueue({ clock: () => new Date("2026-07-05T02:00:00.000Z") });
+    const request = queue.enqueue({
+      skillId: "com.ajnas.research-brief",
+      version: "1.0.0",
+      digest: "sha256:abc",
+      reason: "review",
+      requestedBy: "automation",
+      manifest: baseManifest()
+    });
+    expect(() => queue.resolve(request.id, { approved: "yes", approverId: "owner" } as never)).toThrow(/boolean/);
+    expect(() => queue.resolve(request.id, { approved: true, approverId: "   " })).toThrow(/non-empty/);
+    let invoked = false;
+    const accessorResolution = { approverId: "owner" } as Record<string, unknown>;
+    Object.defineProperty(accessorResolution, "approved", { enumerable: true, get: () => { invoked = true; return true; } });
+    expect(() => queue.resolve(request.id, accessorResolution as never)).toThrow(/data properties/);
+    expect(invoked).toBe(false);
+    expect(queue.pending()).toHaveLength(1);
   });
 });

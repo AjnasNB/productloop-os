@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 - 2026-07-15
+
+- Validate approval requests plus review, delegation, and cancellation identities, decisions, reasons, timestamps, and JSON metadata before mutating tickets.
+- Raised the runtime peer floor for sanitized policy and effective-risk approval behavior.
+- Raised the complete peer floor set to runtime `^0.2.0`, policy `^0.1.1`, provenance `^0.1.2`, and connectors `^0.1.1`.
+- Hardened canonical JSON descriptor checks against inherited `Object.prototype.value` pollution for accessor-backed objects and arrays.
+
 ## 0.1.0 - 2026-07-15
 
 - Added `ajnas.approval.workflow.v1` staged approval workflow validation and deterministic digests.

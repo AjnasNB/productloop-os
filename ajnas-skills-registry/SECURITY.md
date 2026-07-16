@@ -2,16 +2,20 @@
 
 `ajnas-skills-registry` is a local governance component for skill metadata. It does not execute skill code, fetch remote packages, or publish artifacts by itself.
 
+Its install-policy helper denies unrelated tools. Approval queue resolutions require a real boolean and non-empty approver identity, and an approved or rejected request cannot be resolved again.
+
+Canonical JSON normalization accepts only own enumerable data descriptors. Accessors and inherited descriptor fields are rejected without invoking getters, including when `Object.prototype` is polluted.
+
 ## Supported Version
 
-- `0.1.x`: early public release line. APIs may change between minor versions; supported security fixes are documented here.
+- `0.2.x`: current metadata-only policy contract and strict signed-manifest release line.
 
 ## Security Model
 
 - Skill manifests must use the `ajnas.skill.v1` schema.
 - License identifiers are restricted to MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, and ISC.
 - High-risk capabilities, filesystem write access, and external publishing require a human approval mode other than `never`.
-- Signed manifests use Ed25519 over a canonical payload containing digest, key id, algorithm, and signing timestamp.
+- Signed manifests use Ed25519 keys only and cover a canonical payload containing digest, key id, algorithm, and signing timestamp. Envelopes have exact runtime-validated shapes, and registries consume defensive manifest snapshots.
 - Registry audit events are hash chained so removed or reordered events can be detected during replay.
 
 ## Operational Guidance

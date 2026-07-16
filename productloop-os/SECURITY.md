@@ -4,4 +4,6 @@ Report suspected vulnerabilities through the security contact configured on the 
 
 ProductLoop OS policy objects do not replace sandboxing, identity checks, secret isolation, network egress controls, or authorization at the side-effect boundary. The bundled Maqam crawler tool adapter is declared high risk and is not registered automatically. Browser replay records are deterministic fixtures, not proof that a live browser or source is trustworthy.
 
+Configured Maqam crawler defaults are deployment locks: per-call tool input cannot broaden those network settings or resource ceilings.
+
 Never place npm tokens, model keys, connector credentials, approval bypasses, or private evidence in manifests, fixtures, traces, CLI arguments, or logs. Redaction is a defense-in-depth export feature, not permission to ingest secrets unnecessarily.

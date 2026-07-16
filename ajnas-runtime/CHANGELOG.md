@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0 - 2026-07-15
+
+- Removed executable tool callbacks from policy requests and validate all custom policy decisions before execution.
+- Bound approval requests to the effective raised risk and reject malformed approval responses fail-closed.
+- Marked the policy-request tool projection as a deliberate breaking security boundary and raised dependent runtime floors to `^0.2.0`.
+- Hardened canonical JSON descriptor checks against inherited `Object.prototype.value` pollution for accessor-backed objects and arrays.
+
 ## 0.1.0 - 2026-07-15
 
 - Added `AgentRuntime` for ordered workflow execution.

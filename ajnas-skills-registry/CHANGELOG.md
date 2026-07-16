@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 - 2026-07-15
+
+- Made the install policy deny unrelated tools instead of allowing on a non-match.
+- Made approval decisions semantically validated and terminal states immutable.
+- Removed executable callbacks from the structural runtime policy request type.
+- Enforced canonical Ed25519 signed-manifest envelopes, exact key types, immutable manifest snapshots, and consistent fail-closed verification errors.
+- Raised the `ajnas-runtime` peer floor to `^0.2.0` for the metadata-only policy tool contract.
+- Hardened canonical JSON descriptor checks against inherited `Object.prototype.value` pollution for accessor-backed objects and arrays.
+
 ## 0.1.1 - 2026-07-15
 
 - Added the Node.js declaration dependency required by clean TypeScript consumers of the public `node:crypto` and `Buffer` types.

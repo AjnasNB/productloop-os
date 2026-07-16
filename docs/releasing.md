@@ -2,12 +2,18 @@
 
 This monorepo is designed for deliberate, inspectable npm releases. Publishing is a human-authorized external side effect and is not part of the build or test scripts.
 
-## Published release order
+## Coordinated release order
 
-1. Publish and verify `maqam@0.2.0` from its own repository.
-2. Publish the eight `ajnas-*@0.1.0` packages. `ajnas-runtime` first is convenient because several packages declare it as an optional peer.
-3. Publish `productloop-os@0.1.0` last, after every declared dependency resolves from the public registry.
-4. For the clean-consumer declaration patch, publish `ajnas-skills-registry@0.1.1`, `ajnas-provenance@0.1.1`, and `ajnas-browser-research@0.1.1` before `productloop-os@0.1.1`.
+`maqam@0.2.2` is the registry-backed crawler floor. For the current coordinated release, publish only after Maqam is public, a clean reviewed commit is available, and explicit authorization is given, in this order:
+
+1. `ajnas-runtime@0.2.0`.
+2. `ajnas-skills-registry@0.2.0`.
+3. `ajnas-provenance@0.1.2`.
+4. `ajnas-policy@0.1.1`.
+5. `ajnas-evals@0.1.1` and `ajnas-connectors@0.1.1`.
+6. `ajnas-approvals@0.1.1`.
+7. `ajnas-browser-research@0.1.2`.
+8. `productloop-os@0.2.0`, after every declared dependency resolves from the public registry.
 
 The packages use normal semver dependencies in publishable manifests. Do not publish a manifest containing a local `file:` path, workspace-only alias, or unpublished version.
 
@@ -18,8 +24,10 @@ For later releases, publish only changed packages. Publish dependencies before d
 From a clean checkout on a supported Node.js version:
 
 ```sh
-npm install
+npm ci
 npm run verify
+npm audit --audit-level=high
+npm audit --omit=dev --audit-level=high
 npm view <package>@<version> version
 ```
 

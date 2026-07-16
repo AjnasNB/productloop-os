@@ -6,18 +6,18 @@ The project is a governance toolkit, not a claim of autonomous intelligence. It 
 
 ## Packages
 
-| Package | Responsibility |
-| --- | --- |
-| [`productloop-os`](./productloop-os) | One install, named namespaces, tested adapters, and composition helpers |
-| [`maqam`](https://github.com/AjnasNB/maqam) | Governed workflows, CLI-agent tools, evidence, skills, and crawler-backed research |
-| [`ajnas-runtime`](./ajnas-runtime) | Ordered workflows and policy-gated tool calls |
-| [`ajnas-policy`](./ajnas-policy) | Declarative allow, deny, and approval decisions |
-| [`ajnas-approvals`](./ajnas-approvals) | Human review tickets, delegation, escalation, and audit history |
-| [`ajnas-provenance`](./ajnas-provenance) | Hash-linked traces, bundles, signatures, and redaction |
-| [`ajnas-skills-registry`](./ajnas-skills-registry) | Signed skill manifests and install policy |
-| [`ajnas-connectors`](./ajnas-connectors) | Connector manifests, permissions, and trust evaluation |
-| [`ajnas-evals`](./ajnas-evals) | Deterministic assertions and verifiable evaluation reports |
-| [`ajnas-browser-research`](./ajnas-browser-research) | Policy-aware research plans, replay adapters, citations, and evidence exports |
+| Package | Release | Responsibility |
+| --- | ---: | --- |
+| [`productloop-os`](./productloop-os) | `0.2.0` | One install, named namespaces, tested adapters, and composition helpers |
+| [`maqam`](https://github.com/AjnasNB/maqam) | `0.2.2` | Governed workflows, CLI-agent tools, evidence, skills, and crawler-backed research |
+| [`ajnas-runtime`](./ajnas-runtime) | `0.2.0` | Ordered workflows and policy-gated tool calls |
+| [`ajnas-policy`](./ajnas-policy) | `0.1.1` | Declarative allow, deny, and approval decisions |
+| [`ajnas-approvals`](./ajnas-approvals) | `0.1.1` | Human review tickets, delegation, escalation, and audit history |
+| [`ajnas-provenance`](./ajnas-provenance) | `0.1.2` | Hash-linked traces, bundles, signatures, and redaction |
+| [`ajnas-skills-registry`](./ajnas-skills-registry) | `0.2.0` | Signed skill manifests and install policy |
+| [`ajnas-connectors`](./ajnas-connectors) | `0.1.1` | Connector manifests, permissions, and trust evaluation |
+| [`ajnas-evals`](./ajnas-evals) | `0.1.1` | Deterministic assertions and verifiable evaluation reports |
+| [`ajnas-browser-research`](./ajnas-browser-research) | `0.1.2` | Policy-aware research plans, replay adapters, citations, and evidence exports |
 
 ## Install
 
@@ -68,7 +68,7 @@ npx productloop-os info
 Node.js 20.18.1 or newer is required by the current Maqam dependency.
 
 ```sh
-npm install
+npm ci
 npm test
 npm run typecheck
 npm run build
@@ -76,7 +76,7 @@ npm run integration
 npm run pack
 ```
 
-Maqam `0.2.0` is published on npm, and the workspace lockfile resolves it from the public registry. Local development and release verification must not replace the declared `^0.2.0` dependency with a sibling checkout or filesystem link.
+Maqam `^0.2.2` is the supported crawler floor, and the canonical workspace lockfile resolves it from the public registry. Local development and release verification must not commit a sibling checkout or filesystem link in place of that registry dependency.
 
 See [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), and [release process](./docs/releasing.md).
 

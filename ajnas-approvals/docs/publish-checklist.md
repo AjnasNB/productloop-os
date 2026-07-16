@@ -1,6 +1,6 @@
 # Publish Checklist
 
-`ajnas-approvals@0.1.0` was authorized for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
+`ajnas-approvals@0.1.1` is the authorized review-validation security patch for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
 
 ## Pre-Publish Verification
 
@@ -27,7 +27,7 @@ Confirm the exact version is absent before publishing. If it already exists, sto
 The release evidence records:
 
 - package name: `ajnas-approvals`
-- version: `0.1.0`
+- version: `0.1.1`
 - target registry: npm public registry
 - approver identity
 - approval timestamp

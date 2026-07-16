@@ -142,4 +142,4 @@ The final command strictly compiles a consumer fixture that wires `ajnas-runtime
 
 ## Release Status
 
-Version `0.1.0` is the initial public release, authorized for the public npm registry on 2026-07-15. A different version or registry target requires fresh authorization.
+Version `0.1.1` is the current release candidate with request-bound, terminal approval decisions and strict review validation.

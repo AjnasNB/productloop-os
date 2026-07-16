@@ -1,6 +1,6 @@
 import { DuplicateSkillError, ManifestValidationError, SignatureVerificationError } from "./errors.js";
 import { sanitizeJson } from "./stable-json.js";
-import { computeSkillDigest, verifySkillSignature } from "./signature.js";
+import { computeSkillDigest, normalizeSignedSkillManifest, verifySkillSignature } from "./signature.js";
 import type { JsonObject, RegisterSkillOptions, RegistryRecord, SignedSkillManifest, SkillManifest, SkillRegistryOptions } from "./types.js";
 import { validateSkillManifest } from "./validation.js";
 
@@ -17,19 +17,25 @@ export class SkillRegistry {
   }
 
   register(input: SkillManifest | SignedSkillManifest, options: RegisterSkillOptions): RegistryRecord {
-    const signed = isSignedManifest(input) ? input : undefined;
-    const manifest = signed?.manifest ?? input as SkillManifest;
-    const validation = validateSkillManifest(manifest);
-    if (!validation.valid) {
-      throw new ManifestValidationError(validation.issues);
-    }
-
-    if (signed) {
+    let signed: SignedSkillManifest | undefined;
+    let manifest: SkillManifest;
+    if (hasSignedEnvelopeField(input)) {
+      try {
+        signed = normalizeSignedSkillManifest(input);
+      } catch {
+        throw new SignatureVerificationError();
+      }
       const key = this.keyResolver?.(signed.signature.keyId) ?? null;
       if (!key || !verifySkillSignature(signed, key)) {
         throw new SignatureVerificationError(signed.signature.keyId);
       }
+      manifest = signed.manifest;
+    } else {
+      manifest = input as SkillManifest;
     }
+
+    const validation = validateSkillManifest(manifest);
+    if (!validation.valid) throw new ManifestValidationError(validation.issues);
 
     const digest = computeSkillDigest(manifest);
     const recordKey = `${manifest.id}@${manifest.version}`;
@@ -87,6 +93,7 @@ function cloneRecord(record: RegistryRecord): RegistryRecord {
   return sanitizeJson(record) as unknown as RegistryRecord;
 }
 
-function isSignedManifest(value: SkillManifest | SignedSkillManifest): value is SignedSkillManifest {
-  return typeof value === "object" && value !== null && "manifest" in value && "signature" in value && "digest" in value;
+function hasSignedEnvelopeField(value: SkillManifest | SignedSkillManifest): boolean {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+  return ["manifest", "signature", "digest"].some((key) => Object.prototype.hasOwnProperty.call(value, key));
 }

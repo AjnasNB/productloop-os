@@ -1,5 +1,9 @@
 # Security
 
+Request, review, delegation, and cancellation APIs validate identities, exact decisions, reasons, timestamps, and bounded JSON metadata before changing a ticket.
+
+Canonical JSON normalization accepts only own enumerable data descriptors. Accessors and inherited descriptor fields are rejected without invoking getters, including when `Object.prototype` is polluted.
+
 `ajnas-approvals` is a workflow state and evidence package. It does not authenticate users, deliver notifications, store secrets, or enforce organizational identity by itself.
 
 ## Required Host Responsibilities

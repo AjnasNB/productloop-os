@@ -1,6 +1,6 @@
 # Publish Checklist
 
-`ajnas-policy@0.1.0` was authorized for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
+`ajnas-policy@0.1.1` is the authorized strict-validation security patch for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
 
 ## Preflight
 

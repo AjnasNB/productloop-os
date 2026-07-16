@@ -115,6 +115,37 @@ describe("approval workflows", () => {
     expect(expired.status).toBe("expired");
     expect(createRuntimeDecisionFromApprovalTicket(expired).decision).toBe("deny");
   });
+
+  test("rejects malformed review decisions and identities without changing the ticket", () => {
+    const queue = new ApprovalQueue({ clock: () => new Date("2026-07-12T09:00:00.000Z") });
+    const ticket = queue.request({ workflow, ...request });
+    expect(() => queue.review(ticket.id, workflow, { reviewerId: "security-lead", decision: "yes" } as never)).toThrow(/approve or reject/);
+    expect(() => queue.review(ticket.id, workflow, { reviewerId: " ", decision: "approve" })).toThrow(/non-empty/);
+    expect(queue.get(ticket.id)).toMatchObject({ status: "pending", decisions: [] });
+  });
+
+  test("validates request, delegation, and cancellation inputs before state changes", () => {
+    const queue = new ApprovalQueue({ clock: () => new Date("2026-07-12T09:00:00.000Z") });
+    expect(() => queue.request({ workflow, ...request, requestedBy: " " })).toThrow(/requestedBy/);
+    expect(() => queue.request({ workflow, ...request, reason: "", metadata: "bad" as never })).toThrow(/reason|metadata/);
+    expect(() => queue.request({ workflow, ...request, policyDecision: { decision: "maybe", reason: "bad" } as never })).toThrow(/policyDecision/);
+
+    const ticket = queue.request({ workflow, ...request });
+    const stageTwo = queue.review(ticket.id, workflow, { reviewerId: "security-lead", decision: "approve" });
+    expect(() => queue.delegate(stageTwo.id, workflow, {
+      fromReviewerId: "release-owner",
+      toReviewer: { id: "backup", kind: "robot" } as never,
+      reason: "delegate"
+    })).toThrow(/kind/);
+    expect(() => queue.delegate(stageTwo.id, workflow, {
+      fromReviewerId: " ",
+      toReviewer: { id: "backup", kind: "role" },
+      reason: "delegate"
+    })).toThrow(/fromReviewerId/);
+    expect(() => queue.cancel(stageTwo.id, workflow, { actorId: "", reason: "cancel" })).toThrow(/actorId/);
+    expect(() => queue.cancel(stageTwo.id, workflow, { actorId: "owner", reason: " ", metadata: [] as never })).toThrow(/reason|metadata/);
+    expect(queue.get(stageTwo.id)).toMatchObject({ status: "pending", delegations: [] });
+  });
 });
 
 describe("approval adapters", () => {

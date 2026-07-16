@@ -166,6 +166,94 @@ describe("TraceLedger", () => {
     expect(verifyTraceBundle(bundle)).toEqual({ valid: true, issues: [] });
     expect(verifyTraceBundleSignature(signed, publicKey)).toBe(true);
     expect(verifyTraceBundleSignature({ ...signed, digest: "sha256:bad" }, publicKey)).toBe(false);
+    expect(verifyTraceBundleSignature({
+      ...signed,
+      bundle: { ...signed.bundle, events: [{ ...signed.bundle.events[0], actor: "attacker" }] }
+    }, publicKey)).toBe(false);
+    expect(verifyTraceBundleSignature({ ...signed, signature: { ...signed.signature, algorithm: "rsa-sha256" as never } }, publicKey)).toBe(false);
+    expect(verifyTraceBundleSignature({ ...signed, signature: { ...signed.signature, value: "not-base64" } }, publicKey)).toBe(false);
+    expect(verifyTraceBundleSignature(signed, "not-a-public-key")).toBe(false);
+    expect(verifyTraceBundle(null as never)).toMatchObject({ valid: false });
+
+    let invoked = false;
+    const accessorSigned = { ...signed } as unknown as Record<string, unknown>;
+    Object.defineProperty(accessorSigned, "signature", {
+      enumerable: true,
+      get() {
+        invoked = true;
+        return signed.signature;
+      }
+    });
+    expect(verifyTraceBundleSignature(accessorSigned as never, publicKey)).toBe(false);
+    expect(invoked).toBe(false);
+
+    bundle.generatedBy = "mutated-after-signing";
+    expect(signed.bundle.generatedBy).toBe("daily-oss-skill-and-crawler-research");
+    expect(verifyTraceBundleSignature(signed, publicKey)).toBe(true);
+  });
+
+  it("accepts Ed25519 key objects and PEM strings or buffers while rejecting RSA and EC keys", () => {
+    const ledger = new TraceLedger({ traceId: "trace_key_types", clock: fixedClock });
+    ledger.record({
+      actor: "release",
+      action: "bundle.signed",
+      subject: { type: "package", id: "ajnas-provenance" },
+      source: { system: "ajnas-provenance", id: "key-type-test" },
+      data: {}
+    });
+    const bundle = createTraceBundle(ledger.events, {
+      generatedAt: "2026-07-06T06:01:00.000Z",
+      generatedBy: "unit-test",
+      purpose: "key-type-enforcement"
+    });
+    const ed25519 = generateKeyPairSync("ed25519");
+    const privatePem = ed25519.privateKey.export({ format: "pem", type: "pkcs8" }).toString();
+    const publicPem = ed25519.publicKey.export({ format: "pem", type: "spki" }).toString();
+
+    for (const privateKey of [ed25519.privateKey, privatePem, Buffer.from(privatePem)]) {
+      const signed = signTraceBundle(bundle, {
+        algorithm: "ed25519",
+        keyId: "release-key",
+        privateKey,
+        signedAt: "2026-07-06T06:02:00.000Z"
+      });
+      for (const publicKey of [ed25519.publicKey, publicPem, Buffer.from(publicPem)]) {
+        expect(verifyTraceBundleSignature(signed, publicKey)).toBe(true);
+      }
+    }
+
+    const signed = signTraceBundle(bundle, {
+      algorithm: "ed25519",
+      keyId: "release-key",
+      privateKey: ed25519.privateKey,
+      signedAt: "2026-07-06T06:02:00.000Z"
+    });
+    const rsa = generateKeyPairSync("rsa", { modulusLength: 2048 });
+    const ec = generateKeyPairSync("ec", { namedCurve: "P-256" });
+
+    for (const keyPair of [rsa, ec]) {
+      const wrongPrivatePem = keyPair.privateKey.export({ format: "pem", type: "pkcs8" }).toString();
+      const wrongPublicPem = keyPair.publicKey.export({ format: "pem", type: "spki" }).toString();
+      for (const privateKey of [keyPair.privateKey, wrongPrivatePem, Buffer.from(wrongPrivatePem)]) {
+        expect(() => signTraceBundle(bundle, {
+          algorithm: "ed25519",
+          keyId: "wrong-key",
+          privateKey,
+          signedAt: "2026-07-06T06:02:00.000Z"
+        })).toThrow(/Ed25519/);
+      }
+      for (const publicKey of [keyPair.publicKey, wrongPublicPem, Buffer.from(wrongPublicPem)]) {
+        expect(verifyTraceBundleSignature(signed, publicKey)).toBe(false);
+      }
+    }
+
+    expect(() => signTraceBundle(bundle, {
+      algorithm: "ed25519",
+      keyId: "public-key-is-not-private",
+      privateKey: ed25519.publicKey,
+      signedAt: "2026-07-06T06:02:00.000Z"
+    })).toThrow(/private key/);
+    expect(verifyTraceBundleSignature(signed, ed25519.privateKey)).toBe(false);
   });
 
   it("returns runtime-compatible export policy decisions", () => {
@@ -214,5 +302,13 @@ describe("TraceLedger", () => {
       decision: "allow",
       reason: "Provenance export is allowed"
     });
+
+    expect(policy.evaluate({
+      runId: "run_001",
+      stepId: "step_004",
+      tool: { name: "npm.publish", description: "publish", risk: "critical" },
+      input: {},
+      metadata: {}
+    })).toMatchObject({ decision: "deny", reason: expect.stringContaining("scoped") });
   });
 });

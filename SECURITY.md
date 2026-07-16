@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-`0.1.x` is the current early public release line. Security fixes are documented in package changelogs and released as new immutable npm versions.
+`0.2.x` is the current coordinated monorepo release line. Individual package versions and security fixes are documented in their changelogs and released as new immutable npm versions.
 
 ## Reporting a vulnerability
 

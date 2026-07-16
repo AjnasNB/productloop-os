@@ -65,7 +65,7 @@ export async function runDeterministicDemo(): Promise<ProductLoopDemoResult> {
       value: "./demo.js"
     },
     compatibility: {
-      ajnasRuntime: "^0.1.0"
+      ajnasRuntime: "^0.2.0"
     },
     capabilities: [
       {

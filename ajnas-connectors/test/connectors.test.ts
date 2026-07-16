@@ -134,4 +134,19 @@ describe("connector registry and approvals", () => {
     expect(queue.list("approved")).toHaveLength(1);
     expect(queue.list("pending")).toHaveLength(0);
   });
+
+  test("rejects truthy approval flags and malformed approver identities", () => {
+    const manifest = loadManifest();
+    const invocation = loadInvocation();
+    const queue = new ConnectorApprovalQueue({ clock: fixedClock });
+    const request = queue.request({ manifest, invocation, reason: "review", requestedBy: "release-engineer" });
+    expect(() => queue.resolve(request.id, { approved: "yes", approverId: "owner" } as never)).toThrow(/boolean/);
+    expect(() => queue.resolve(request.id, { approved: true, approverId: " " })).toThrow(/non-empty/);
+    let invoked = false;
+    const accessorResolution = { approverId: "owner" } as Record<string, unknown>;
+    Object.defineProperty(accessorResolution, "approved", { enumerable: true, get: () => { invoked = true; return true; } });
+    expect(() => queue.resolve(request.id, accessorResolution as never)).toThrow(/data properties/);
+    expect(invoked).toBe(false);
+    expect(queue.list("pending")).toHaveLength(1);
+  });
 });

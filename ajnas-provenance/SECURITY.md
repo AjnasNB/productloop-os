@@ -2,6 +2,10 @@
 
 `ajnas-provenance` provides tamper-evident receipts. It does not provide encrypted storage, key custody, identity proofing, or external timestamping by itself.
 
+`verifyTraceBundleSignature` recomputes bundle and receipt integrity before accepting the Ed25519 signature. Signing requires an Ed25519 private key and verification requires an Ed25519 public key for `KeyObject`, PEM string, and PEM buffer inputs; RSA and EC material is rejected. Non-canonical values and malformed algorithms, keys, encodings, or bundle contents return `false`; callers do not need a separate integrity call to make signature verification meaningful. Signing takes a defensive canonical clone so later caller mutation cannot alter the signed wrapper.
+
+Canonical JSON normalization accepts only own enumerable data descriptors. Accessors and inherited descriptor fields are rejected without invoking getters, including when `Object.prototype` is polluted.
+
 ## Expected Controls
 
 - Store trace bundles in append-only or versioned storage.

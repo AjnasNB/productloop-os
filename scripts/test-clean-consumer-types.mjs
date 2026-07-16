@@ -7,12 +7,32 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 const repoRoot = fileURLToPath(new URL("../", import.meta.url));
-const packageNames = [
+const maqamPackageDirectory = process.env.MAQAM_PACKAGE_DIR
+  ? resolve(process.env.MAQAM_PACKAGE_DIR)
+  : undefined;
+const localPackageNames = [
+  "ajnas-runtime",
   "ajnas-skills-registry",
   "ajnas-provenance",
+  "ajnas-policy",
+  "ajnas-evals",
+  "ajnas-connectors",
+  "ajnas-approvals",
   "ajnas-browser-research",
   "productloop-os",
 ];
+const expectedLocalVersions = new Map([
+  ["ajnas-runtime", "0.2.0"],
+  ["ajnas-skills-registry", "0.2.0"],
+  ["ajnas-provenance", "0.1.2"],
+  ["ajnas-policy", "0.1.1"],
+  ["ajnas-evals", "0.1.1"],
+  ["ajnas-connectors", "0.1.1"],
+  ["ajnas-approvals", "0.1.1"],
+  ["ajnas-browser-research", "0.1.2"],
+  ["productloop-os", "0.2.0"],
+]);
+const packageNames = maqamPackageDirectory ? ["maqam", ...localPackageNames] : localPackageNames;
 
 async function findNpmCli() {
   const executableDirectory = dirname(process.execPath);
@@ -104,7 +124,7 @@ async function main() {
     const consumerDirectory = join(temporaryRoot, "consumer");
     await Promise.all([mkdir(packDirectory), mkdir(consumerDirectory)]);
 
-    const packageDirectories = packageNames.map((name) => join(repoRoot, name));
+    const packageDirectories = packageNames.map((name) => name === "maqam" ? maqamPackageDirectory : join(repoRoot, name));
     const packOutput = await runNpm(
       ["pack", "--json", "--pack-destination", packDirectory, ...packageDirectories],
       repoRoot,
@@ -117,6 +137,14 @@ async function main() {
     }
 
     const packedByName = new Map(packResults.map((entry) => [entry.name, entry]));
+    for (const [name, version] of expectedLocalVersions) {
+      if (packedByName.get(name)?.version !== version) {
+        throw new Error(`Expected ${name}@${version}; received ${String(packedByName.get(name)?.version)}`);
+      }
+    }
+    if (maqamPackageDirectory && packedByName.get("maqam")?.version !== "0.2.2") {
+      throw new Error(`MAQAM_PACKAGE_DIR must contain maqam@0.2.2; received ${String(packedByName.get("maqam")?.version)}`);
+    }
     const tarballs = packageNames.map((name) => {
       const entry = packedByName.get(name);
       if (!entry || typeof entry.filename !== "string") {
@@ -158,15 +186,27 @@ async function main() {
       [
         'import type { KeyMaterial as RegistryKeyMaterial } from "ajnas-skills-registry";',
         'import type { KeyMaterial as ProvenanceKeyMaterial } from "ajnas-provenance";',
+        'import type { PolicyToolDefinition } from "ajnas-runtime";',
+        'import type { PolicyBundle } from "ajnas-policy";',
+        'import type { EvalSuite } from "ajnas-evals";',
+        'import type { ConnectorApprovalResolution } from "ajnas-connectors";',
+        'import type { ApprovalReviewInput } from "ajnas-approvals";',
         'import type { SignResearchProvenanceOptions } from "ajnas-browser-research";',
+        'import type { CrawlOptions } from "maqam";',
         'import { PRODUCTLOOP_OS_VERSION } from "productloop-os";',
         "",
         'export const registryKey: RegistryKeyMaterial = "registry-public-key";',
         'export const provenanceKey: ProvenanceKeyMaterial = "provenance-public-key";',
+        'export const policyTool: PolicyToolDefinition = { name: "read", description: "read", risk: "low" };',
+        'export const policyBundle: Pick<PolicyBundle, "defaultEffect"> = { defaultEffect: "deny" };',
+        'export const evalSuite: Pick<EvalSuite, "schemaVersion"> = { schemaVersion: "ajnas.eval.suite.v1" };',
+        'export const connectorResolution: ConnectorApprovalResolution = { approved: false, approverId: "owner" };',
+        'export const approvalReview: ApprovalReviewInput = { reviewerId: "owner", decision: "reject" };',
+        'export const crawlOptions: CrawlOptions = { seeds: ["https://example.com"] };',
         "export const browserSigningOptions: Pick<SignResearchProvenanceOptions, \"privateKey\"> = {",
         '  privateKey: "browser-private-key",',
         "};",
-        "export const productLoopVersion: string = PRODUCTLOOP_OS_VERSION;",
+        'export const productLoopVersion: "0.2.0" = PRODUCTLOOP_OS_VERSION;',
         "",
       ].join("\n"),
       "utf8",
@@ -200,7 +240,7 @@ async function main() {
     await access(typescriptCli);
     await run(process.execPath, [typescriptCli, "--project", "tsconfig.json", "--pretty", "false"], consumerDirectory);
 
-    console.log("Clean external TypeScript consumer passed for the fixed packages and ProductLoop OS umbrella.");
+    console.log(`Clean external TypeScript consumer passed for all nine workspace packages using ${maqamPackageDirectory ? "the MAQAM_PACKAGE_DIR 0.2.2 tarball" : "registry maqam@^0.2.2"}.`);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
   }

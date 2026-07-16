@@ -54,11 +54,12 @@ export class ConnectorApprovalQueue {
     if (existing.status !== "pending") {
       throw new Error(`Approval request ${id} is already ${existing.status}.`);
     }
+    const checkedResolution = normalizeResolution(resolution);
     const resolved: ConnectorApprovalRequest = {
       ...existing,
-      status: resolution.approved ? "approved" : "rejected",
+      status: checkedResolution.approved ? "approved" : "rejected",
       resolvedAt: this.clock().toISOString(),
-      resolution: toJsonObject(resolution) as unknown as ConnectorApprovalResolution
+      resolution: checkedResolution
     };
     this.requests.set(id, cloneRequest(resolved));
     return cloneRequest(resolved);
@@ -73,6 +74,16 @@ export class ConnectorApprovalQueue {
     const requests = [...this.requests.values()].sort((left, right) => left.createdAt.localeCompare(right.createdAt));
     return (status ? requests.filter((request) => request.status === status) : requests).map(cloneRequest);
   }
+}
+
+function normalizeResolution(resolution: unknown): ConnectorApprovalResolution {
+  if (resolution === null || typeof resolution !== "object" || Array.isArray(resolution)) throw new TypeError("Connector approval resolution must be a JSON object.");
+  const value = toJsonObject(resolution) as Record<string, unknown>;
+  if (typeof value.approved !== "boolean") throw new TypeError("Connector approval approved must be a boolean.");
+  if (typeof value.approverId !== "string" || !value.approverId.trim()) throw new TypeError("Connector approval approverId must be a non-empty string.");
+  if (value.comment !== undefined && typeof value.comment !== "string") throw new TypeError("Connector approval comment must be a string.");
+  if (value.metadata !== undefined && (value.metadata === null || typeof value.metadata !== "object" || Array.isArray(value.metadata))) throw new TypeError("Connector approval metadata must be a JSON object.");
+  return value as unknown as ConnectorApprovalResolution;
 }
 
 function cloneRequest(request: ConnectorApprovalRequest): ConnectorApprovalRequest {

@@ -91,6 +91,8 @@ const runtime = new AgentRuntime({
 });
 ```
 
+The helper is deliberately scoped to the configured provenance-export tool and denies every other tool. A runtime with additional tools must use an explicit composed policy rather than treating a non-match as permission.
+
 The export policy receives only the tool identity and risk fields it evaluates. It neither imports the runtime nor receives the runtime tool's execution callback.
 
 ## CLI

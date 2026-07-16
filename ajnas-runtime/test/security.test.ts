@@ -3,6 +3,7 @@ import {
   AgentRuntime,
   ApprovalBindingError,
   InvalidRunIdError,
+  InvalidPolicyDecisionError,
   InMemoryProvenanceSink,
   PolicyDeniedError,
   RunIdCollisionError,
@@ -34,6 +35,61 @@ describe("runtime security defaults", () => {
     await expect(runtime.run({ name: "publish", steps: [{ id: "publish", run: (context) => context.callTool("npm.publish", { version: "1.0.0" }) }] }))
       .rejects.toBeInstanceOf(ApprovalBindingError);
     expect(executed).toBe(false);
+  });
+
+  test("never exposes tool execution to policy code and rejects malformed policy decisions", async () => {
+    let executed = false;
+    let exposedExecute: unknown;
+    const runtime = new AgentRuntime({
+      tools: [{ name: "external.write", description: "Write", risk: "high", execute: () => { executed = true; return { ok: true }; } }],
+      policy: {
+        evaluate: (request) => {
+          exposedExecute = (request.tool as unknown as { execute?: unknown }).execute;
+          return { decision: "maybe", reason: "not a real decision" } as never;
+        }
+      },
+      runIdFactory: () => "run-invalid-policy"
+    });
+
+    await expect(runtime.run({ name: "invalid-policy", steps: [{ id: "write", run: (context) => context.callTool("external.write", {}) }] }))
+      .rejects.toBeInstanceOf(InvalidPolicyDecisionError);
+    expect(exposedExecute).toBeUndefined();
+    expect(executed).toBe(false);
+  });
+
+  test("rejects null policy decisions and malformed approval responses", async () => {
+    let executed = false;
+    const tool = { name: "external.write", description: "Write", risk: "low" as const, execute: () => { executed = true; return { ok: true }; } };
+    const nullPolicy = new AgentRuntime({ tools: [tool], policy: { evaluate: () => null as never }, runIdFactory: () => "run-null-policy" });
+    await expect(nullPolicy.run({ name: "null-policy", steps: [{ id: "write", run: (context) => context.callTool("external.write", {}) }] }))
+      .rejects.toBeInstanceOf(InvalidPolicyDecisionError);
+
+    const malformedApproval = new AgentRuntime({
+      tools: [tool],
+      policy: { evaluate: () => ({ decision: "require_approval", reason: "review" }) },
+      approver: { requestApproval: (request) => ({ approved: "yes", approverId: "owner", bindingDigest: request.bindingDigest }) as never },
+      runIdFactory: () => "run-malformed-approval"
+    });
+    await expect(malformedApproval.run({ name: "malformed-approval", steps: [{ id: "write", run: (context) => context.callTool("external.write", {}) }] }))
+      .rejects.toBeInstanceOf(ApprovalBindingError);
+    expect(executed).toBe(false);
+  });
+
+  test("sends the effective raised risk to the approver", async () => {
+    let approvalRisk: unknown;
+    const runtime = new AgentRuntime({
+      tools: [{ name: "external.write", description: "Write", risk: "low", execute: () => ({ ok: true }) }],
+      policy: { evaluate: () => ({ decision: "require_approval", reason: "review" }) },
+      approver: {
+        requestApproval: (request) => {
+          approvalRisk = request.risk;
+          return { approved: true, approverId: "owner", bindingDigest: request.bindingDigest };
+        }
+      },
+      runIdFactory: () => "run-raised-risk"
+    });
+    await runtime.run({ name: "raised-risk", steps: [{ id: "write", run: (context) => context.callTool("external.write", {}, { risk: "critical" }) }] });
+    expect(approvalRisk).toBe("critical");
   });
 
   test("rejects concurrent reuse of an active run ID", async () => {

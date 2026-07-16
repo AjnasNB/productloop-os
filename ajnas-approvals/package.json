@@ -1,6 +1,6 @@
 {
   "name": "ajnas-approvals",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Human approval workflows, deterministic review tickets, escalation, delegation, and audit receipts for Ajnas agent infrastructure.",
   "type": "module",
   "license": "MIT",
@@ -28,7 +28,7 @@
     "workflow"
   ],
   "bin": {
-    "ajnas-approvals": "./bin/ajnas-approvals.js"
+    "ajnas-approvals": "bin/ajnas-approvals.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -62,10 +62,10 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "ajnas-runtime": "^0.1.0",
-    "ajnas-policy": "^0.1.0",
-    "ajnas-provenance": "^0.1.0",
-    "ajnas-connectors": "^0.1.0"
+    "ajnas-connectors": "^0.1.1",
+    "ajnas-policy": "^0.1.1",
+    "ajnas-provenance": "^0.1.2",
+    "ajnas-runtime": "^0.2.0"
   },
   "peerDependenciesMeta": {
     "ajnas-runtime": {

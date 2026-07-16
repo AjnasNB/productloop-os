@@ -28,9 +28,13 @@ export class SkillApprovalQueue {
     if (!request) {
       throw new UnknownApprovalRequestError(id);
     }
-    request.status = resolution.approved ? "approved" : "rejected";
+    if (request.status !== "pending") {
+      throw new Error(`Skill approval request ${id} is already ${request.status}.`);
+    }
+    const checkedResolution = normalizeResolution(resolution);
+    request.status = checkedResolution.approved ? "approved" : "rejected";
     request.resolvedAt = this.clock().toISOString();
-    request.resolution = sanitizeJson(resolution) as unknown as SkillApprovalResolution;
+    request.resolution = checkedResolution;
     return cloneRequest(request);
   }
 
@@ -43,6 +47,18 @@ export class SkillApprovalQueue {
       requests: this.requests.map(cloneRequest)
     };
   }
+}
+
+function normalizeResolution(resolution: unknown): SkillApprovalResolution {
+  if (resolution === null || typeof resolution !== "object" || Array.isArray(resolution)) throw new TypeError("Skill approval resolution must be a JSON object.");
+  const normalized = sanitizeJson(resolution);
+  if (normalized === null || typeof normalized !== "object" || Array.isArray(normalized)) throw new TypeError("Skill approval resolution must be a JSON object.");
+  const value = normalized as Record<string, unknown>;
+  if (typeof value.approved !== "boolean") throw new TypeError("Skill approval approved must be a boolean.");
+  if (typeof value.approverId !== "string" || !value.approverId.trim()) throw new TypeError("Skill approval approverId must be a non-empty string.");
+  if (value.comment !== undefined && typeof value.comment !== "string") throw new TypeError("Skill approval comment must be a string.");
+  if (value.metadata !== undefined && (value.metadata === null || typeof value.metadata !== "object" || Array.isArray(value.metadata))) throw new TypeError("Skill approval metadata must be a JSON object.");
+  return value as unknown as SkillApprovalResolution;
 }
 
 function cloneRequest(request: SkillApprovalRequest): SkillApprovalRequest {

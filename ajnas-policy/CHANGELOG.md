@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 - 2026-07-15
+
+- Added strict runtime validation for policy bundles, match criteria, JSON values, and unknown fields so malformed deny rules cannot fall through to an allow default.
+- Reject non-boolean or malformed approval queue resolutions.
+- Raised peer floors to `ajnas-runtime` `^0.2.0` and `ajnas-provenance` `^0.1.2`.
+- Hardened canonical JSON descriptor checks against inherited `Object.prototype.value` pollution for accessor-backed objects and arrays.
+
 ## 0.1.0 - 2026-07-15
 
 - Added `ajnas.policy.bundle.v1` declarative policy bundles.

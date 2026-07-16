@@ -96,4 +96,4 @@ ajnas-policy evaluate fixtures/enterprise-release-policy.json fixtures/publish-r
 
 ## Release Status
 
-Version `0.1.0` is the initial public release, authorized for the public npm registry on 2026-07-15. A different version or registry target requires fresh authorization.
+Version `0.1.1` is the current release candidate with strict policy, request, decision, and approval validation.

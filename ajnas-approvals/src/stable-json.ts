@@ -87,7 +87,7 @@ function normalize(value: unknown, state: NormalizeState, depth: number): JsonVa
       throw new TypeError("JSON objects must not contain symbol properties");
     }
     const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    if (!descriptor?.enumerable || !("value" in descriptor)) {
+    if (!isEnumerableDataDescriptor(descriptor)) {
       throw new TypeError("JSON objects must contain only enumerable data properties");
     }
     accountBytes(state, key);
@@ -110,10 +110,14 @@ function assertDenseDataArray(value: unknown[]): void {
   }
   for (let index = 0; index < value.length; index += 1) {
     const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
-    if (!descriptor?.enumerable || !("value" in descriptor)) {
+    if (!isEnumerableDataDescriptor(descriptor)) {
       throw new TypeError("JSON arrays must contain only enumerable data elements");
     }
   }
+}
+
+function isEnumerableDataDescriptor(descriptor: PropertyDescriptor | undefined): descriptor is PropertyDescriptor & { enumerable: true; value: unknown } {
+  return descriptor !== undefined && Object.hasOwn(descriptor, "enumerable") && descriptor.enumerable === true && Object.hasOwn(descriptor, "value");
 }
 
 function createObject(entries: Array<[string, JsonValue]>): JsonObject {

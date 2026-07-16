@@ -27,12 +27,12 @@ describe("package readiness", () => {
     const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
 
     expect(packageJson.name).toBe("ajnas-connectors");
-    expect(packageJson.bin).toEqual({ "ajnas-connectors": "./bin/ajnas-connectors.js" });
+    expect(packageJson.bin).toEqual({ "ajnas-connectors": "bin/ajnas-connectors.js" });
     expect(packageJson.files).toEqual(["bin", "dist", "README.md", "LICENSE", "CHANGELOG.md", "SECURITY.md", "docs", "examples", "fixtures"]);
     expect(packageJson.peerDependencies).toMatchObject({
-      "ajnas-runtime": "^0.1.0",
-      "ajnas-policy": "^0.1.0",
-      "ajnas-provenance": "^0.1.0"
+      "ajnas-runtime": "^0.2.0",
+      "ajnas-policy": "^0.1.1",
+      "ajnas-provenance": "^0.1.2"
     });
   });
 });

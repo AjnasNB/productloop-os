@@ -22,24 +22,38 @@ export function createTraceBundle(
   };
 }
 
-export function verifyTraceBundle(bundle: TraceBundle): VerificationResult {
+export function verifyTraceBundle(input: TraceBundle): VerificationResult {
+  let bundle: TraceBundle;
+  try {
+    bundle = JSON.parse(stableStringify(input)) as TraceBundle;
+  } catch (error) {
+    return {
+      valid: false,
+      issues: [`bundle must contain canonical JSON values: ${error instanceof Error ? error.message : String(error)}`]
+    };
+  }
   const issues: string[] = [];
-  if (bundle.schemaVersion !== "ajnas.provenance.bundle.v1") {
-    issues.push(`unsupported bundle schema ${bundle.schemaVersion}`);
-  }
-  if (bundle.eventCount !== bundle.events.length) {
-    issues.push(`event count mismatch: expected ${bundle.eventCount}, received ${bundle.events.length}`);
-  }
-  const expectedRootHash = bundle.events.at(-1)?.receipt.eventHash ?? null;
-  if (bundle.rootHash !== expectedRootHash) {
-    issues.push("root hash mismatch");
-  }
-  const traceResult = verifyTrace(bundle.events);
-  issues.push(...traceResult.issues);
-  const { digest: _digest, ...bundleWithoutDigest } = bundle;
-  const expectedDigest = computeTraceBundleDigest(bundleWithoutDigest);
-  if (bundle.digest !== expectedDigest) {
-    issues.push("bundle digest mismatch");
+  try {
+    if (bundle.schemaVersion !== "ajnas.provenance.bundle.v1") {
+      issues.push(`unsupported bundle schema ${String(bundle.schemaVersion)}`);
+    }
+    if (!Array.isArray(bundle.events)) throw new TypeError("bundle events must be an array");
+    if (bundle.eventCount !== bundle.events.length) {
+      issues.push(`event count mismatch: expected ${String(bundle.eventCount)}, received ${bundle.events.length}`);
+    }
+    const expectedRootHash = bundle.events.at(-1)?.receipt.eventHash ?? null;
+    if (bundle.rootHash !== expectedRootHash) {
+      issues.push("root hash mismatch");
+    }
+    const traceResult = verifyTrace(bundle.events);
+    issues.push(...traceResult.issues);
+    const { digest: _digest, ...bundleWithoutDigest } = bundle;
+    const expectedDigest = computeTraceBundleDigest(bundleWithoutDigest);
+    if (bundle.digest !== expectedDigest) {
+      issues.push("bundle digest mismatch");
+    }
+  } catch (error) {
+    issues.push(`malformed bundle: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   return {

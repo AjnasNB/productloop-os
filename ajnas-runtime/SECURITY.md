@@ -1,8 +1,12 @@
 # Security
 
+Policy engines receive sanitized immutable tool metadata and cannot access a registered tool's execution callback. Runtime-returned policy and approval objects are validated at runtime; TypeScript annotations are not treated as a security boundary.
+
+Canonical JSON normalization accepts only own enumerable data descriptors. Accessors and inherited descriptor fields are rejected without invoking getters, including when `Object.prototype` is polluted.
+
 ## Supported Version
 
-`0.1.x` is an early public release line. APIs may change between minor versions; supported security fixes are documented here.
+`0.2.x` is the current metadata-only policy-boundary release line. APIs may change between minor versions; supported security fixes are documented here.
 
 ## Security Model
 

@@ -2,6 +2,8 @@
 
 `ajnas-evals` is a local evaluation harness. It does not execute arbitrary shell commands, call external services, or publish data by itself.
 
+Canonical JSON normalization accepts only own enumerable data descriptors. Accessors and inherited descriptor fields are rejected without invoking getters, including when `Object.prototype` is polluted.
+
 ## Data Handling
 
 - Eval suites and artifacts are local JSON inputs.

@@ -142,7 +142,6 @@ export interface RuntimeToolDefinition {
   name: string;
   description: string;
   risk: SkillRisk;
-  execute: (context: unknown) => unknown;
 }
 
 export interface RuntimePolicyRequest {

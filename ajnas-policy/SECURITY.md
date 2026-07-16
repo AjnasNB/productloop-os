@@ -2,6 +2,10 @@
 
 `ajnas-policy` is a local policy evaluation library. It does not contact networks, execute tools, publish artifacts, or persist data by itself.
 
+Bundle validation rejects unknown fields, mistyped criteria, empty criteria, and non-JSON values. Invalid bundles always produce a deny decision, including when their declared default would otherwise allow.
+
+Canonical JSON normalization accepts only own enumerable data descriptors. Accessors and inherited descriptor fields are rejected without invoking getters, including when `Object.prototype` is polluted.
+
 Recommended use:
 
 - Treat policy bundles as controlled configuration and review changes like source code.

@@ -310,7 +310,7 @@ export interface ResearchProvenanceBundle {
 }
 
 export interface ResearchProvenanceSignature {
-  algorithm: "ed25519" | "rsa-sha256" | "ecdsa-sha256";
+  algorithm: "ed25519" | "rsa-sha256" | "rsa-pss-sha256" | "ecdsa-sha256";
   keyId: string;
   value: string;
 }

@@ -1,6 +1,6 @@
 # ajnas-skills-registry Publish Checklist
 
-`ajnas-skills-registry@0.1.1` was authorized for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
+`ajnas-skills-registry@0.2.0` is the selected signed-manifest and policy-contract release candidate for the public npm registry. Publishing still requires explicit release authorization after all gates pass.
 
 ## Preflight
 
@@ -19,7 +19,7 @@ Confirm the exact version is absent before publishing. If it already exists, sto
 
 ## Approval Gate
 
-The `0.1.1` patch release is authorized. Preserve the approval date, target, and exact version in the release evidence.
+The selected release is `0.2.0`. Preserve the approval date, target, and exact version in the release evidence when publication is separately authorized.
 
 ## Publish Command
 

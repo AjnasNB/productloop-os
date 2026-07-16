@@ -11,8 +11,8 @@ export function createSkillInstallPolicy(options: SkillInstallPolicyOptions = {}
     async evaluate(request): Promise<RuntimePolicyDecision> {
       if (request.tool.name !== toolName) {
         return {
-          decision: "allow",
-          reason: "not a skill installation tool"
+          decision: "deny",
+          reason: `skill install policy is scoped to ${toolName}; unrelated tools require a separate explicit policy`
         };
       }
 

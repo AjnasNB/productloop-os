@@ -119,4 +119,4 @@ npm run pack:dry
 
 ## Release Status
 
-Version `0.1.0` is the initial public release, authorized for the public npm registry on 2026-07-15. A different version or registry target requires fresh authorization.
+Version `0.2.0` is the current release candidate. Its metadata-only policy tool projection is an intentional security-motivated API break from `0.1.x`.

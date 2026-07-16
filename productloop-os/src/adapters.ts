@@ -29,23 +29,35 @@ export function adaptPolicyEngine(engine: policy.RuntimePolicyEngine): runtime.P
 
 export interface MaqamCrawlerToolOptions {
   name?: string;
+  /** Deployment-enforced crawl options. Call input cannot override these values. */
   defaults?: maqam.CrawlOptions;
 }
 
 export function createMaqamCrawlerTool(
   options: MaqamCrawlerToolOptions = {}
 ): runtime.ToolDefinition<maqam.CrawlOptions, maqam.CrawlPage[]> {
+  const lockedDefaults = lockCrawlOptions(options.defaults);
   return {
     name: options.name ?? "maqam.crawl",
     description: "Crawl explicitly supplied HTTP(S) seeds with Maqam; this performs live network I/O.",
     risk: "high",
     async execute({ input }) {
       return maqam.crawl({
-        ...options.defaults,
-        ...input
+        ...input,
+        ...lockedDefaults
       });
     }
   };
+}
+
+function lockCrawlOptions(value: maqam.CrawlOptions | undefined): Readonly<maqam.CrawlOptions> {
+  if (!value) return Object.freeze({});
+  const copy: maqam.CrawlOptions = { ...value };
+  for (const key of ["seeds", "urls", "allowedOrigins"] as const) {
+    const entries = value[key];
+    if (entries) copy[key] = Object.freeze([...entries]) as string[];
+  }
+  return Object.freeze(copy);
 }
 
 export function runtimeSnapshotToEvalArtifact(

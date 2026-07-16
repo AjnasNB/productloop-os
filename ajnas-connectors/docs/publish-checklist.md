@@ -1,8 +1,8 @@
 # Publish Checklist
 
-Package: `ajnas-connectors@0.1.0`
+Package: `ajnas-connectors@0.1.1`
 
-`ajnas-connectors@0.1.0` was authorized for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
+`ajnas-connectors@0.1.1` is the authorized approval-validation security patch for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
 
 ## Required Verification
 

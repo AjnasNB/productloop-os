@@ -27,10 +27,17 @@ export interface ToolCallMetadata {
   [key: string]: unknown;
 }
 
+/** JSON-safe tool metadata exposed to policy code. Execution remains runtime-owned. */
+export interface PolicyToolDefinition {
+  name: string;
+  description: string;
+  risk: ToolRisk;
+}
+
 export interface PolicyRequest {
   runId: string;
   stepId: string;
-  tool: ToolDefinition;
+  tool: PolicyToolDefinition;
   input: unknown;
   metadata: ToolCallMetadata;
 }

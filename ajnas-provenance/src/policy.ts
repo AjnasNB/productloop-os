@@ -16,8 +16,8 @@ export function createProvenanceExportPolicy(options: ProvenanceExportPolicyOpti
     evaluate(request: RuntimePolicyRequest): RuntimePolicyDecision {
       if (request.tool.name !== toolName) {
         return {
-          decision: "allow",
-          reason: "Policy does not apply to this tool"
+          decision: "deny",
+          reason: `provenance export policy is scoped to ${toolName}; unrelated tools require a separate explicit policy`
         };
       }
 

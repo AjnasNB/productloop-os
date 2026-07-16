@@ -39,9 +39,10 @@ export class PolicyApprovalQueue {
     if (request.status !== "pending") {
       throw new Error(`Policy approval request ${id} is already ${request.status}`);
     }
-    request.status = resolution.approved ? "approved" : "rejected";
+    const checkedResolution = normalizeResolution(resolution);
+    request.status = checkedResolution.approved ? "approved" : "rejected";
     request.resolvedAt = this.clock().toISOString();
-    request.resolution = toJsonObject(resolution) as unknown as PolicyApprovalResolution;
+    request.resolution = checkedResolution;
     return cloneRequest(request);
   }
 
@@ -55,6 +56,16 @@ export class PolicyApprovalQueue {
       requests: this.requests.map(cloneRequest)
     };
   }
+}
+
+function normalizeResolution(resolution: unknown): PolicyApprovalResolution {
+  if (resolution === null || typeof resolution !== "object" || Array.isArray(resolution)) throw new TypeError("Policy approval resolution must be a JSON object");
+  const value = toJsonObject(resolution) as Record<string, unknown>;
+  if (typeof value.approved !== "boolean") throw new TypeError("Policy approval approved must be a boolean");
+  if (typeof value.approverId !== "string" || !value.approverId.trim()) throw new TypeError("Policy approval approverId must be a non-empty string");
+  if (value.comment !== undefined && typeof value.comment !== "string") throw new TypeError("Policy approval comment must be a string");
+  if (value.metadata !== undefined && (value.metadata === null || typeof value.metadata !== "object" || Array.isArray(value.metadata))) throw new TypeError("Policy approval metadata must be a JSON object");
+  return value as unknown as PolicyApprovalResolution;
 }
 
 function cloneRequest(request: PolicyApprovalRequest): PolicyApprovalRequest {
