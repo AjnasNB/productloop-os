@@ -70,15 +70,15 @@
     "node": ">=20.18.1"
   },
   "dependencies": {
-    "maqam": "^0.2.2",
+    "ajnas-approvals": "^0.1.1",
+    "ajnas-browser-research": "^0.1.2",
+    "ajnas-connectors": "^0.1.1",
+    "ajnas-evals": "^0.1.1",
+    "ajnas-policy": "^0.1.1",
+    "ajnas-provenance": "^0.1.2",
     "ajnas-runtime": "^0.2.0",
     "ajnas-skills-registry": "^0.2.0",
-    "ajnas-provenance": "^0.1.2",
-    "ajnas-policy": "^0.1.1",
-    "ajnas-evals": "^0.1.1",
-    "ajnas-connectors": "^0.1.1",
-    "ajnas-approvals": "^0.1.1",
-    "ajnas-browser-research": "^0.1.2"
+    "maqam": "^0.2.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",
