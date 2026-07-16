@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ProductLoop OS Discussions
+    url: https://github.com/AjnasNB/productloop-os/discussions
+    about: Ask usage questions, discuss architecture, and propose integrations before implementation.
+  - name: Private security report
+    url: https://github.com/AjnasNB/productloop-os/security/advisories/new
+    about: Report vulnerabilities, leaked credentials, or sensitive exploit details privately.

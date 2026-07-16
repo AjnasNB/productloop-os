@@ -1,0 +1,78 @@
+name: Bug report
+description: Report reproducible incorrect behavior in ProductLoop OS.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing issues first. Do not include credentials, private data, or vulnerability details. Report security issues through the private process in SECURITY.md.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Affected package
+      options:
+        - productloop-os
+        - ajnas-runtime
+        - ajnas-skills-registry
+        - ajnas-provenance
+        - ajnas-policy
+        - ajnas-evals
+        - ajnas-connectors
+        - ajnas-approvals
+        - ajnas-browser-research
+        - Monorepo tooling or documentation
+        - Multiple packages
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Exact package version or commit
+      placeholder: "productloop-os@0.2.0 or full Git commit"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Node.js, npm, operating system, and relevant provider or mock version.
+      placeholder: "Node 22.x, npm 11.x, Ubuntu 24.04, local fixture"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Observed behavior
+      description: Explain what happened and include sanitized error codes or output.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest safe code sample and exact commands.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Security or public-contract impact
+      description: Identify policy, approval, adapter, evidence, serialization, type, schema, CLI, or package-contract impact. Write None if reviewed and not applicable.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, private data, and sensitive exploit details from this report.
+          required: true
+        - label: This is not a vulnerability report requiring the private SECURITY.md process.
+          required: true

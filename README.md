@@ -1,15 +1,19 @@
 # ProductLoop OS
 
-ProductLoop OS is a TypeScript workspace for policy-gated agent workflows. It composes small, independently publishable packages for runtime execution, policy decisions, human approvals, connector trust, skill manifests, evidence provenance, deterministic evaluations, and browser-research records.
+ProductLoop OS is the ecosystem and runtime companion to [Maqam](https://maqamagent.com). Maqam is the governed execution kernel: it binds policy, exact approvals, tool execution, and source-linked evidence at the side-effect boundary. ProductLoop surrounds that kernel with small, independently publishable packages for workflow runtime, policy decisions, approval operations, connector trust, skill manifests, provenance, deterministic evaluations, and browser-research records.
 
-The project is a governance toolkit, not a claim of autonomous intelligence. It does not ship a model, a hosted control plane, a secret manager, a production browser, or a distributed job system. Maqam supplies a higher-level governed agent framework and a crawler; `ajnas-browser-research` supplies a governed adapter contract and deterministic replay harness. Real browser, search, connector, model, and storage implementations remain explicit deployment choices.
+Use the [Maqam website](https://maqamagent.com) for the product overview and the [ProductLoop package atlas](https://maqamagent.com/docs/productloop/) for package-by-package documentation. The detailed [Maqam and ProductLoop relationship](./docs/maqam-and-productloop.md) explains which package to install and which integration boundaries remain explicit.
+
+The projects form one ecosystem, not one silently merged runtime. `createProductLoopOS()` exposes the Maqam namespace and creates both Maqam and Ajnas package components, while their contracts and ledgers remain distinct. The bundled Maqam crawler bridge is opt-in and is never registered automatically. Direct calls to a provider, browser, connector, model SDK, or Maqam tool outside a governed runtime path are not intercepted by ProductLoop.
+
+The ecosystem is a governance toolkit, not a claim of autonomous intelligence. It does not ship a model, a hosted control plane, a secret manager, a production browser, or a distributed job system. `ajnas-browser-research` supplies a governed adapter contract and deterministic replay harness. Real browser, search, connector, model, and storage implementations remain explicit deployment choices.
 
 ## Packages
 
-| Package | Release | Responsibility |
+| Package | Version or range | Responsibility |
 | --- | ---: | --- |
 | [`productloop-os`](./productloop-os) | `0.2.0` | One install, named namespaces, tested adapters, and composition helpers |
-| [`maqam`](https://github.com/AjnasNB/maqam) | `0.2.2` | Governed workflows, CLI-agent tools, evidence, skills, and crawler-backed research |
+| [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.2` dependency | Governed execution kernel, exact approvals, evidence, CLI-agent tools, and crawler-backed research |
 | [`ajnas-runtime`](./ajnas-runtime) | `0.2.0` | Ordered workflows and policy-gated tool calls |
 | [`ajnas-policy`](./ajnas-policy) | `0.1.1` | Declarative allow, deny, and approval decisions |
 | [`ajnas-approvals`](./ajnas-approvals) | `0.1.1` | Human review tickets, delegation, escalation, and audit history |
@@ -78,7 +82,17 @@ npm run pack
 
 Maqam `^0.2.2` is the supported crawler floor, and the canonical workspace lockfile resolves it from the public registry. Local development and release verification must not commit a sibling checkout or filesystem link in place of that registry dependency.
 
-See [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), and [release process](./docs/releasing.md).
+See [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), and [release process](./docs/releasing.md).
+
+## Open source and community
+
+Start with the [community hub](https://maqamagent.com/community/) or [GitHub Discussions](https://github.com/AjnasNB/productloop-os/discussions) for questions, examples, and integration proposals. Actionable changes should arrive through a fork or branch and a reviewed pull request.
+
+- [Contributing](./CONTRIBUTING.md)
+- [Governance and maintainer roles](./GOVERNANCE.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+- [Support](./SUPPORT.md)
+- [Security policy](./SECURITY.md)
 
 ## Security and maturity
 

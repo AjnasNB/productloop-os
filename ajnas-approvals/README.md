@@ -142,4 +142,4 @@ The final command strictly compiles a consumer fixture that wires `ajnas-runtime
 
 ## Release Status
 
-Version `0.1.1` is the current release candidate with request-bound, terminal approval decisions and strict review validation.
+Version `0.1.1` is the current public release with request-bound, terminal approval decisions and strict review validation.

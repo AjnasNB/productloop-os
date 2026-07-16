@@ -1,0 +1,71 @@
+name: Feature request
+description: Propose a scoped improvement to ProductLoop OS.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For open-ended designs or integration questions, start in ProductLoop OS Discussions. A feature request should describe a concrete problem and a maintainable public contract.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Proposed package
+      options:
+        - productloop-os
+        - ajnas-runtime
+        - ajnas-skills-registry
+        - ajnas-provenance
+        - ajnas-policy
+        - ajnas-evals
+        - ajnas-connectors
+        - ajnas-approvals
+        - ajnas-browser-research
+        - Monorepo tooling or documentation
+        - New or cross-package surface
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the user or maintainer problem without assuming a particular implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed public contract
+      description: Describe APIs, types, schemas, CLI behavior, or documentation that would change.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Security, effects, and bypass paths
+      description: Explain external effects, authorization, failure behavior, and any direct path outside ProductLoop governance.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Provider or benchmark evidence
+      description: If this concerns a provider or measured claim, state what has actually been tested and link methodology or sanitized evidence. Otherwise write Not applicable.
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Contribution expectations
+      options:
+        - label: I understand that a provider-shaped fixture is not a native or production-ready integration.
+          required: true
+        - label: I understand that project-defined evaluations are not certification or competitor benchmarks.
+          required: true
+        - label: I understand that only @AjnasNB can merge or release this project.
+          required: true

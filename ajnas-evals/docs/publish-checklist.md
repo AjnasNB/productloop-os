@@ -1,6 +1,6 @@
 # Publish Checklist
 
-`ajnas-evals@0.1.1` is the selected peer-compatibility release for the public npm registry. Publishing still requires explicit release authorization after all gates pass.
+`ajnas-evals@0.1.1` is the current public peer-compatibility release. This checklist records its release gate; every later version or different target requires fresh authorization.
 
 Before publishing:
 

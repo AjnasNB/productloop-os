@@ -119,4 +119,4 @@ npm run pack:dry
 
 ## Release Status
 
-Version `0.2.0` is the current release candidate. Its metadata-only policy tool projection is an intentional security-motivated API break from `0.1.x`.
+Version `0.2.0` is the current public release. Its metadata-only policy tool projection is an intentional security-motivated API break from `0.1.x`.

@@ -1,6 +1,6 @@
 # Publish Checklist
 
-`ajnas-runtime@0.2.0` is the selected security-boundary release candidate for the public npm registry. Publishing still requires explicit release authorization after all gates pass.
+`ajnas-runtime@0.2.0` is the current public security-boundary release. This checklist records its release gate; every later version or different target requires fresh authorization.
 
 ## Preflight
 

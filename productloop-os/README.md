@@ -1,6 +1,8 @@
 # productloop-os
 
-`productloop-os` is the public umbrella for Maqam and eight small Ajnas governance packages. It gives applications one dependency, stable named namespaces, a deny-by-default composition, explicit schema adapters, a dependency doctor, and a deterministic integration example.
+`productloop-os` is the public ecosystem and runtime companion to [Maqam](https://maqamagent.com), the governed execution kernel. It gives applications one dependency for Maqam plus eight small Ajnas packages, stable named namespaces, a deny-by-default composition, explicit schema adapters, a dependency doctor, and a deterministic integration example.
+
+The [ProductLoop package atlas](https://maqamagent.com/docs/productloop/) documents every namespace. Installing this umbrella does not merge the Maqam and Ajnas runtimes or silently govern direct SDK calls. `createProductLoopOS()` creates separate components, and cross-runtime behavior is limited to documented, opt-in adapters.
 
 Node.js 20.18.1 or newer is required.
 
@@ -57,7 +59,7 @@ console.log(result.status, os.trace.events.length);
 
 ## Namespaces
 
-- `maqam` — governed workflows, evidence, CLI-agent tools, and HTTP crawling
+- `maqam` — governed execution, exact approvals, evidence, CLI-agent tools, and HTTP crawling
 - `runtime` — ordered policy-gated tool execution
 - `skills` — skill manifests, signatures, install policy, and audit
 - `provenance` — hash-linked traces, bundles, signatures, and redaction
@@ -81,6 +83,8 @@ The exported `adapters` include:
 - connector trust to runtime policy decisions;
 - `createMaqamCrawlerTool()`, an explicit high-risk live-network tool that is never registered automatically.
 
+These adapters convert documented records or tool shapes; they are not native integrations with external orchestrators, providers, or hosted services. A direct client call outside the selected runtime bypasses its policy, approval, and evidence path unless the host application explicitly wraps that call.
+
 ## CLI
 
 ```sh
@@ -97,9 +101,11 @@ This package is not a model, browser engine, hosted crawler fleet, identity syst
 
 `createMaqamCrawlerTool({ defaults })` treats every supplied default as a deployment-enforced value: per-call input cannot override those network or resource limits. Put seeds and ordinary request-specific fields in tool input; put private-network policy, allowlists, robots behavior, and ceilings in `defaults`.
 
-See the repository's [architecture](https://github.com/AjnasNB/productloop-os/blob/main/docs/architecture.md), [comparison](https://github.com/AjnasNB/productloop-os/blob/main/docs/comparison.md), and [release guide](https://github.com/AjnasNB/productloop-os/blob/main/docs/releasing.md).
+See the [Maqam and ProductLoop guide](https://github.com/AjnasNB/productloop-os/blob/main/docs/maqam-and-productloop.md), [architecture](https://github.com/AjnasNB/productloop-os/blob/main/docs/architecture.md), [comparison](https://github.com/AjnasNB/productloop-os/blob/main/docs/comparison.md), and [release guide](https://github.com/AjnasNB/productloop-os/blob/main/docs/releasing.md).
 
-The current coordinated release candidate is `productloop-os@0.2.0`.
+For participation and support, use the [community hub](https://maqamagent.com/community/), [GitHub Discussions](https://github.com/AjnasNB/productloop-os/discussions), [contribution guide](https://github.com/AjnasNB/productloop-os/blob/main/CONTRIBUTING.md), [governance policy](https://github.com/AjnasNB/productloop-os/blob/main/GOVERNANCE.md), [Code of Conduct](https://github.com/AjnasNB/productloop-os/blob/main/CODE_OF_CONDUCT.md), [support guide](https://github.com/AjnasNB/productloop-os/blob/main/SUPPORT.md), and [security policy](https://github.com/AjnasNB/productloop-os/blob/main/SECURITY.md).
+
+The current public umbrella release is `productloop-os@0.2.0`.
 
 ## License
 

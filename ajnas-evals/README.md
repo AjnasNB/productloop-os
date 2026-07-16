@@ -59,4 +59,4 @@ Eval reports include deterministic suite and artifact digests. `EvalAuditLedger`
 
 The package does not call external services. Adapters decide how agent workflows are executed and return normalized evidence for evaluation.
 
-Version `0.1.1` is the current peer-compatibility release candidate for runtime `0.2.x` and the coordinated security-patched package graph.
+Version `0.1.1` is the current public peer-compatibility release for runtime `0.2.x` and the coordinated security-patched package graph.

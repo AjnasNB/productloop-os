@@ -4,9 +4,10 @@ ProductLoop OS is closest to an in-process governance and evidence toolkit. It i
 
 The references below describe upstream projects as reviewed on 2026-07-15. Follow the source links for current behavior and licensing.
 
-| Project | Primary abstraction | Strong fit | Different from ProductLoop OS |
+| Project | Primary abstraction | Strong fit | Important difference or boundary |
 | --- | --- | --- | --- |
-| ProductLoop OS / Maqam | Governed workflow plus policy, approvals, evidence, manifests, evals, and explicit tool adapters | Applications that want auditable local primitives and control over providers | Early `0.x`; no hosted control plane; replay is the only bundled browser-research adapter; Maqam's crawler is HTTP/HTML-oriented rather than a full browser fleet |
+| [Maqam](https://maqamagent.com) | Governed execution kernel for policy-bound tools, exact approvals, and source-linked evidence | Applications that need approval and evidence attached to the input that actually executes | Early `0.x`; no hosted control plane; its crawler is HTTP/HTML-oriented rather than a full browser fleet |
+| [ProductLoop OS](https://maqamagent.com/docs/productloop/) | Composable runtime, policy, approval, provenance, connector, skill, eval, and research packages around Maqam | Applications that want inspectable local primitives and control over providers | Keeps package contracts and ledgers explicit; no automatic interception of direct provider calls; deterministic replay is the only bundled browser-research adapter |
 | [Crawl4AI](https://github.com/unclecode/crawl4ai) | Python browser crawler and scraper producing structured, model-ready content | Async crawling, browser sessions, extraction strategies, caching, proxies, hooks, and self-hosted browser control | Much deeper crawling/browser surface; it does not replace ProductLoop's cross-package policy, approval-ticket, connector-trust, release, and evidence schemas |
 | [Firecrawl](https://github.com/firecrawl/firecrawl) | Hosted and self-hostable API for search, scrape, crawl, extract, and agent workflows | Web data API, SDK integrations, managed scale, and rich web extraction | Stronger web service and extraction surface; cloud and self-hosted feature sets can differ; its repository is AGPL-3.0 while ProductLoop OS and Maqam are MIT |
 | [LangGraph](https://github.com/langchain-ai/langgraph) | Low-level graph orchestration for long-running, stateful agents | Durable execution, state, memory, human-in-the-loop graph control, and deployment | Broader and more mature workflow orchestration; ProductLoop focuses on portable governance records and can wrap tools called from another orchestrator |
@@ -17,8 +18,10 @@ A crawler or browser system can implement the `BrowserResearchAdapter` contract,
 
 Likewise, a durable orchestrator can call ProductLoop-controlled tools or persist ProductLoop evidence alongside its own checkpoints. The packages do not require a specific model vendor.
 
-## What “better” should mean here
+## What "better" should mean here
 
 ProductLoop OS should compete on inspectability, narrow interfaces, deterministic tests, package independence, and explicit high-risk boundaries. It should not claim superiority in crawl throughput, rendering fidelity, model quality, distributed durability, or connector breadth without benchmarks and production evidence.
 
 No upstream code was copied into this workspace. The comparison is architectural inspiration and interoperability guidance; licenses and notices of any future imported code must be reviewed separately.
+
+For the precise boundary between the two projects, see [Maqam and ProductLoop](./maqam-and-productloop.md).

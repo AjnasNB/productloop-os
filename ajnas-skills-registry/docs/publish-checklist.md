@@ -1,6 +1,6 @@
 # ajnas-skills-registry Publish Checklist
 
-`ajnas-skills-registry@0.2.0` is the selected signed-manifest and policy-contract release candidate for the public npm registry. Publishing still requires explicit release authorization after all gates pass.
+`ajnas-skills-registry@0.2.0` is the current public signed-manifest and policy-contract release. This checklist records its release gate; every later version or different target requires fresh authorization.
 
 ## Preflight
 

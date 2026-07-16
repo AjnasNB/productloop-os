@@ -1,0 +1,15 @@
+# Repository owner and required reviewer.
+* @AjnasNB
+
+# Explicitly identify release, security, dependency, and community control files.
+/.github/ @AjnasNB
+/SECURITY.md @AjnasNB
+/GOVERNANCE.md @AjnasNB
+/CODE_OF_CONDUCT.md @AjnasNB
+/CONTRIBUTING.md @AjnasNB
+/SUPPORT.md @AjnasNB
+/docs/releasing.md @AjnasNB
+/package.json @AjnasNB
+/package-lock.json @AjnasNB
+/*/package.json @AjnasNB
+/*/package-lock.json @AjnasNB

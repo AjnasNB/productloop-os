@@ -122,4 +122,4 @@ npm run pack:dry
 
 ## Release Status
 
-Version `0.2.0` is the current release candidate. It intentionally removes executable callbacks from runtime policy projections and adds strict, immutable Ed25519 signed-manifest verification.
+Version `0.2.0` is the current public release. It intentionally removes executable callbacks from runtime policy projections and adds strict, immutable Ed25519 signed-manifest verification.

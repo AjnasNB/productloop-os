@@ -2,7 +2,7 @@
 
 Package: `ajnas-browser-research@0.1.2`
 
-`ajnas-browser-research@0.1.2` is the authorized approval/signature security patch for publication to the public npm registry on 2026-07-15. Every later version or different target requires fresh authorization.
+`ajnas-browser-research@0.1.2` was authorized and published to the public npm registry on 2026-07-15. This checklist records that release gate; every later version or different target requires fresh authorization.
 
 ## Local Verification
 

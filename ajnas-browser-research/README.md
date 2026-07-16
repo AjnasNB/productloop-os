@@ -96,4 +96,4 @@ The harness does not bypass access controls, paywalls, CAPTCHA, anti-bot systems
 
 ## Publish
 
-Version `0.1.2` is the current release candidate. It adds fail-closed approval validation, immutable plan snapshots, canonical metadata-bound signatures, and strict signing-key correspondence.
+Version `0.1.2` is the current public release. It adds fail-closed approval validation, immutable plan snapshots, canonical metadata-bound signatures, and strict signing-key correspondence.

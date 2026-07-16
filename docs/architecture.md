@@ -1,6 +1,8 @@
 # ProductLoop OS architecture
 
-ProductLoop OS is a composition layer over independently usable packages. The umbrella does not merge their stores or silently translate every record. It creates explicit adapters at the boundaries where the schemas are compatible and keeps the original module namespaces available when an application needs lower-level control.
+ProductLoop OS is the ecosystem and runtime companion to [Maqam](https://maqamagent.com), the governed execution kernel. ProductLoop composes independently usable packages around that kernel; the umbrella does not merge their stores, silently translate every record, or intercept calls made outside its runtimes. It creates explicit adapters only where documented schemas are compatible and keeps the original module namespaces available when an application needs lower-level control.
+
+See the [Maqam and ProductLoop guide](./maqam-and-productloop.md) for the product boundary and installation choices, or browse the public [package atlas](https://maqamagent.com/docs/productloop/).
 
 ```mermaid
 flowchart LR
@@ -9,7 +11,7 @@ flowchart LR
   Approvals["ajnas-approvals"] -->|reviewed decision| Runtime
   Skills["ajnas-skills-registry"] -->|reviewed manifests| Runtime
   Connectors["ajnas-connectors"] -->|trust and invocation context| Policy
-  Maqam["Maqam tools and crawler"] -->|explicit high-risk tool adapter| Runtime
+  Maqam["Maqam governed execution kernel"] -->|opt-in crawler tool adapter| Runtime
   Browser["ajnas-browser-research adapter"] -->|deterministic report| Evals["ajnas-evals"]
   Runtime -->|runtime events| Provenance["ajnas-provenance"]
   Skills -->|registry audit events| Provenance
@@ -31,7 +33,7 @@ flowchart LR
 
 The ProductLoop runtime uses a deny-by-default declarative bundle unless the caller supplies a policy bundle or an explicit runtime policy adapter. Standalone `ajnas-runtime` also denies tool calls when no policy engine is configured. A tool's declared risk is metadata, not a sandbox; applications must still enforce the real permission boundary.
 
-The Maqam subsystem remains separate because its workflow, policy, evidence, and tool contracts are not identical to the smaller Ajnas packages. The umbrella exposes both systems and a `createMaqamCrawlerTool()` adapter that turns Maqam's crawler into an `ajnas-runtime` high-risk tool. It is never registered or executed automatically.
+The Maqam subsystem remains separate because its workflow, policy, approval, evidence, and tool contracts are not identical to the smaller Ajnas packages. The umbrella exposes both systems and a `createMaqamCrawlerTool()` adapter that turns Maqam's crawler into an `ajnas-runtime` high-risk tool. It is never registered or executed automatically. This is a tested package adapter, not a claim that ProductLoop natively integrates every Maqam capability or any external provider.
 
 ## Tested bridges
 
@@ -59,3 +61,5 @@ The following capabilities are deliberately provided by callers or deployment in
 - telemetry export, retention, and incident response.
 
 Maqam contains an HTTP crawler and CLI-agent process adapters. Those are real side effects and must be governed with network, filesystem, command, and credential controls outside the in-process policy objects.
+
+Any provider, browser, connector, model SDK, or Maqam call made directly outside the chosen governed runtime bypasses that runtime's policy, approval, and evidence path. A host application must route the real side effect through the relevant gateway or registered tool and enforce infrastructure controls at the execution boundary.
