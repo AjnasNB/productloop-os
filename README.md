@@ -10,18 +10,20 @@ The ecosystem is a governance toolkit, not a claim of autonomous intelligence. I
 
 ## Packages
 
-| Package | Version or range | Responsibility |
+This source tree prepares the following coordinated patch set. npm publication is complete only after the protected workflow verifies every registry artifact.
+
+| Package | Release version or range | Responsibility |
 | --- | ---: | --- |
-| [`productloop-os`](./productloop-os) | `0.2.0` | One install, named namespaces, tested adapters, and composition helpers |
+| [`productloop-os`](./productloop-os) | `0.2.1` | One install, named namespaces, tested adapters, and composition helpers |
 | [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
-| [`ajnas-runtime`](./ajnas-runtime) | `0.2.0` | Ordered workflows and policy-gated tool calls |
-| [`ajnas-policy`](./ajnas-policy) | `0.1.1` | Declarative allow, deny, and approval decisions |
-| [`ajnas-approvals`](./ajnas-approvals) | `0.1.1` | Human review tickets, delegation, escalation, and audit history |
-| [`ajnas-provenance`](./ajnas-provenance) | `0.1.2` | Hash-linked traces, bundles, signatures, and redaction |
-| [`ajnas-skills-registry`](./ajnas-skills-registry) | `0.2.0` | Signed skill manifests and install policy |
-| [`ajnas-connectors`](./ajnas-connectors) | `0.1.1` | Connector manifests, permissions, and trust evaluation |
-| [`ajnas-evals`](./ajnas-evals) | `0.1.1` | Deterministic assertions and verifiable evaluation reports |
-| [`ajnas-browser-research`](./ajnas-browser-research) | `0.1.2` | Policy-aware research plans, replay adapters, citations, and evidence exports |
+| [`ajnas-runtime`](./ajnas-runtime) | `0.2.1` | Ordered workflows and policy-gated tool calls |
+| [`ajnas-policy`](./ajnas-policy) | `0.1.2` | Declarative allow, deny, and approval decisions |
+| [`ajnas-approvals`](./ajnas-approvals) | `0.1.2` | Human review tickets, delegation, escalation, and audit history |
+| [`ajnas-provenance`](./ajnas-provenance) | `0.1.3` | Hash-linked traces, bundles, signatures, and redaction |
+| [`ajnas-skills-registry`](./ajnas-skills-registry) | `0.2.1` | Signed skill manifests and install policy |
+| [`ajnas-connectors`](./ajnas-connectors) | `0.1.2` | Connector manifests, permissions, and trust evaluation |
+| [`ajnas-evals`](./ajnas-evals) | `0.1.2` | Deterministic assertions and verifiable evaluation reports |
+| [`ajnas-browser-research`](./ajnas-browser-research) | `0.1.3` | Policy-aware research plans, replay adapters, citations, and evidence exports |
 
 ## Install
 

@@ -31,4 +31,4 @@ export type {
 export { runDeterministicDemo } from "./demo.js";
 export type { ProductLoopDemoResult } from "./demo.js";
 
-export const PRODUCTLOOP_OS_VERSION = "0.2.0";
+export const PRODUCTLOOP_OS_VERSION = "0.2.1";

@@ -1,6 +1,6 @@
 # Publish Checklist
 
-`ajnas-evals@0.1.1` is the current public peer-compatibility release. This checklist records its release gate; every later version or different target requires fresh authorization.
+Selected release: `ajnas-evals@0.1.2`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 Before publishing:
 

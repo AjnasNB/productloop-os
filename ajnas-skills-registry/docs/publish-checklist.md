@@ -1,6 +1,6 @@
 # ajnas-skills-registry Publish Checklist
 
-`ajnas-skills-registry@0.2.0` is the current public signed-manifest and policy-contract release. This checklist records its release gate; every later version or different target requires fresh authorization.
+Selected release: `ajnas-skills-registry@0.2.1`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Preflight
 
@@ -19,7 +19,7 @@ Confirm the exact version is absent before publishing. If it already exists, sto
 
 ## Approval Gate
 
-The selected release is `0.2.0`. Preserve the approval date, target, and exact version in the release evidence when publication is separately authorized.
+The selected release is `0.2.1`. Preserve the approval date, target, exact commit, and exact manifest in the release evidence when publication is authorized.
 
 ## Publish boundary
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 - 2026-07-17
+
+- Raised the coordinated peer floors to runtime `^0.2.1`, policy and connectors `^0.1.2`, and provenance `^0.1.3`.
+- Prepared the package for exact tarball, integrity, and provenance verification through npm Trusted Publishing.
+
 ## 0.1.1 - 2026-07-15
 
 - Validate approval requests plus review, delegation, and cancellation identities, decisions, reasons, timestamps, and JSON metadata before mutating tickets.

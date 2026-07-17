@@ -1,8 +1,8 @@
 # Publish Checklist
 
-Package: `ajnas-connectors@0.1.1`
+Selected release: `ajnas-connectors@0.1.2`
 
-`ajnas-connectors@0.1.1` was authorized and published to the public npm registry on 2026-07-15. This checklist records that release gate; every later version or different target requires fresh authorization.
+This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Required Verification
 

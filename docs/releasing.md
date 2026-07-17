@@ -2,7 +2,19 @@
 
 Publishing is a human-authorized external side effect. Normal builds, tests, pull requests, Dependabot updates, and merges never publish npm packages.
 
-The repository currently uses public `maqam@0.2.4` as its tested integration baseline. The nine workspace package versions already present on npm are immutable; do not dispatch the release workflow until a reviewed change bumps every version in the coordinated release.
+The repository currently uses public `maqam@0.2.4` as its tested integration baseline. The nine previous workspace package versions already present on npm are immutable. This release source selects the following fresh coordinated versions:
+
+| Package | Version |
+| --- | ---: |
+| `ajnas-runtime` | `0.2.1` |
+| `ajnas-skills-registry` | `0.2.1` |
+| `ajnas-provenance` | `0.1.3` |
+| `ajnas-policy` | `0.1.2` |
+| `ajnas-evals` | `0.1.2` |
+| `ajnas-connectors` | `0.1.2` |
+| `ajnas-approvals` | `0.1.2` |
+| `ajnas-browser-research` | `0.1.3` |
+| `productloop-os` | `0.2.1` |
 
 ## Trusted Publisher configuration
 

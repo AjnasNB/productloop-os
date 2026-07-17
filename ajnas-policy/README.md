@@ -96,4 +96,4 @@ ajnas-policy evaluate fixtures/enterprise-release-policy.json fixtures/publish-r
 
 ## Release Status
 
-Version `0.1.1` is the current public release with strict policy, request, decision, and approval validation.
+Version `0.1.2` is the coordinated trusted-publishing patch with strict policy, request, decision, and approval validation.

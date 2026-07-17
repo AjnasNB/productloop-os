@@ -1,8 +1,8 @@
 # Publish Checklist
 
-Package: `ajnas-provenance@0.1.2`
+Selected release: `ajnas-provenance@0.1.3`
 
-`ajnas-provenance@0.1.2` was authorized and published to the public npm registry on 2026-07-15. This checklist records that release gate; every later version or different target requires fresh authorization.
+This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Required Verification
 
@@ -22,7 +22,7 @@ npm view ajnas-provenance version --json
 
 ## Approval Gate
 
-The `0.1.2` patch release approval is recorded. Confirm the exact version is absent before publishing; if it already exists, stop because npm versions are immutable.
+Confirm `0.1.3` is absent before publishing. If it already exists, stop because npm versions are immutable; an existing version may be skipped only by the protected workflow after exact identity verification.
 
 Future coordinated versions are published only by the protected Trusted Publishing workflow. Do not run `npm publish` locally or provide a reusable npm token. Follow the exact manifest, environment approval, and leaf-first order in [the monorepo release process](../../docs/releasing.md).
 

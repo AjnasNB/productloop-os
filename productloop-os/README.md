@@ -105,7 +105,7 @@ See the [Maqam and ProductLoop guide](https://github.com/AjnasNB/productloop-os/
 
 For participation and support, use the [community hub](https://maqamagent.com/community/), [GitHub Discussions](https://github.com/AjnasNB/productloop-os/discussions), [contribution guide](https://github.com/AjnasNB/productloop-os/blob/main/CONTRIBUTING.md), [governance policy](https://github.com/AjnasNB/productloop-os/blob/main/GOVERNANCE.md), [Code of Conduct](https://github.com/AjnasNB/productloop-os/blob/main/CODE_OF_CONDUCT.md), [support guide](https://github.com/AjnasNB/productloop-os/blob/main/SUPPORT.md), and [security policy](https://github.com/AjnasNB/productloop-os/blob/main/SECURITY.md).
 
-The current public umbrella release is `productloop-os@0.2.0`.
+The coordinated umbrella patch is `productloop-os@0.2.1`.
 
 ## License
 

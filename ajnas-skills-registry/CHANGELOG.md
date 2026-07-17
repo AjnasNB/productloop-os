@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 - 2026-07-17
+
+- Raised the `ajnas-runtime` peer floor to `^0.2.1` for the coordinated ProductLoop patch release.
+- Prepared the package for exact tarball, integrity, and provenance verification through npm Trusted Publishing.
+
 ## 0.2.0 - 2026-07-15
 
 - Made the install policy deny unrelated tools instead of allowing on a non-match.

@@ -1,6 +1,6 @@
 # Publish Checklist
 
-`ajnas-approvals@0.1.1` was authorized and published to the public npm registry on 2026-07-15. This checklist records that release gate; every later version or different target requires fresh authorization.
+Selected release: `ajnas-approvals@0.1.2`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Pre-Publish Verification
 
@@ -22,12 +22,12 @@ npm view ajnas-approvals version --json
 
 Confirm the exact version is absent before publishing. If it already exists, stop; npm versions are immutable.
 
-## Recorded Approval
+## Approval Evidence Required
 
 The release evidence records:
 
 - package name: `ajnas-approvals`
-- version: `0.1.1`
+- version: `0.1.2`
 - target registry: npm public registry
 - approver identity
 - approval timestamp

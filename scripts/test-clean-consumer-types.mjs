@@ -22,15 +22,15 @@ const localPackageNames = [
   "productloop-os",
 ];
 const expectedLocalVersions = new Map([
-  ["ajnas-runtime", "0.2.0"],
-  ["ajnas-skills-registry", "0.2.0"],
-  ["ajnas-provenance", "0.1.2"],
-  ["ajnas-policy", "0.1.1"],
-  ["ajnas-evals", "0.1.1"],
-  ["ajnas-connectors", "0.1.1"],
-  ["ajnas-approvals", "0.1.1"],
-  ["ajnas-browser-research", "0.1.2"],
-  ["productloop-os", "0.2.0"],
+  ["ajnas-runtime", "0.2.1"],
+  ["ajnas-skills-registry", "0.2.1"],
+  ["ajnas-provenance", "0.1.3"],
+  ["ajnas-policy", "0.1.2"],
+  ["ajnas-evals", "0.1.2"],
+  ["ajnas-connectors", "0.1.2"],
+  ["ajnas-approvals", "0.1.2"],
+  ["ajnas-browser-research", "0.1.3"],
+  ["productloop-os", "0.2.1"],
 ]);
 const packageNames = maqamPackageDirectory ? ["maqam", ...localPackageNames] : localPackageNames;
 
@@ -206,7 +206,7 @@ async function main() {
         "export const browserSigningOptions: Pick<SignResearchProvenanceOptions, \"privateKey\"> = {",
         '  privateKey: "browser-private-key",',
         "};",
-        'export const productLoopVersion: "0.2.0" = PRODUCTLOOP_OS_VERSION;',
+        'export const productLoopVersion: "0.2.1" = PRODUCTLOOP_OS_VERSION;',
         "",
       ].join("\n"),
       "utf8",

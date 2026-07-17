@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 - 2026-07-17
+
+- Prepared the runtime as the leaf package in the coordinated ProductLoop trusted-publishing release set.
+- Added no runtime behavior change; this patch provides a fresh immutable npm version for exact artifact and provenance verification.
+
 ## 0.2.0 - 2026-07-15
 
 - Removed executable tool callbacks from policy requests and validate all custom policy decisions before execution.

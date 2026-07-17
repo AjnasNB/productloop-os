@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 - 2026-07-17
+
+- Raised peer floors to runtime `^0.2.1`, policy `^0.1.2`, and provenance `^0.1.3` for the coordinated ProductLoop patch release.
+- Prepared the package for exact tarball, integrity, and provenance verification through npm Trusted Publishing.
+
 ## 0.1.1 - 2026-07-15
 
 - Reject truthy non-boolean approvals, empty approver identities, malformed comments, and non-JSON resolution metadata.

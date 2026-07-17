@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 - 2026-07-17
+
+- Raised peer floors to `ajnas-runtime` `^0.2.1` and `ajnas-provenance` `^0.1.3` for the coordinated ProductLoop patch release.
+- Prepared the package for exact tarball, integrity, and provenance verification through npm Trusted Publishing.
+
 ## 0.1.1 - 2026-07-15
 
 - Added strict runtime validation for policy bundles, match criteria, JSON values, and unknown fields so malformed deny rules cannot fall through to an allow default.

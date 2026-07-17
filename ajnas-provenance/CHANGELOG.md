@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3 - 2026-07-17
+
+- Raised peer floors to `ajnas-runtime` and `ajnas-skills-registry` `^0.2.1` for the coordinated ProductLoop patch release.
+- Prepared the package for exact tarball, integrity, and provenance verification through npm Trusted Publishing.
+
 ## 0.1.2 - 2026-07-15
 
 - Recompute bundle integrity during signature verification, defensively clone signed bundles, and fail closed for non-canonical values, malformed algorithms/signatures/keys, or tampered contents.

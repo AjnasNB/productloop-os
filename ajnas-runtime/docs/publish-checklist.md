@@ -1,11 +1,11 @@
 # Publish Checklist
 
-`ajnas-runtime@0.2.0` is the current public security-boundary release. This checklist records its release gate; every later version or different target requires fresh authorization.
+Selected release: `ajnas-runtime@0.2.1`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Preflight
 
 - [x] Package name selected: `ajnas-runtime`
-- [x] Version selected: `0.2.0`
+- [x] Version selected: `0.2.1`
 - [x] License selected: MIT
 - [x] README present
 - [x] CHANGELOG present
@@ -15,9 +15,9 @@
 - [x] Tests present
 - [x] Build script present
 - [x] Package dry-run script present
-- [x] User approves publishing this exact release
-- [x] npm account/scope ownership verified
-- [x] npm credential available only in the release environment
+- [ ] Exact source commit and nine-package manifest reviewed
+- [ ] npm Trusted Publisher entry matches the repository workflow and environment
+- [ ] Protected `npm-publish` environment approved by the maintainer
 
 ## Verification Commands
 
@@ -37,5 +37,6 @@ Future coordinated versions are published only by the protected Trusted Publishi
 
 ## Post-Publish
 
-- Create the annotated monorepo release tag from the exact verified source commit.
-- Record package URL, tarball integrity, and publish timestamp in the automation memory.
+- [ ] Verify version, integrity, SLSA provenance, downloaded tarball SHA-256, and installed registry signatures.
+- [ ] Create the annotated monorepo release tag from the exact verified source commit.
+- [ ] Record the package URL, workflow run, integrity, and publish timestamp in the GitHub release.

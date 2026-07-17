@@ -1,6 +1,6 @@
 {
   "name": "ajnas-policy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Declarative policy bundles, runtime decisions, approval gates, and audit receipts for Ajnas agent infrastructure.",
   "type": "module",
   "license": "MIT",
@@ -61,8 +61,8 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "ajnas-provenance": "^0.1.2",
-    "ajnas-runtime": "^0.2.0"
+    "ajnas-provenance": "^0.1.3",
+    "ajnas-runtime": "^0.2.1"
   },
   "peerDependenciesMeta": {
     "ajnas-runtime": {

@@ -27,7 +27,7 @@ function baseManifest(overrides: Partial<SkillManifest> = {}): SkillManifest {
       value: "./dist/research-brief.js"
     },
     compatibility: {
-      ajnasRuntime: "^0.2.0"
+      ajnasRuntime: "^0.2.1"
     },
     capabilities: [
       {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3 - 2026-07-17
+
+- Raised all ProductLoop peer floors to the coordinated patch set: runtime `^0.2.1`, approvals, connectors, and policy `^0.1.2`, and provenance `^0.1.3`.
+- Prepared the package for exact tarball, integrity, and provenance verification through npm Trusted Publishing.
+
 ## 0.1.2 - 2026-07-15
 
 - Require approval resolutions to echo the exact request id and validate reviewer identity and decision time before adapter execution.

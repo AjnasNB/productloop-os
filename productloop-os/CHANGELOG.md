@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 - 2026-07-17
+
+- Raised all eight ProductLoop dependency floors to the coordinated patch release set while retaining the public `maqam@^0.2.4` baseline.
+- Added an offline Maqam `0.2.4` adapter-routing and conformance fixture to verify the umbrella integration without accounts, model calls, network requests, or side effects.
+- Prepared all nine packages for leaf-first npm Trusted Publishing with exact tarball hashes, integrity, SLSA provenance, and registry signature verification.
+
 ## 0.2.0 - 2026-07-15
 
 - Raised all security-patched dependency floors, including Maqam `^0.2.2`.
