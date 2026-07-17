@@ -302,8 +302,20 @@ jobs:
 
             registry_dir="${RUNNER_TEMP}/registry-${package_name}"
             mkdir -p "${registry_dir}"
-            npm pack "${package_name}@${package_version}" --ignore-scripts --pack-destination "${registry_dir}" >/dev/null
             registry_tarball="${registry_dir}/${package_name}-${package_version}.tgz"
+            downloaded="false"
+            for ((attempt = 1; attempt <= 24; attempt += 1)); do
+              rm -f "${registry_tarball}"
+              if npm pack "${package_name}@${package_version}" --ignore-scripts --pack-destination "${registry_dir}" >/dev/null; then
+                downloaded="true"
+                break
+              fi
+              if (( attempt < 24 )); then sleep 5; fi
+            done
+            if [[ "${downloaded}" != "true" ]]; then
+              echo "Registry tarball did not become available for ${package_name}@${package_version}." >&2
+              exit 1
+            fi
             registry_sha256="$(sha256sum "${registry_tarball}" | awk '{print $1}')"
             if [[ "${registry_sha256}" != "${expected_sha256}" ]]; then
               echo "Downloaded ${package_name}@${package_version} does not match the approved SHA-256." >&2
@@ -332,7 +344,19 @@ jobs:
           for (const [name, entry] of Object.entries(manifest)) console.log(`${name}@${entry.version}`);
           NODE
           )
-          npm install --ignore-scripts "${exact_packages[@]}"
+          installed="false"
+          for ((attempt = 1; attempt <= 24; attempt += 1)); do
+            rm -rf node_modules package-lock.json
+            if npm install --ignore-scripts "${exact_packages[@]}"; then
+              installed="true"
+              break
+            fi
+            if (( attempt < 24 )); then sleep 5; fi
+          done
+          if [[ "${installed}" != "true" ]]; then
+            echo "Registry packages did not become jointly installable before the retry limit." >&2
+            exit 1
+          fi
           npm audit signatures
 
       - name: Summarize verified publication
