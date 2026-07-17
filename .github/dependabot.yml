@@ -9,6 +9,12 @@ updates:
       timezone: Asia/Kolkata
     open-pull-requests-limit: 5
     versioning-strategy: increase-if-necessary
+    ignore:
+      # Major toolchain upgrades are scheduled explicitly against the full
+      # Node 20/22/24 workspace matrix instead of entering release work.
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
     commit-message:
       prefix: deps
       include: scope
