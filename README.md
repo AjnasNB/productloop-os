@@ -13,7 +13,7 @@ The ecosystem is a governance toolkit, not a claim of autonomous intelligence. I
 | Package | Version or range | Responsibility |
 | --- | ---: | --- |
 | [`productloop-os`](./productloop-os) | `0.2.0` | One install, named namespaces, tested adapters, and composition helpers |
-| [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.2` dependency | Governed execution kernel, exact approvals, evidence, CLI-agent tools, and crawler-backed research |
+| [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
 | [`ajnas-runtime`](./ajnas-runtime) | `0.2.0` | Ordered workflows and policy-gated tool calls |
 | [`ajnas-policy`](./ajnas-policy) | `0.1.1` | Declarative allow, deny, and approval decisions |
 | [`ajnas-approvals`](./ajnas-approvals) | `0.1.1` | Human review tickets, delegation, escalation, and audit history |
@@ -80,7 +80,7 @@ npm run integration
 npm run pack
 ```
 
-Maqam `^0.2.2` is the supported crawler floor, and the canonical workspace lockfile resolves it from the public registry. Local development and release verification must not commit a sibling checkout or filesystem link in place of that registry dependency.
+Maqam `^0.2.4` is the supported integration floor, and the canonical workspace lockfile resolves the public `maqam@0.2.4` artifact. The ProductLoop integration suite exercises the 0.2.4 adapter contract through the exposed Maqam gateway. Local development and release verification must not commit a sibling checkout or filesystem link in place of that registry dependency.
 
 See [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), and [release process](./docs/releasing.md).
 

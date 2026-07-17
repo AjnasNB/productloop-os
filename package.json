@@ -26,6 +26,7 @@
     "pack": "npm run pack:dry --workspaces --if-present",
     "integration": "npm run build && npm run test --workspace=productloop-os && npm run example --workspace=productloop-os && npm run cli:doctor --workspace=productloop-os",
     "test:consumer-types": "node scripts/test-clean-consumer-types.mjs",
+    "release:manifest": "node scripts/release-manifest.mjs",
     "verify": "npm run build && npm run test:workspaces && npm run typecheck && npm run integration && npm run test:consumer-types && npm run pack"
   },
   "optionalDependencies": {

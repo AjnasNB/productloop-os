@@ -32,12 +32,8 @@ The release evidence records:
 - approver identity
 - approval timestamp
 
-## Publish Commands
+## Publish boundary
 
-Run only for the authorized version after all verification passes:
-
-```sh
-npm publish --access public
-```
+Future coordinated versions are published only by the protected Trusted Publishing workflow. Do not run `npm publish` locally or provide a reusable npm token. Follow the exact manifest, environment approval, and leaf-first order in [the monorepo release process](../../docs/releasing.md).
 
 Record the resulting npm URL, package integrity, git tag, and approval ticket evidence in the release notes.

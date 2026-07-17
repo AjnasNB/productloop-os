@@ -1,62 +1,95 @@
 # Release process
 
-This monorepo is designed for deliberate, inspectable npm releases. Publishing is a human-authorized external side effect and is not part of the build or test scripts.
+Publishing is a human-authorized external side effect. Normal builds, tests, pull requests, Dependabot updates, and merges never publish npm packages.
 
-## Coordinated release order
+The repository currently uses public `maqam@0.2.4` as its tested integration baseline. The nine workspace package versions already present on npm are immutable; do not dispatch the release workflow until a reviewed change bumps every version in the coordinated release.
 
-`maqam@0.2.2` is the registry-backed crawler floor. For the current coordinated release, publish only after Maqam is public, a clean reviewed commit is available, and explicit authorization is given, in this order:
+## Trusted Publisher configuration
 
-1. `ajnas-runtime@0.2.0`.
-2. `ajnas-skills-registry@0.2.0`.
-3. `ajnas-provenance@0.1.2`.
-4. `ajnas-policy@0.1.1`.
-5. `ajnas-evals@0.1.1` and `ajnas-connectors@0.1.1`.
-6. `ajnas-approvals@0.1.1`.
-7. `ajnas-browser-research@0.1.2`.
-8. `productloop-os@0.2.0`, after every declared dependency resolves from the public registry.
+Configure a Trusted Publisher separately on npm for each package:
 
-The packages use normal semver dependencies in publishable manifests. Do not publish a manifest containing a local `file:` path, workspace-only alias, or unpublished version.
+- `ajnas-runtime`
+- `ajnas-skills-registry`
+- `ajnas-provenance`
+- `ajnas-policy`
+- `ajnas-evals`
+- `ajnas-connectors`
+- `ajnas-approvals`
+- `ajnas-browser-research`
+- `productloop-os`
 
-For later releases, publish only changed packages. Publish dependencies before dependents, and publish `productloop-os` last whenever one of its declared dependency versions changes.
+Every npm publisher entry must use these exact values:
 
-## Per-package gate
+| Setting | Value |
+| --- | --- |
+| Provider | GitHub Actions |
+| Organization or user | `AjnasNB` |
+| Repository | `productloop-os` |
+| Workflow filename | `publish-npm.yml` |
+| Environment | `npm-publish` |
 
-From a clean checkout on a supported Node.js version:
+Create the GitHub `npm-publish` environment with required maintainer review and deployment restricted to protected `main`. Disable or avoid administrator bypass. The workflow stores no npm token and does not use a recovery code, automation token, `NODE_AUTH_TOKEN`, or repository secret. Revoke any reusable npm credential that has appeared in chat, logs, or shell history.
+
+Only the protected publish job receives `id-token: write`. The unprivileged verify job installs dependencies, runs all tests and audits, builds the packages, creates nine tarballs, checks their exact hashes, and uploads them as a one-day workflow artifact. After environment approval, the OIDC job downloads those same tarballs; it does not install workspace dependencies or run package lifecycle scripts.
+
+## Prepare an exact release
+
+Start from a clean, reviewed `main` commit. Update package versions and changelogs deliberately, then update internal dependency ranges when a dependency version changes. A coordinated run requires a new version for all nine packages.
+
+Run:
 
 ```sh
+npm install --global npm@11.18.0 --ignore-scripts
+npm --version # must print 11.18.0
 npm ci
 npm run verify
 npm audit --audit-level=high
 npm audit --omit=dev --audit-level=high
-npm view <package>@<version> version
+npm run release:manifest
 ```
 
-Before each publish, inspect identity and tarball contents:
+The release workflow and local manifest preparation deliberately use npm `11.18.0`. Do not generate the approval manifest with another npm version: npm pack output and tarball bytes are CLI-version-sensitive. `release:manifest` packs the already-built outputs with lifecycle scripts disabled and prints the exact workflow JSON. Each entry contains only `version`, `sha256`, and npm `sha512` integrity. It writes temporary tarballs outside the repository unless `--output <directory>` is supplied.
+
+Before dispatching, confirm that the commit and working tree are exact:
 
 ```sh
-npm whoami
-npm view <package> versions --json
-npm pack --dry-run --workspace=<package>
+git status --short
+git rev-parse HEAD
 ```
 
-Then publish the selected workspace intentionally:
+Open **Actions → Publish npm packages (trusted) → Run workflow** from `main` and supply:
 
-```sh
-npm publish --workspace=<package>
-```
+1. `expected_commit`: the full lowercase 40-character output of `git rev-parse HEAD`.
+2. `release_manifest`: the complete JSON printed by `npm run release:manifest`.
+3. `confirmation`: `publish productloop-os packages from COMMIT`, replacing `COMMIT` with the same full hash.
 
-Each package's `prepublishOnly` lifecycle runs tests and typechecking. Its `prepack` lifecycle rebuilds `dist` so the tarball is produced from the current source. `publishConfig.access` is public. Provenance should be enabled only from a supported trusted-publishing CI identity; this local token-based release must not claim CI provenance it cannot produce.
+The verification job must pass before GitHub offers the `npm-publish` environment approval. Review the commit and manifest summary, then use normal **Approve and deploy**. Do not use an administrator bypass.
 
-## Credential rules
+## Enforced publication order
 
-- Never write an npm token, recovery code, or bypass credential into a manifest, `.npmrc`, source file, documentation, issue, shell history, test fixture, or CI log.
-- Prefer npm trusted publishing for CI. For a local release, use npm's interactive authentication or a short-lived environment-scoped credential.
-- If a credential appears in chat, logs, or a command line, rotate it before relying on it.
-- Confirm package ownership and account identity immediately before publishing.
-- Keep the public publish step distinct from tests; no lifecycle script in this repository calls `npm publish`.
+The protected job publishes and verifies one exact tarball at a time:
 
-## Post-publish verification
+1. `ajnas-runtime`
+2. `ajnas-skills-registry`
+3. `ajnas-provenance`
+4. `ajnas-policy`
+5. `ajnas-evals`
+6. `ajnas-connectors`
+7. `ajnas-approvals`
+8. `ajnas-browser-research`
+9. `productloop-os`
 
-Use a fresh temporary consumer project, install the exact public versions, import every namespace, run `productloop-os doctor`, and execute the deterministic example. Confirm that repository, homepage, bugs, license, files, bin entries, types, and provenance metadata appear correctly in the registry.
+For every package, the workflow verifies registry version, integrity, SLSA provenance, downloaded tarball SHA-256, and installed registry signatures. `productloop-os` is always last.
 
-If any check fails, stop the sequence. npm versions are immutable; fix the issue, increment the affected version, document the reason, and publish a new version rather than attempting to overwrite the existing one.
+npm has no multi-package transaction. If a run stops after publishing some leaves, fix the external cause and rerun the same approved commit and manifest. A previously published version is skipped only when its registry integrity, provenance, downloaded SHA-256, and any reported `gitHead` match the approved identity exactly; any difference fails closed.
+
+## Post-release
+
+After all nine registry checks pass:
+
+1. Install the exact public versions in a fresh consumer and run `productloop-os doctor` and the deterministic example.
+2. Create signed or annotated Git tags only after npm success.
+3. Publish GitHub release notes that list the exact package versions and workflow run.
+4. Update website version tables and install commands, then run the website's live checks before deployment.
+
+If registry verification fails, do not attempt to overwrite a version. npm versions are immutable; correct the source, increment the affected version, regenerate the complete manifest, and run a newly reviewed release.

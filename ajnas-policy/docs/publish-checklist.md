@@ -19,13 +19,9 @@ npm view ajnas-policy version --json
 
 Confirm the exact version is absent before publishing. If it already exists, stop; npm versions are immutable.
 
-## Publish Commands
+## Publish boundary
 
-Run only for the authorized version after all verification passes:
-
-```bash
-npm publish --access public
-```
+Future coordinated versions are published only by the protected Trusted Publishing workflow. Do not run `npm publish` locally or provide a reusable npm token. Follow the exact manifest, environment approval, and leaf-first order in [the monorepo release process](../../docs/releasing.md).
 
 After publish:
 

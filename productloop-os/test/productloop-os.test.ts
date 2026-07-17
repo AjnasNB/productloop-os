@@ -1,5 +1,13 @@
 import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
+import {
+  defineToolAdapter,
+  registerToolAdapter,
+  runToolAdapterConformance
+} from "maqam";
 import {
   PRODUCTLOOP_OS_VERSION,
   createMaqamCrawlerTool,
@@ -7,6 +15,12 @@ import {
   inspectModules,
   runDeterministicDemo
 } from "../src/index.js";
+
+const require = createRequire(import.meta.url);
+const maqamEntry = require.resolve("maqam");
+const maqamPackage = JSON.parse(
+  readFileSync(join(dirname(maqamEntry), "..", "package.json"), "utf8")
+) as { version: string };
 
 describe("productloop-os", () => {
   it("exports the published package version", () => {
@@ -17,6 +31,42 @@ describe("productloop-os", () => {
     const modules = inspectModules();
     expect(modules).toHaveLength(9);
     expect(modules.every((module) => module.loaded)).toBe(true);
+  });
+
+  it("uses the public Maqam 0.2.4 integration baseline", () => {
+    expect(maqamPackage.version).toBe("0.2.4");
+  });
+
+  it("routes a Maqam 0.2.4 adapter through the ProductLoop gateway", async () => {
+    const invocations: string[] = [];
+    const adapter = defineToolAdapter<{ value: string }, { slug: string }>({
+      name: "function.productloop.slug",
+      transport: "function",
+      description: "Create a deterministic slug in an offline fixture.",
+      effects: [],
+      risk: "low",
+      async invoke(input) {
+        invocations.push(input.value);
+        return { slug: input.value.toLowerCase().replaceAll(" ", "-") };
+      }
+    });
+    const os = createProductLoopOS({
+      maqamPolicy: { allowedTools: [adapter.name] }
+    });
+
+    registerToolAdapter(os.maqamGateway, adapter);
+    await expect(os.maqamGateway.call(
+      adapter.name,
+      { value: "ProductLoop Maqam" },
+      { runId: "run_maqam_0_2_4_adapter" }
+    )).resolves.toEqual({ slug: "productloop-maqam" });
+    expect(invocations).toEqual(["ProductLoop Maqam"]);
+
+    const conformance = await runToolAdapterConformance(adapter, {
+      input: { value: "Offline Contract" },
+      verifyOutput: (output) => output.slug === "offline-contract"
+    });
+    expect(conformance.passed).toBe(true);
   });
 
   it("uses a deny-by-default runtime composition", async () => {

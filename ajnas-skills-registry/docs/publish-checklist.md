@@ -21,13 +21,9 @@ Confirm the exact version is absent before publishing. If it already exists, sto
 
 The selected release is `0.2.0`. Preserve the approval date, target, and exact version in the release evidence when publication is separately authorized.
 
-## Publish Command
+## Publish boundary
 
-Run only after approval and npm authentication are confirmed:
-
-```bash
-npm publish --access public
-```
+Future coordinated versions are published only by the protected Trusted Publishing workflow. Do not run `npm publish` locally or provide a reusable npm token. Follow the exact manifest, environment approval, and leaf-first order in [the monorepo release process](../../docs/releasing.md).
 
 ## Post-Publish Evidence
 

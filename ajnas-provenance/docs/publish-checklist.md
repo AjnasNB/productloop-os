@@ -24,10 +24,6 @@ npm view ajnas-provenance version --json
 
 The `0.1.2` patch release approval is recorded. Confirm the exact version is absent before publishing; if it already exists, stop because npm versions are immutable.
 
-Approved publish command:
-
-```bash
-npm publish --access public
-```
+Future coordinated versions are published only by the protected Trusted Publishing workflow. Do not run `npm publish` locally or provide a reusable npm token. Follow the exact manifest, environment approval, and leaf-first order in [the monorepo release process](../../docs/releasing.md).
 
 Future versions, different registries, announcements, emails, and unrelated external actions require their own authorization.

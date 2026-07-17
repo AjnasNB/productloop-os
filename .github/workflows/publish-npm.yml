@@ -1,0 +1,348 @@
+name: Publish npm packages (trusted)
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_commit:
+        description: Exact 40-character main commit approved for release
+        required: true
+        type: string
+      release_manifest:
+        description: JSON object containing exact version, SHA-256, and sha512 integrity for all nine packages
+        required: true
+        type: string
+      confirmation:
+        description: Type publish productloop-os packages from COMMIT
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish-productloop-os
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify nine approved artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      manifest_sha256: ${{ steps.pack.outputs.manifest_sha256 }}
+    env:
+      EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+      RELEASE_MANIFEST: ${{ inputs.release_manifest }}
+      CONFIRMATION: ${{ inputs.confirmation }}
+    steps:
+      - name: Validate dispatch boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "Trusted publishing must be dispatched from main." >&2
+            exit 1
+          fi
+          if [[ ! "${EXPECTED_COMMIT}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "expected_commit must be a lowercase 40-character Git commit." >&2
+            exit 1
+          fi
+          if [[ "${GITHUB_SHA}" != "${EXPECTED_COMMIT}" ]]; then
+            echo "The dispatched main commit does not match expected_commit." >&2
+            exit 1
+          fi
+          if [[ "${CONFIRMATION}" != "publish productloop-os packages from ${EXPECTED_COMMIT}" ]]; then
+            echo "Confirmation must exactly equal: publish productloop-os packages from ${EXPECTED_COMMIT}" >&2
+            exit 1
+          fi
+
+      - name: Checkout approved commit
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.15.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Setup trusted-publishing npm CLI
+        run: npm install --global npm@11.18.0 --ignore-scripts
+
+      - name: Verify toolchain
+        run: |
+          node --version
+          npm --version
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Run full monorepo verification
+        run: npm run verify
+
+      - name: Audit complete dependency graph
+        run: npm audit --audit-level=high
+
+      - name: Audit production dependency graph
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Require committed generated state
+        run: git diff --exit-code
+
+      - name: Pack and verify exact release artifacts
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          pack_dir="${RUNNER_TEMP}/release-pack"
+          mkdir -p "${pack_dir}"
+          node scripts/release-manifest.mjs \
+            --verify-env \
+            --output "${pack_dir}" \
+            > "${RUNNER_TEMP}/actual-release-manifest.json"
+          manifest_sha256="$(sha256sum "${RUNNER_TEMP}/actual-release-manifest.json" | awk '{print $1}')"
+          echo "manifest_sha256=${manifest_sha256}" >> "${GITHUB_OUTPUT}"
+
+      - name: Validate fail-closed registry state
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE' > "${RUNNER_TEMP}/release-packages.tsv"
+          const manifest = JSON.parse(process.env.RELEASE_MANIFEST);
+          const order = [
+            "ajnas-runtime",
+            "ajnas-skills-registry",
+            "ajnas-provenance",
+            "ajnas-policy",
+            "ajnas-evals",
+            "ajnas-connectors",
+            "ajnas-approvals",
+            "ajnas-browser-research",
+            "productloop-os"
+          ];
+          for (const name of order) {
+            const entry = manifest[name];
+            console.log(`${name}\t${entry.version}\t${entry.sha256}\t${entry.integrity}`);
+          }
+          NODE
+          expected_predicate="https://slsa.dev/provenance/v1"
+          while IFS=$'\t' read -r package_name package_version expected_sha256 expected_integrity; do
+            registry_error="${RUNNER_TEMP}/npm-view-${package_name}.err"
+            if npm view "${package_name}@${package_version}" version >/dev/null 2>"${registry_error}"; then
+              published_integrity="$(npm view "${package_name}@${package_version}" dist.integrity)"
+              published_predicate="$(npm view "${package_name}@${package_version}" dist.attestations.provenance.predicateType 2>/dev/null || true)"
+              published_git_head="$(npm view "${package_name}@${package_version}" gitHead 2>/dev/null || true)"
+              if [[ "${published_integrity}" != "${expected_integrity}" \
+                || "${published_predicate}" != "${expected_predicate}" ]]; then
+                echo "Existing ${package_name}@${package_version} does not match the approved integrity and provenance." >&2
+                exit 1
+              fi
+              if [[ -n "${published_git_head}" && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
+                echo "Existing ${package_name}@${package_version} has unexpected gitHead ${published_git_head}." >&2
+                exit 1
+              fi
+              registry_dir="${RUNNER_TEMP}/preflight-${package_name}"
+              mkdir -p "${registry_dir}"
+              npm pack "${package_name}@${package_version}" --ignore-scripts --pack-destination "${registry_dir}" >/dev/null
+              registry_sha256="$(sha256sum "${registry_dir}/${package_name}-${package_version}.tgz" | awk '{print $1}')"
+              if [[ "${registry_sha256}" != "${expected_sha256}" ]]; then
+                echo "Existing ${package_name}@${package_version} does not match the approved SHA-256." >&2
+                exit 1
+              fi
+              echo "${package_name}@${package_version} already exists with the exact approved identity; a protected retry may skip it."
+            elif grep -Eq "E404|404 Not Found" "${registry_error}"; then
+              echo "${package_name}@${package_version} is unpublished."
+            else
+              cat "${registry_error}" >&2
+              echo "Could not establish registry state for ${package_name}@${package_version}." >&2
+              exit 1
+            fi
+          done < "${RUNNER_TEMP}/release-packages.tsv"
+
+      - name: Upload verified tarballs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: productloop-release-${{ github.sha }}
+          path: ${{ runner.temp }}/release-pack/*.tgz
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Summarize approval boundary
+        shell: bash
+        run: |
+          {
+            echo "## Verified ProductLoop npm release"
+            echo
+            echo "- Commit: \`${EXPECTED_COMMIT}\`"
+            echo "- Manifest SHA-256: \`${{ steps.pack.outputs.manifest_sha256 }}\`"
+            echo "- Package count: 9"
+            echo "- Registry state: every version is unpublished or already has the exact approved identity"
+            echo "- Next boundary: protected \`npm-publish\` environment approval"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+  publish:
+    name: Publish leaf-first after maintainer approval
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment:
+      name: npm-publish
+      url: https://www.npmjs.com/package/productloop-os
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+      RELEASE_MANIFEST: ${{ inputs.release_manifest }}
+    steps:
+      - name: Checkout verified commit
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.15.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Setup trusted-publishing npm CLI
+        run: npm install --global npm@11.18.0 --ignore-scripts
+
+      - name: Download verified tarballs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: productloop-release-${{ github.sha }}
+          path: ${{ runner.temp }}/release-pack
+
+      - name: Reverify protected-job inputs and tarballs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_SHA}" != "${EXPECTED_COMMIT}" ]]; then
+            echo "Protected job commit does not match the approved commit." >&2
+            exit 1
+          fi
+          node scripts/release-manifest.mjs \
+            --verify-env \
+            --verify-directory "${RUNNER_TEMP}/release-pack" \
+            > "${RUNNER_TEMP}/protected-release-manifest.json"
+          manifest_sha256="$(sha256sum "${RUNNER_TEMP}/protected-release-manifest.json" | awk '{print $1}')"
+          if [[ "${manifest_sha256}" != "${{ needs.verify.outputs.manifest_sha256 }}" ]]; then
+            echo "Release manifest changed after verification." >&2
+            exit 1
+          fi
+
+      - name: Publish and verify nine packages in dependency order
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_predicate="https://slsa.dev/provenance/v1"
+          order=(
+            ajnas-runtime
+            ajnas-skills-registry
+            ajnas-provenance
+            ajnas-policy
+            ajnas-evals
+            ajnas-connectors
+            ajnas-approvals
+            ajnas-browser-research
+            productloop-os
+          )
+          for package_name in "${order[@]}"; do
+            package_version="$(node --input-type=module -e 'const value=JSON.parse(process.env.RELEASE_MANIFEST); process.stdout.write(value[process.argv[1]].version)' "${package_name}")"
+            expected_sha256="$(node --input-type=module -e 'const value=JSON.parse(process.env.RELEASE_MANIFEST); process.stdout.write(value[process.argv[1]].sha256)' "${package_name}")"
+            expected_integrity="$(node --input-type=module -e 'const value=JSON.parse(process.env.RELEASE_MANIFEST); process.stdout.write(value[process.argv[1]].integrity)' "${package_name}")"
+            tarball="${RUNNER_TEMP}/release-pack/${package_name}-${package_version}.tgz"
+
+            registry_error="${RUNNER_TEMP}/npm-view-protected-${package_name}.err"
+            already_published="false"
+            if npm view "${package_name}@${package_version}" version >/dev/null 2>"${registry_error}"; then
+              already_published="true"
+            elif ! grep -Eq "E404|404 Not Found" "${registry_error}"; then
+              cat "${registry_error}" >&2
+              echo "Could not establish registry state for ${package_name}@${package_version}." >&2
+              exit 1
+            fi
+
+            if [[ "${already_published}" != "true" ]]; then
+              # Publishing the already verified tarball keeps build tools and
+              # dependency lifecycle code outside the OIDC-enabled job.
+              npm publish "${tarball}" --access public --ignore-scripts --provenance
+            fi
+
+            verified="false"
+            published_version=""
+            published_integrity=""
+            published_predicate=""
+            published_git_head=""
+            attempt_limit=24
+            if [[ "${already_published}" == "true" ]]; then attempt_limit=1; fi
+            for ((attempt = 1; attempt <= attempt_limit; attempt += 1)); do
+              published_version="$(npm view "${package_name}@${package_version}" version 2>/dev/null || true)"
+              published_integrity="$(npm view "${package_name}@${package_version}" dist.integrity 2>/dev/null || true)"
+              published_predicate="$(npm view "${package_name}@${package_version}" dist.attestations.provenance.predicateType 2>/dev/null || true)"
+              published_git_head="$(npm view "${package_name}@${package_version}" gitHead 2>/dev/null || true)"
+              if [[ "${published_version}" == "${package_version}" \
+                && "${published_integrity}" == "${expected_integrity}" \
+                && "${published_predicate}" == "${expected_predicate}" ]]; then
+                verified="true"
+                break
+              fi
+              if (( attempt < attempt_limit )); then sleep 5; fi
+            done
+            if [[ "${verified}" != "true" ]]; then
+              echo "Registry metadata verification failed for ${package_name}@${package_version}." >&2
+              exit 1
+            fi
+            if [[ -n "${published_git_head}" && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
+              echo "Unexpected gitHead for ${package_name}@${package_version}: ${published_git_head}" >&2
+              exit 1
+            fi
+
+            registry_dir="${RUNNER_TEMP}/registry-${package_name}"
+            mkdir -p "${registry_dir}"
+            npm pack "${package_name}@${package_version}" --ignore-scripts --pack-destination "${registry_dir}" >/dev/null
+            registry_tarball="${registry_dir}/${package_name}-${package_version}.tgz"
+            registry_sha256="$(sha256sum "${registry_tarball}" | awk '{print $1}')"
+            if [[ "${registry_sha256}" != "${expected_sha256}" ]]; then
+              echo "Downloaded ${package_name}@${package_version} does not match the approved SHA-256." >&2
+              exit 1
+            fi
+
+            {
+              if [[ "${already_published}" == "true" ]]; then
+                echo "- \`${package_name}@${package_version}\`: exact prior publication verified and skipped"
+              else
+                echo "- \`${package_name}@${package_version}\`: published; SHA-256 and SLSA provenance verified"
+              fi
+            } >> "${GITHUB_STEP_SUMMARY}"
+          done
+
+      - name: Verify installed registry signatures and attestations
+        shell: bash
+        run: |
+          set -euo pipefail
+          consumer_dir="${RUNNER_TEMP}/registry-consumer"
+          mkdir -p "${consumer_dir}"
+          cd "${consumer_dir}"
+          npm init --yes >/dev/null
+          mapfile -t exact_packages < <(node --input-type=module <<'NODE'
+          const manifest = JSON.parse(process.env.RELEASE_MANIFEST);
+          for (const [name, entry] of Object.entries(manifest)) console.log(`${name}@${entry.version}`);
+          NODE
+          )
+          npm install --ignore-scripts "${exact_packages[@]}"
+          npm audit signatures
+
+      - name: Summarize verified publication
+        run: |
+          {
+            echo
+            echo "## Publication complete"
+            echo
+            echo "- Commit: \`${EXPECTED_COMMIT}\`"
+            echo "- Authentication: npm Trusted Publishing (OIDC)"
+            echo "- Order: eight leaf packages, then \`productloop-os\`"
+            echo "- Registry tarballs, integrity, provenance, and installed signatures verified"
+          } >> "${GITHUB_STEP_SUMMARY}"

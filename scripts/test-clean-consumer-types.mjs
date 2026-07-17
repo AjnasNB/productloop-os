@@ -142,8 +142,8 @@ async function main() {
         throw new Error(`Expected ${name}@${version}; received ${String(packedByName.get(name)?.version)}`);
       }
     }
-    if (maqamPackageDirectory && packedByName.get("maqam")?.version !== "0.2.2") {
-      throw new Error(`MAQAM_PACKAGE_DIR must contain maqam@0.2.2; received ${String(packedByName.get("maqam")?.version)}`);
+    if (maqamPackageDirectory && packedByName.get("maqam")?.version !== "0.2.4") {
+      throw new Error(`MAQAM_PACKAGE_DIR must contain maqam@0.2.4; received ${String(packedByName.get("maqam")?.version)}`);
     }
     const tarballs = packageNames.map((name) => {
       const entry = packedByName.get(name);
@@ -240,7 +240,7 @@ async function main() {
     await access(typescriptCli);
     await run(process.execPath, [typescriptCli, "--project", "tsconfig.json", "--pretty", "false"], consumerDirectory);
 
-    console.log(`Clean external TypeScript consumer passed for all nine workspace packages using ${maqamPackageDirectory ? "the MAQAM_PACKAGE_DIR 0.2.2 tarball" : "registry maqam@^0.2.2"}.`);
+    console.log(`Clean external TypeScript consumer passed for all nine workspace packages using ${maqamPackageDirectory ? "the MAQAM_PACKAGE_DIR 0.2.4 tarball" : "registry maqam@^0.2.4"}.`);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
   }
