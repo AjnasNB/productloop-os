@@ -64,7 +64,7 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@types/node": "^20.19.43"
+    "@types/node": "^26.1.1"
   },
   "peerDependencies": {
     "ajnas-approvals": "^0.1.1",
