@@ -1,8 +1,9 @@
 # ProductLoop Ecosystem Launch Runbook
 
 This runbook coordinates truthful, reversible launches for Maqam, Cockroach
-Crawler, Qarinah, and ProductLoop OS. It is a release gate, not announcement
-copy. Each public post must link to evidence that a signed-out user can verify.
+Crawler, a private context-ledger prototype, and ProductLoop OS. It is a release
+gate, not announcement copy. Each public post must link to evidence that a
+signed-out user can verify.
 
 ## Product Map
 
@@ -10,7 +11,7 @@ copy. Each public post must link to evidence that a signed-out user can verify.
 | --- | --- | --- |
 | Maqam | Govern registered agent operations with policy, exact approvals, traces, and evidence. | Governance kernel; do not claim control over calls that bypass registered adapters. |
 | Cockroach Crawler | Collect bounded public-source records for agent workflows. | Collection connector; do not call a prerelease stable or promise access around login, paywall, robots, or provider restrictions. |
-| Qarinah | Compile consented, provenance-linked agent activity into small cited context packs. | Context and memory layer; do not enable capture without machine-local trust or publish before the license decision. |
+| Context Ledger | Compile consented, provenance-linked agent activity into small cited context packs. | Private context and memory prototype; do not enable capture without machine-local trust or publish before the license and public-name decisions. |
 | ProductLoop OS | Compose the public packages into reviewable product and agent workflows. | Umbrella and adapters; keep package ledgers and trust boundaries explicit. |
 
 The long-term direction is a cross-platform governed agent control plane for
@@ -40,17 +41,19 @@ Every release must satisfy all applicable gates before an announcement:
    boundaries are visible before users install or enable an integration.
 10. A rollback or correction owner is available for the first 24 hours.
 
-## Required Decisions Before Qarinah Is Public
+## Required Decisions Before a Context-Ledger Release
 
-Qarinah remains private and unlicensed until its commercialization model is
-chosen. These two goals cannot both be guaranteed by one license:
+The private context-ledger prototype remains private and unlicensed until its
+commercialization model and public product name are chosen. These two goals
+cannot both be guaranteed by one license:
 
 - OSI open source permits commercial use.
 - A license that prohibits commercial use is source-available, not open source.
 
-The recommended open-source route is AGPL-3.0-or-later for future Qarinah
-releases, a separately registered product trademark, a contributor agreement,
-and an optional commercial license for organizations that do not want AGPL
+The recommended open-source route for a future context-ledger release is
+AGPL-3.0-or-later, a separately registered trademark for the eventual public
+name after appropriate clearance, a contributor license agreement (CLA), and an
+optional dual/commercial license for organizations that do not want AGPL
 obligations. If commercial use must be prohibited, choose a lawyer-reviewed
 source-available license and describe it accurately. Existing MIT releases in
 the ecosystem remain usable under the MIT terms under which they were received.
@@ -77,9 +80,10 @@ and feedback for the next stage.
 - Demonstrate bounded crawling, normalized `SourceRecord` output, source
   conformance, SSRF denial, and serverless dry-run checks.
 
-### Stage 3: Qarinah Technical Preview
+### Stage 3: Context Ledger Technical Preview
 
-- Resolve the license and trademark gate, then make the repository public.
+- Resolve the license gate and choose and clear a public name before making the
+  repository public.
 - Publish only after tamper, rollback, consent, path, redaction, concurrency,
   type-consumer, and cross-platform CI checks pass.
 - Demonstrate a cited, token-budgeted context pack rebuilt from a consented
@@ -90,8 +94,8 @@ and feedback for the next stage.
 ### Stage 4: ProductLoop OS Composition
 
 - Show Maqam governing a registered operation, Cockroach producing a normalized
-  record, Qarinah preserving its cited context, and ProductLoop orchestrating
-  the workflow through public adapter contracts.
+  record, the context ledger preserving its cited context, and ProductLoop
+  orchestrating the workflow through public adapter contracts.
 - Verify that composition does not merge independent ledgers or bypass any
   package's policy and approval boundary.
 
