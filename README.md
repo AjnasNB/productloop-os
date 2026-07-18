@@ -84,7 +84,7 @@ npm run pack
 
 Maqam `^0.2.4 || ^0.3.0` is the supported compatibility range. The canonical workspace lockfile intentionally continues to resolve the public `maqam@0.2.4` artifact, so normal workspace and clean-consumer tests preserve the compatibility floor. Before a Maqam `0.3.x` release is public, maintainers can point `MAQAM_PACKAGE_DIR` at an exact local Maqam release candidate to run the same offline type and tool-routing contract. A sibling checkout or filesystem dependency must never be committed or included in a release manifest.
 
-See [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), and [release process](./docs/releasing.md).
+See [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), [release process](./docs/releasing.md), and the [ecosystem launch runbook](./docs/launch-runbook.md).
 
 ## Open source and community
 
