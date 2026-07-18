@@ -2,9 +2,9 @@
 
 Publishing is a human-authorized external side effect. Normal builds, tests, pull requests, Dependabot updates, and merges never publish npm packages.
 
-The repository currently uses public `maqam@0.2.4` as its tested integration baseline. The nine previous workspace package versions already present on npm are immutable. This release source selects the following fresh coordinated versions:
+The repository currently uses public `maqam@0.2.4` as its locked integration baseline and declares compatibility with `^0.2.4 || ^0.3.0`. The nine workspace versions below are already published and immutable. They are the baseline, not reusable version numbers for a later compatibility release:
 
-| Package | Version |
+| Package | Published baseline |
 | --- | ---: |
 | `ajnas-runtime` | `0.2.1` |
 | `ajnas-skills-registry` | `0.2.1` |
@@ -15,6 +15,25 @@ The repository currently uses public `maqam@0.2.4` as its tested integration bas
 | `ajnas-approvals` | `0.1.2` |
 | `ajnas-browser-research` | `0.1.3` |
 | `productloop-os` | `0.2.1` |
+
+## Qualify a Maqam 0.3 candidate
+
+Normal verification must retain the registry-backed `maqam@0.2.4` lock and prove the compatibility floor:
+
+```sh
+npm ci
+npm run verify
+```
+
+Before Maqam `0.3.x` is published, its exact clean release-candidate checkout can be tested without committing a filesystem dependency:
+
+```sh
+MAQAM_PACKAGE_DIR=/absolute/path/to/clean/maqam-candidate npm run test:consumer-types
+```
+
+The candidate test packs Maqam outside this repository, installs it with all nine ProductLoop tarballs in a temporary consumer, typechecks the public declarations, and runs the same offline gateway adapter fixture used for the `0.2.4` floor. It accepts only versions covered by the declared range and removes the temporary consumer afterward.
+
+Do not publish ProductLoop against an unpublished Maqam version. After `maqam@0.3.x` is public, update the canonical lockfile to that exact registry artifact, rerun the floor test separately against `0.2.4`, and run the full verification against the release lock. Because the existing ProductLoop versions are immutable and the current trusted workflow releases one coordinated manifest, select fresh versions for all nine ProductLoop packages, publish Maqam first, and publish `productloop-os` last.
 
 ## Trusted Publisher configuration
 

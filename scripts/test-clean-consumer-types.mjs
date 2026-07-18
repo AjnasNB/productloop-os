@@ -7,6 +7,7 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 const repoRoot = fileURLToPath(new URL("../", import.meta.url));
+const registryMaqamBaseline = "0.2.4";
 const maqamPackageDirectory = process.env.MAQAM_PACKAGE_DIR
   ? resolve(process.env.MAQAM_PACKAGE_DIR)
   : undefined;
@@ -33,6 +34,16 @@ const expectedLocalVersions = new Map([
   ["productloop-os", "0.2.1"],
 ]);
 const packageNames = maqamPackageDirectory ? ["maqam", ...localPackageNames] : localPackageNames;
+
+function isSupportedMaqamVersion(value) {
+  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(value);
+  if (!match) return false;
+  const [, major, minor, patch] = match.map(Number);
+  return major === 0 && (
+    (minor === 2 && patch >= 4) ||
+    minor === 3
+  );
+}
 
 async function findNpmCli() {
   const executableDirectory = dirname(process.execPath);
@@ -142,9 +153,14 @@ async function main() {
         throw new Error(`Expected ${name}@${version}; received ${String(packedByName.get(name)?.version)}`);
       }
     }
-    if (maqamPackageDirectory && packedByName.get("maqam")?.version !== "0.2.4") {
-      throw new Error(`MAQAM_PACKAGE_DIR must contain maqam@0.2.4; received ${String(packedByName.get("maqam")?.version)}`);
+    const localMaqamVersion = packedByName.get("maqam")?.version;
+    if (maqamPackageDirectory && (
+      typeof localMaqamVersion !== "string" ||
+      !isSupportedMaqamVersion(localMaqamVersion)
+    )) {
+      throw new Error(`MAQAM_PACKAGE_DIR must contain a stable version covered by ^0.2.4 || ^0.3.0; received ${String(localMaqamVersion)}`);
     }
+    const expectedMaqamVersion = localMaqamVersion ?? registryMaqamBaseline;
     const tarballs = packageNames.map((name) => {
       const entry = packedByName.get(name);
       if (!entry || typeof entry.filename !== "string") {
@@ -170,6 +186,7 @@ async function main() {
         "--no-save",
         "--omit=dev",
         ...tarballs,
+        ...(maqamPackageDirectory ? [] : [`maqam@${registryMaqamBaseline}`]),
       ],
       consumerDirectory,
     );
@@ -240,7 +257,56 @@ async function main() {
     await access(typescriptCli);
     await run(process.execPath, [typescriptCli, "--project", "tsconfig.json", "--pretty", "false"], consumerDirectory);
 
-    console.log(`Clean external TypeScript consumer passed for all nine workspace packages using ${maqamPackageDirectory ? "the MAQAM_PACKAGE_DIR 0.2.4 tarball" : "registry maqam@^0.2.4"}.`);
+    await writeFile(
+      join(consumerDirectory, "consumer.mjs"),
+      [
+        'import { createRequire } from "node:module";',
+        'import { dirname, join } from "node:path";',
+        'import { fileURLToPath } from "node:url";',
+        'import { createProductLoopOS, maqam } from "productloop-os";',
+        "",
+        'const productLoopEntry = fileURLToPath(import.meta.resolve("productloop-os"));',
+        "const require = createRequire(productLoopEntry);",
+        'const maqamEntry = require.resolve("maqam");',
+        'const maqamPackage = require(join(dirname(maqamEntry), "..", "package.json"));',
+        `if (maqamPackage.version !== ${JSON.stringify(expectedMaqamVersion)}) {`,
+        `  throw new Error(\`Expected maqam@${expectedMaqamVersion}; received \${String(maqamPackage.version)}\`);`,
+        "}",
+        "const invocations = [];",
+        "const adapter = maqam.defineToolAdapter({",
+        '  name: "function.productloop.compatibility",',
+        '  transport: "function",',
+        '  description: "Exercise the offline ProductLoop compatibility contract.",',
+        "  effects: [],",
+        '  risk: "low",',
+        "  async invoke(input) {",
+        "    invocations.push(input.value);",
+        "    return { slug: input.value.toLowerCase().replaceAll(\" \", \"-\") };",
+        "  },",
+        "});",
+        "const os = createProductLoopOS({ maqamPolicy: { allowedTools: [adapter.name] } });",
+        "maqam.registerToolAdapter(os.maqamGateway, adapter);",
+        "const result = await os.maqamGateway.call(",
+        "  adapter.name,",
+        '  { value: "ProductLoop Maqam" },',
+        '  { runId: "run_clean_consumer_compatibility" },',
+        ");",
+        'if (result.slug !== "productloop-maqam" || invocations.join(",") !== "ProductLoop Maqam") {',
+        '  throw new Error("Maqam gateway compatibility fixture returned an unexpected result.");',
+        "}",
+        "const conformance = await maqam.runToolAdapterConformance(adapter, {",
+        '  input: { value: "Offline Contract" },',
+        '  verifyOutput: (output) => output.slug === "offline-contract",',
+        "});",
+        'if (!conformance.passed) throw new Error("Maqam adapter conformance failed.");',
+        `console.log("Offline Maqam ${expectedMaqamVersion} runtime compatibility passed.");`,
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+    await run(process.execPath, ["consumer.mjs"], consumerDirectory);
+
+    console.log(`Clean external TypeScript and runtime consumer passed for all nine workspace packages using maqam@${expectedMaqamVersion}.`);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
   }
