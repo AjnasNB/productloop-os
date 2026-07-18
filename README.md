@@ -10,12 +10,12 @@ The ecosystem is a governance toolkit, not a claim of autonomous intelligence. I
 
 ## Packages
 
-This source tree prepares the following coordinated patch set. npm publication is complete only after the protected workflow verifies every registry artifact.
+The table below records the current source versions and dependency ranges. Published package versions are immutable; a later coordinated release must select fresh versions before the protected workflow can publish new registry artifacts.
 
 | Package | Release version or range | Responsibility |
 | --- | ---: | --- |
 | [`productloop-os`](./productloop-os) | `0.2.1` | One install, named namespaces, tested adapters, and composition helpers |
-| [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
+| [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4 || ^0.3.0` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
 | [`ajnas-runtime`](./ajnas-runtime) | `0.2.1` | Ordered workflows and policy-gated tool calls |
 | [`ajnas-policy`](./ajnas-policy) | `0.1.2` | Declarative allow, deny, and approval decisions |
 | [`ajnas-approvals`](./ajnas-approvals) | `0.1.2` | Human review tickets, delegation, escalation, and audit history |
@@ -82,7 +82,7 @@ npm run integration
 npm run pack
 ```
 
-Maqam `^0.2.4` is the supported integration floor, and the canonical workspace lockfile resolves the public `maqam@0.2.4` artifact. The ProductLoop integration suite exercises the 0.2.4 adapter contract through the exposed Maqam gateway. Local development and release verification must not commit a sibling checkout or filesystem link in place of that registry dependency.
+Maqam `^0.2.4 || ^0.3.0` is the supported compatibility range. The canonical workspace lockfile intentionally continues to resolve the public `maqam@0.2.4` artifact, so normal workspace and clean-consumer tests preserve the compatibility floor. Before a Maqam `0.3.x` release is public, maintainers can point `MAQAM_PACKAGE_DIR` at an exact local Maqam release candidate to run the same offline type and tool-routing contract. A sibling checkout or filesystem dependency must never be committed or included in a release manifest.
 
 See [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), and [release process](./docs/releasing.md).
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Declared compatibility with both Maqam `0.2.x` from `0.2.4` onward and Maqam `0.3.x`.
+- Extended the clean-consumer fixture so the locked public `0.2.4` baseline and an explicit local `0.3.x` release candidate can run the same offline type and tool-routing contract.
+
 ## 0.2.1 - 2026-07-17
 
 - Raised all eight ProductLoop dependency floors to the coordinated patch release set while retaining the public `maqam@^0.2.4` baseline.

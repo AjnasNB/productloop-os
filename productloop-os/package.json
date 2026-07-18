@@ -70,7 +70,7 @@
     "node": ">=20.18.1"
   },
   "dependencies": {
-    "maqam": "^0.2.4",
+    "maqam": "^0.2.4 || ^0.3.0",
     "ajnas-runtime": "^0.2.1",
     "ajnas-skills-registry": "^0.2.1",
     "ajnas-provenance": "^0.1.3",
