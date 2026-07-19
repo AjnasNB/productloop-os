@@ -18,7 +18,7 @@ function manifest(overrides: Partial<SkillManifest> = {}): SkillManifest {
       value: "./dist/cli-check.js"
     },
     compatibility: {
-      ajnasRuntime: "^0.2.1"
+      ajnasRuntime: "^0.2.2"
     },
     capabilities: [
       {

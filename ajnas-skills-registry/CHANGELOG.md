@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.2.2 - 2026-07-20
 
 - Dropped the end-of-life Node 20 runtime line; supported runtimes are maintained Node 22 LTS, Node 24 LTS, and Node 26 Current releases.
+- Raised the Node declaration baseline to 22 and the `ajnas-runtime` peer floor to `^0.2.2` for the coordinated patch.
 
 ## 0.2.1 - 2026-07-17
 

@@ -96,4 +96,4 @@ The harness does not bypass access controls, paywalls, CAPTCHA, anti-bot systems
 
 ## Publish
 
-Version `0.1.3` is the coordinated trusted-publishing patch. It retains fail-closed approval validation, immutable plan snapshots, canonical metadata-bound signatures, and strict signing-key correspondence.
+Version `0.1.4` is selected for the maintained Node 22/24/26 metadata and coordinated peer-floor patch. It is not a public release until the trusted workflow and registry verification succeed.

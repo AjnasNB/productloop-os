@@ -1,6 +1,6 @@
 # ajnas-skills-registry Publish Checklist
 
-Selected release: `ajnas-skills-registry@0.2.1`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
+Selected release: `ajnas-skills-registry@0.2.2`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Preflight
 
@@ -19,7 +19,7 @@ Confirm the exact version is absent before publishing. If it already exists, sto
 
 ## Approval Gate
 
-The selected release is `0.2.1`. Preserve the approval date, target, exact commit, and exact manifest in the release evidence when publication is authorized.
+The selected release is `0.2.2`. Preserve the approval date, target, exact commit, and exact manifest in the release evidence when publication is authorized.
 
 ## Publish boundary
 

@@ -59,4 +59,4 @@ Eval reports include deterministic suite and artifact digests. `EvalAuditLedger`
 
 The package does not call external services. Adapters decide how agent workflows are executed and return normalized evidence for evaluation.
 
-Version `0.1.2` is the coordinated trusted-publishing patch for runtime `0.2.x` and the security-patched package graph.
+Version `0.1.3` is selected for the maintained Node 22/24/26 metadata and coordinated peer-floor patch. It is not a public release until the trusted workflow and registry verification succeed.

@@ -16,6 +16,6 @@ describe("package readiness", () => {
 
     const manifest = JSON.parse(await readFile(new URL("package.json", root), "utf8"));
     expect(manifest.name).toBe("ajnas-runtime");
-    expect(manifest.version).toBe("0.2.1");
+    expect(manifest.version).toBe("0.2.2");
   });
 });

@@ -142,4 +142,4 @@ The final command strictly compiles a consumer fixture that wires `ajnas-runtime
 
 ## Release Status
 
-Version `0.1.2` is the coordinated trusted-publishing patch with request-bound, terminal approval decisions and strict review validation.
+Version `0.1.3` is selected for the maintained Node 22/24/26 metadata and coordinated peer-floor patch. It is not a public release until the trusted workflow and registry verification succeed.

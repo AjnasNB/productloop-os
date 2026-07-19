@@ -10,20 +10,20 @@ The ecosystem is a governance toolkit, not a claim of autonomous intelligence. I
 
 ## Packages
 
-The table below records the current source versions and dependency ranges. Published package versions are immutable; a later coordinated release must select fresh versions before the protected workflow can publish new registry artifacts.
+The table below records the coordinated patch versions and dependency ranges selected in source. They are not public releases until the protected workflow verifies and publishes the exact registry artifacts.
 
 | Package | Release version or range | Responsibility |
 | --- | ---: | --- |
-| [`productloop-os`](./productloop-os) | `0.2.1` | One install, named namespaces, tested adapters, and composition helpers |
-| [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4 || ^0.3.0` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
-| [`ajnas-runtime`](./ajnas-runtime) | `0.2.1` | Ordered workflows and policy-gated tool calls |
-| [`ajnas-policy`](./ajnas-policy) | `0.1.2` | Declarative allow, deny, and approval decisions |
-| [`ajnas-approvals`](./ajnas-approvals) | `0.1.2` | Human review tickets, delegation, escalation, and audit history |
-| [`ajnas-provenance`](./ajnas-provenance) | `0.1.3` | Hash-linked traces, bundles, signatures, and redaction |
-| [`ajnas-skills-registry`](./ajnas-skills-registry) | `0.2.1` | Signed skill manifests and install policy |
-| [`ajnas-connectors`](./ajnas-connectors) | `0.1.2` | Connector manifests, permissions, and trust evaluation |
-| [`ajnas-evals`](./ajnas-evals) | `0.1.2` | Deterministic assertions and verifiable evaluation reports |
-| [`ajnas-browser-research`](./ajnas-browser-research) | `0.1.3` | Policy-aware research plans, replay adapters, citations, and evidence exports |
+| [`productloop-os`](./productloop-os) | `0.2.2` | One install, named namespaces, tested adapters, and composition helpers |
+| [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4 || ^0.3.1` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
+| [`ajnas-runtime`](./ajnas-runtime) | `0.2.2` | Ordered workflows and policy-gated tool calls |
+| [`ajnas-policy`](./ajnas-policy) | `0.1.3` | Declarative allow, deny, and approval decisions |
+| [`ajnas-approvals`](./ajnas-approvals) | `0.1.3` | Human review tickets, delegation, escalation, and audit history |
+| [`ajnas-provenance`](./ajnas-provenance) | `0.1.4` | Hash-linked traces, bundles, signatures, and redaction |
+| [`ajnas-skills-registry`](./ajnas-skills-registry) | `0.2.2` | Signed skill manifests and install policy |
+| [`ajnas-connectors`](./ajnas-connectors) | `0.1.3` | Connector manifests, permissions, and trust evaluation |
+| [`ajnas-evals`](./ajnas-evals) | `0.1.3` | Deterministic assertions and verifiable evaluation reports |
+| [`ajnas-browser-research`](./ajnas-browser-research) | `0.1.4` | Policy-aware research plans, replay adapters, citations, and evidence exports |
 
 ## Install
 
@@ -82,7 +82,7 @@ npm run integration
 npm run pack
 ```
 
-Maqam `^0.2.4 || ^0.3.0` is the supported compatibility range. The canonical workspace lockfile intentionally continues to resolve the public `maqam@0.2.4` artifact, so normal workspace and clean-consumer tests preserve the compatibility floor. Before a Maqam `0.3.x` release is public, maintainers can point `MAQAM_PACKAGE_DIR` at an exact local Maqam release candidate to run the same offline type and tool-routing contract. A sibling checkout or filesystem dependency must never be committed or included in a release manifest.
+Maqam `^0.2.4 || ^0.3.1` is the supported compatibility range. The canonical workspace lockfile and default clean-consumer test resolve the public `maqam@0.3.1` artifact. The full release gate also installs exact `maqam@0.2.4` in a separate clean consumer to preserve the older compatibility floor. Maintainers can point `MAQAM_PACKAGE_DIR` at another exact clean Maqam candidate for pre-release qualification, but a sibling checkout or filesystem dependency must never be committed or included in a release manifest.
 
 See [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), [release process](./docs/releasing.md), and the [ecosystem launch runbook](./docs/launch-runbook.md).
 

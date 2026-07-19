@@ -119,4 +119,4 @@ npm run pack:dry
 
 ## Release Status
 
-Version `0.2.1` is the coordinated trusted-publishing patch. Its metadata-only policy tool projection remains the intentional security-motivated API break introduced in `0.2.0`.
+Version `0.2.2` is selected for the maintained Node 22/24/26 metadata patch. It is not a public release until the trusted workflow and registry verification succeed.

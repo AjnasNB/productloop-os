@@ -24,7 +24,7 @@ const maqamPackage = JSON.parse(
 
 describe("productloop-os", () => {
   it("exports the published package version", () => {
-    expect(PRODUCTLOOP_OS_VERSION).toBe("0.2.1");
+    expect(PRODUCTLOOP_OS_VERSION).toBe("0.2.2");
   });
 
   it("loads Maqam and every Ajnas package namespace", () => {
@@ -33,11 +33,11 @@ describe("productloop-os", () => {
     expect(modules.every((module) => module.loaded)).toBe(true);
   });
 
-  it("uses the public Maqam 0.2.4 integration baseline", () => {
-    expect(maqamPackage.version).toBe("0.2.4");
+  it("uses the public Maqam 0.3.1 release baseline", () => {
+    expect(maqamPackage.version).toBe("0.3.1");
   });
 
-  it("routes a Maqam 0.2.4 adapter through the ProductLoop gateway", async () => {
+  it("routes a Maqam 0.3.1 adapter through the ProductLoop gateway", async () => {
     const invocations: string[] = [];
     const adapter = defineToolAdapter<{ value: string }, { slug: string }>({
       name: "function.productloop.slug",
@@ -58,7 +58,7 @@ describe("productloop-os", () => {
     await expect(os.maqamGateway.call(
       adapter.name,
       { value: "ProductLoop Maqam" },
-      { runId: "run_maqam_0_2_4_adapter" }
+      { runId: "run_maqam_0_3_1_adapter" }
     )).resolves.toEqual({ slug: "productloop-maqam" });
     expect(invocations).toEqual(["ProductLoop Maqam"]);
 
