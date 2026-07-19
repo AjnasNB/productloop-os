@@ -11,7 +11,7 @@ updates:
     versioning-strategy: increase-if-necessary
     ignore:
       # Major toolchain upgrades are scheduled explicitly against the full
-      # Node 20/22/24 workspace matrix instead of entering release work.
+      # Node 22/24/26 maintained-runtime matrix instead of entering release work.
       - dependency-name: "*"
         update-types:
           - version-update:semver-major

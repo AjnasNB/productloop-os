@@ -4,7 +4,7 @@
 
 The [ProductLoop package atlas](https://maqamagent.com/docs/productloop/) documents every namespace. Installing this umbrella does not merge the Maqam and Ajnas runtimes or silently govern direct SDK calls. `createProductLoopOS()` creates separate components, and cross-runtime behavior is limited to documented, opt-in adapters.
 
-Node.js 20.18.1 or newer is required.
+A maintained Node.js 22, 24, or 26 release is required.
 
 ```sh
 npm install productloop-os

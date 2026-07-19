@@ -15,11 +15,17 @@ describe("productloop-os CLI", () => {
     const report = JSON.parse(stdout.join("\n")) as {
       ok: boolean;
       version: string;
+      node: { version: string; supported: boolean; requirement: string };
       modules: Array<{ loaded: boolean }>;
       externalCapabilities: { checked: boolean };
     };
     expect(report.ok).toBe(true);
     expect(report.version).toBe("0.2.1");
+    expect(report.node).toEqual({
+      version: process.versions.node,
+      supported: true,
+      requirement: "^22.0.0 || ^24.0.0 || ^26.0.0"
+    });
     expect(report.modules).toHaveLength(9);
     expect(report.modules.every((module) => module.loaded)).toBe(true);
     expect(report.externalCapabilities.checked).toBe(false);

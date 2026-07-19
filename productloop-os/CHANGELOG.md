@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Dropped the end-of-life Node 20 runtime line; supported runtimes are maintained Node 22 LTS, Node 24 LTS, and Node 26 Current releases.
+
 - Declared compatibility with both Maqam `0.2.x` from `0.2.4` onward and Maqam `0.3.x`.
 - Extended the clean-consumer fixture so the locked public `0.2.4` baseline and an explicit local `0.3.x` release candidate can run the same offline type and tool-routing contract.
 

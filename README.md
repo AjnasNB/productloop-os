@@ -71,7 +71,7 @@ npx productloop-os info
 
 ## Development
 
-Node.js 20.18.1 or newer is required by the current Maqam dependency.
+ProductLoop OS supports the maintained Node.js 22 LTS, 24 LTS, and 26 Current release lines.
 
 ```sh
 npm ci

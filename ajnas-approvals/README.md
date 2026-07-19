@@ -10,7 +10,7 @@ The package is intentionally transport-neutral. It does not send email, open tic
 npm install ajnas-approvals
 ```
 
-Node.js 20 or newer is required.
+A maintained Node.js 22, 24, or 26 release is required.
 
 ## Basic Usage
 
