@@ -58,6 +58,8 @@ jobs:
 
       - name: Checkout approved commit
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ inputs.expected_commit }}
 
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -137,9 +139,16 @@ jobs:
                 echo "Existing ${package_name}@${package_version} does not match the approved integrity and provenance." >&2
                 exit 1
               fi
-              if [[ -n "${published_git_head}" && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
+              if [[ "${package_name}" == "productloop-os" \
+                && -n "${published_git_head}" \
+                && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
                 echo "Existing ${package_name}@${package_version} has unexpected gitHead ${published_git_head}." >&2
                 exit 1
+              fi
+              if [[ "${package_name}" != "productloop-os" \
+                && -n "${published_git_head}" \
+                && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
+                echo "${package_name}@${package_version} retains prior publication gitHead ${published_git_head}; exact artifact identity is required before reuse."
               fi
               registry_dir="${RUNNER_TEMP}/preflight-${package_name}"
               mkdir -p "${registry_dir}"
@@ -198,6 +207,8 @@ jobs:
     steps:
       - name: Checkout verified commit
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ inputs.expected_commit }}
 
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -295,9 +306,17 @@ jobs:
               echo "Registry metadata verification failed for ${package_name}@${package_version}." >&2
               exit 1
             fi
-            if [[ -n "${published_git_head}" && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
+            if [[ "${package_name}" == "productloop-os" \
+              && -n "${published_git_head}" \
+              && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
               echo "Unexpected gitHead for ${package_name}@${package_version}: ${published_git_head}" >&2
               exit 1
+            fi
+            if [[ "${package_name}" != "productloop-os" \
+              && "${already_published}" == "true" \
+              && -n "${published_git_head}" \
+              && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
+              echo "${package_name}@${package_version} retains prior publication gitHead ${published_git_head}; exact artifact identity was verified."
             fi
 
             registry_dir="${RUNNER_TEMP}/registry-${package_name}"

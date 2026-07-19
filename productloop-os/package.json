@@ -1,6 +1,6 @@
 {
   "name": "productloop-os",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Composable governance, policy, approvals, provenance, evals, connectors, skills, browser research, and Maqam agent tooling.",
   "type": "module",
   "license": "MIT",
