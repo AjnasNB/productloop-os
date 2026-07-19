@@ -34,7 +34,7 @@ export async function runCli(
       node: {
         version: process.versions.node,
         supported: nodeSupported,
-        requirement: ">=20.18.1"
+        requirement: "^22.0.0 || ^24.0.0 || ^26.0.0"
       },
       modules,
       externalCapabilities: {
@@ -46,7 +46,7 @@ export async function runCli(
       io.stdout(JSON.stringify(report, null, 2));
     } else {
       io.stdout(`ProductLoop OS ${VERSION} doctor: ${report.ok ? "ok" : "failed"}`);
-      io.stdout(`Node ${report.node.version}: ${report.node.supported ? "supported" : "requires >=20.18.1"}`);
+      io.stdout(`Node ${report.node.version}: ${report.node.supported ? "supported" : "requires Node 22, 24, or 26"}`);
       for (const module of modules) {
         io.stdout(`${module.loaded ? "ok" : "missing"} ${module.packageName} (${module.anchor})`);
       }
@@ -105,8 +105,8 @@ export async function runCli(
 }
 
 function supportsNode(version: string): boolean {
-  const [major = 0, minor = 0, patch = 0] = version
+  const [major = 0] = version
     .split(".")
     .map((part) => Number.parseInt(part, 10));
-  return major > 20 || (major === 20 && (minor > 18 || (minor === 18 && patch >= 1)));
+  return major === 22 || major === 24 || major === 26;
 }

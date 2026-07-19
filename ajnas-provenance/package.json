@@ -58,10 +58,10 @@
     "prepublishOnly": "npm run test && npm run typecheck"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.0.0 || ^24.0.0 || ^26.0.0"
   },
   "dependencies": {
-    "@types/node": "^20.19.43"
+    "@types/node": "^22.20.1"
   },
   "peerDependencies": {
     "ajnas-runtime": "^0.2.1",

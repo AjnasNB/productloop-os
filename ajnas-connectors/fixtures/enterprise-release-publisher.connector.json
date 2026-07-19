@@ -12,7 +12,7 @@
   "runtime": {
     "transport": "local",
     "entrypoint": "ajnas-release-publisher",
-    "node": ">=20",
+    "node": "^22.0.0 || ^24.0.0 || ^26.0.0",
     "protocol": "ajnas.connector.manifest.v1"
   },
   "auth": {

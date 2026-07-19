@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Dropped the end-of-life Node 20 runtime line; supported runtimes are maintained Node 22 LTS, Node 24 LTS, and Node 26 Current releases.
+
 ## 0.1.2 - 2026-07-17
 
 - Raised peer floors to `ajnas-runtime` `^0.2.1` and `ajnas-provenance` `^0.1.3` for the coordinated ProductLoop patch release.

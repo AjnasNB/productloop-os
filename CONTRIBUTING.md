@@ -17,7 +17,7 @@ Contributors with explicitly granted repository access must still use a non-defa
 
 ## Development
 
-Use Node.js 20.18.1 or newer and install from the root lockfile:
+Use a maintained Node.js 22, 24, or 26 release and install from the root lockfile:
 
 ```sh
 npm ci
