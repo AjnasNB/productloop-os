@@ -1,11 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.2.2 - 2026-07-20
 
 - Dropped the end-of-life Node 20 runtime line; supported runtimes are maintained Node 22 LTS, Node 24 LTS, and Node 26 Current releases.
-
-- Declared compatibility with both Maqam `0.2.x` from `0.2.4` onward and Maqam `0.3.x`.
-- Extended the clean-consumer fixture so the locked public `0.2.4` baseline and an explicit local `0.3.x` release candidate can run the same offline type and tool-routing contract.
+- Set public Maqam `0.3.1` as the release lock and default clean-consumer target while retaining a separate exact `0.2.4` compatibility-floor test.
+- Raised all eight ProductLoop dependency floors to the coordinated patch set and tightened the declared Maqam range to `^0.2.4 || ^0.3.1`.
 
 ## 0.2.1 - 2026-07-17
 

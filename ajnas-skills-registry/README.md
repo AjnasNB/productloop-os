@@ -35,7 +35,7 @@ const manifest = {
   description: "Turns approved research notes into a concise internal brief.",
   license: "MIT",
   entrypoint: { type: "module", value: "./dist/research-brief.js" },
-  compatibility: { ajnasRuntime: "^0.2.1" },
+  compatibility: { ajnasRuntime: "^0.2.2" },
   capabilities: [
     {
       name: "research.summarize",
@@ -122,4 +122,4 @@ npm run pack:dry
 
 ## Release Status
 
-Version `0.2.1` is the coordinated trusted-publishing patch. It retains the strict, immutable Ed25519 signed-manifest verification and metadata-only runtime policy projection introduced in `0.2.0`.
+Version `0.2.2` is selected for the maintained Node 22/24/26 metadata and runtime peer-floor patch. It is not a public release until the trusted workflow and registry verification succeed.

@@ -1,6 +1,6 @@
 {
   "name": "ajnas-skills-registry",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Signed enterprise skill manifest registry with policy and provenance hooks for Ajnas runtimes.",
   "type": "module",
   "license": "MIT",
@@ -63,7 +63,7 @@
     "@types/node": "^22.20.1"
   },
   "peerDependencies": {
-    "ajnas-runtime": "^0.2.1"
+    "ajnas-runtime": "^0.2.2"
   },
   "peerDependenciesMeta": {
     "ajnas-runtime": {

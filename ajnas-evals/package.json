@@ -1,6 +1,6 @@
 {
   "name": "ajnas-evals",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Deterministic eval suites, enterprise agent-run assertions, and audit receipts for Ajnas infrastructure.",
   "type": "module",
   "license": "MIT",
@@ -62,9 +62,9 @@
     "node": "^22.0.0 || ^24.0.0 || ^26.0.0"
   },
   "peerDependencies": {
-    "ajnas-policy": "^0.1.2",
-    "ajnas-provenance": "^0.1.3",
-    "ajnas-runtime": "^0.2.1"
+    "ajnas-policy": "^0.1.3",
+    "ajnas-provenance": "^0.1.4",
+    "ajnas-runtime": "^0.2.2"
   },
   "peerDependenciesMeta": {
     "ajnas-runtime": {

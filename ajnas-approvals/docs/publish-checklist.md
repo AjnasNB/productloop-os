@@ -1,6 +1,6 @@
 # Publish Checklist
 
-Selected release: `ajnas-approvals@0.1.2`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
+Selected release: `ajnas-approvals@0.1.3`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Pre-Publish Verification
 
@@ -27,7 +27,7 @@ Confirm the exact version is absent before publishing. If it already exists, sto
 The release evidence records:
 
 - package name: `ajnas-approvals`
-- version: `0.1.2`
+- version: `0.1.3`
 - target registry: npm public registry
 - approver identity
 - approval timestamp

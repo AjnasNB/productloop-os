@@ -29,14 +29,14 @@ describe("package readiness", () => {
     expect(await read("SECURITY.md")).toContain("robots.txt");
     expect(await read("docs/provenance-and-licenses.md")).toContain("No third-party implementation code");
     const manifest = JSON.parse(await read("package.json"));
-    expect(manifest.version).toBe("0.1.3");
+    expect(manifest.version).toBe("0.1.4");
     expect(manifest.peerDependencies).toEqual({
-      "ajnas-runtime": "^0.2.1",
-      "ajnas-policy": "^0.1.2",
-      "ajnas-provenance": "^0.1.3",
-      "ajnas-connectors": "^0.1.2",
-      "ajnas-approvals": "^0.1.2"
+      "ajnas-runtime": "^0.2.2",
+      "ajnas-policy": "^0.1.3",
+      "ajnas-provenance": "^0.1.4",
+      "ajnas-connectors": "^0.1.3",
+      "ajnas-approvals": "^0.1.3"
     });
-    expect(await read("CHANGELOG.md")).toContain("## 0.1.3 - 2026-07-17");
+    expect(await read("CHANGELOG.md")).toContain("## 0.1.4 - 2026-07-20");
   });
 });

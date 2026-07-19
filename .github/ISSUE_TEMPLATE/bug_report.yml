@@ -28,7 +28,7 @@ body:
     id: versions
     attributes:
       label: Exact package version or commit
-      placeholder: "productloop-os@0.2.1 or full Git commit"
+      placeholder: "productloop-os@0.2.2 or full Git commit"
     validations:
       required: true
   - type: input

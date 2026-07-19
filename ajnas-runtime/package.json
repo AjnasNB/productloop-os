@@ -1,6 +1,6 @@
 {
   "name": "ajnas-runtime",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Policy-gated agent workflow runtime with provenance receipts and human approval checkpoints.",
   "type": "module",
   "license": "MIT",

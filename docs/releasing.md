@@ -2,38 +2,47 @@
 
 Publishing is a human-authorized external side effect. Normal builds, tests, pull requests, Dependabot updates, and merges never publish npm packages.
 
-The repository currently uses public `maqam@0.2.4` as its locked integration baseline and declares compatibility with `^0.2.4 || ^0.3.0`. The nine workspace versions below are already published and immutable. They are the baseline, not reusable version numbers for a later compatibility release:
+The canonical lock and default integration tests use public `maqam@0.3.1`; the umbrella declares `^0.2.4 || ^0.3.1` and verifies exact `0.2.4` separately. The old workspace versions are already published and immutable, so this source selects fresh coordinated patches. A selected version remains unpublished until the protected workflow and registry checks succeed.
 
-| Package | Published baseline |
-| --- | ---: |
-| `ajnas-runtime` | `0.2.1` |
-| `ajnas-skills-registry` | `0.2.1` |
-| `ajnas-provenance` | `0.1.3` |
-| `ajnas-policy` | `0.1.2` |
-| `ajnas-evals` | `0.1.2` |
-| `ajnas-connectors` | `0.1.2` |
-| `ajnas-approvals` | `0.1.2` |
-| `ajnas-browser-research` | `0.1.3` |
-| `productloop-os` | `0.2.1` |
+| Package | Previous public version | Selected patch |
+| --- | ---: | ---: |
+| `ajnas-runtime` | `0.2.1` | `0.2.2` |
+| `ajnas-skills-registry` | `0.2.1` | `0.2.2` |
+| `ajnas-provenance` | `0.1.3` | `0.1.4` |
+| `ajnas-policy` | `0.1.2` | `0.1.3` |
+| `ajnas-evals` | `0.1.2` | `0.1.3` |
+| `ajnas-connectors` | `0.1.2` | `0.1.3` |
+| `ajnas-approvals` | `0.1.2` | `0.1.3` |
+| `ajnas-browser-research` | `0.1.3` | `0.1.4` |
+| `productloop-os` | `0.2.1` | `0.2.2` |
 
-## Qualify a Maqam 0.3 candidate
+## Qualify the Maqam release and compatibility floor
 
-Normal verification must retain the registry-backed `maqam@0.2.4` lock and prove the compatibility floor:
+Normal verification installs the registry-backed `maqam@0.3.1` release lock and also proves the exact `0.2.4` compatibility floor in an isolated consumer:
 
 ```sh
 npm ci
 npm run verify
 ```
 
-Before Maqam `0.3.x` is published, its exact clean release-candidate checkout can be tested without committing a filesystem dependency:
+The two clean-consumer checks can also be run independently:
+
+```sh
+npm run test:consumer-types
+npm run test:consumer-types:maqam-floor
+```
+
+An exact clean Maqam release-candidate checkout can be tested without committing a filesystem dependency:
 
 ```sh
 MAQAM_PACKAGE_DIR=/absolute/path/to/clean/maqam-candidate npm run test:consumer-types
 ```
 
-The candidate test packs Maqam outside this repository, installs it with all nine ProductLoop tarballs in a temporary consumer, typechecks the public declarations, and runs the same offline gateway adapter fixture used for the `0.2.4` floor. It accepts only versions covered by the declared range and removes the temporary consumer afterward.
+The candidate test packs Maqam outside this repository, installs it with all nine ProductLoop tarballs in a temporary consumer, typechecks the public declarations, and runs the same offline gateway adapter fixture used for registry releases. It accepts only versions covered by the declared range and removes the temporary consumer afterward.
 
-Do not publish ProductLoop against an unpublished Maqam version. After `maqam@0.3.x` is public, update the canonical lockfile to that exact registry artifact, rerun the floor test separately against `0.2.4`, and run the full verification against the release lock. Because the existing ProductLoop versions are immutable and the current trusted workflow releases one coordinated manifest, select fresh versions for all nine ProductLoop packages, publish Maqam first, and publish `productloop-os` last.
+Do not publish ProductLoop against an unpublished Maqam version or a filesystem link. Before dispatch, confirm the canonical lock resolves exact public `maqam@0.3.1`, the separate `0.2.4` floor test passes, and all nine selected ProductLoop versions are absent from npm.
+
+Dependency install scripts are fail-closed under npm `11.18.0` through `.npmrc` `strict-allow-scripts=true`. The root manifest approves only `esbuild`, a dev-only Vitest/Vite tool currently locked to `0.28.1`; the existing lock entry has no registry URL, so npm cannot express that approval as a version-qualified key. Any lock update that changes the resolved esbuild version or introduces another lifecycle script requires a fresh review before `npm ci` can pass.
 
 ## Trusted Publisher configuration
 

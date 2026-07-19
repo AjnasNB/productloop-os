@@ -1,11 +1,11 @@
 # Publish Checklist
 
-Selected release: `ajnas-runtime@0.2.1`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
+Selected release: `ajnas-runtime@0.2.2`. This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 
 ## Preflight
 
 - [x] Package name selected: `ajnas-runtime`
-- [x] Version selected: `0.2.1`
+- [x] Version selected: `0.2.2`
 - [x] License selected: MIT
 - [x] README present
 - [x] CHANGELOG present

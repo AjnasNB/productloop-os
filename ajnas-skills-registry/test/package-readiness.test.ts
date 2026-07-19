@@ -16,7 +16,7 @@ describe("package readiness", () => {
 
     const manifest = JSON.parse(await readFile(new URL("package.json", root), "utf8"));
     expect(manifest.name).toBe("ajnas-skills-registry");
-    expect(manifest.version).toBe("0.2.1");
-    expect(manifest.peerDependencies).toEqual({ "ajnas-runtime": "^0.2.1" });
+    expect(manifest.version).toBe("0.2.2");
+    expect(manifest.peerDependencies).toEqual({ "ajnas-runtime": "^0.2.2" });
   });
 });

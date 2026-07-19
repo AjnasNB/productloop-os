@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 const repoRoot = fileURLToPath(new URL("../", import.meta.url));
-const registryMaqamBaseline = "0.2.4";
+const defaultRegistryMaqamVersion = "0.3.1";
 const maqamPackageDirectory = process.env.MAQAM_PACKAGE_DIR
   ? resolve(process.env.MAQAM_PACKAGE_DIR)
   : undefined;
@@ -23,17 +23,33 @@ const localPackageNames = [
   "productloop-os",
 ];
 const expectedLocalVersions = new Map([
-  ["ajnas-runtime", "0.2.1"],
-  ["ajnas-skills-registry", "0.2.1"],
-  ["ajnas-provenance", "0.1.3"],
-  ["ajnas-policy", "0.1.2"],
-  ["ajnas-evals", "0.1.2"],
-  ["ajnas-connectors", "0.1.2"],
-  ["ajnas-approvals", "0.1.2"],
-  ["ajnas-browser-research", "0.1.3"],
-  ["productloop-os", "0.2.1"],
+  ["ajnas-runtime", "0.2.2"],
+  ["ajnas-skills-registry", "0.2.2"],
+  ["ajnas-provenance", "0.1.4"],
+  ["ajnas-policy", "0.1.3"],
+  ["ajnas-evals", "0.1.3"],
+  ["ajnas-connectors", "0.1.3"],
+  ["ajnas-approvals", "0.1.3"],
+  ["ajnas-browser-research", "0.1.4"],
+  ["productloop-os", "0.2.2"],
 ]);
 const packageNames = maqamPackageDirectory ? ["maqam", ...localPackageNames] : localPackageNames;
+
+function parseRegistryMaqamVersion(argv) {
+  let version = defaultRegistryMaqamVersion;
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index];
+    if (argument !== "--maqam-version") throw new Error(`Unknown argument: ${argument}`);
+    const value = argv[index + 1];
+    if (!value || value.startsWith("--")) throw new Error("--maqam-version requires an exact stable version.");
+    version = value;
+    index += 1;
+  }
+  if (!isSupportedMaqamVersion(version)) {
+    throw new Error(`Maqam ${version} is outside the supported ^0.2.4 || ^0.3.1 range.`);
+  }
+  return version;
+}
 
 function isSupportedMaqamVersion(value) {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(value);
@@ -41,7 +57,7 @@ function isSupportedMaqamVersion(value) {
   const [, major, minor, patch] = match.map(Number);
   return major === 0 && (
     (minor === 2 && patch >= 4) ||
-    minor === 3
+    (minor === 3 && patch >= 1)
   );
 }
 
@@ -127,6 +143,10 @@ function assertOutsideRepo(directory) {
 }
 
 async function main() {
+  const registryMaqamVersion = parseRegistryMaqamVersion(process.argv.slice(2));
+  if (maqamPackageDirectory && registryMaqamVersion !== defaultRegistryMaqamVersion) {
+    throw new Error("--maqam-version cannot be combined with MAQAM_PACKAGE_DIR.");
+  }
   const temporaryRoot = await mkdtemp(join(tmpdir(), "productloop-clean-consumer-"));
   assertOutsideRepo(temporaryRoot);
 
@@ -158,9 +178,9 @@ async function main() {
       typeof localMaqamVersion !== "string" ||
       !isSupportedMaqamVersion(localMaqamVersion)
     )) {
-      throw new Error(`MAQAM_PACKAGE_DIR must contain a stable version covered by ^0.2.4 || ^0.3.0; received ${String(localMaqamVersion)}`);
+      throw new Error(`MAQAM_PACKAGE_DIR must contain a stable version covered by ^0.2.4 || ^0.3.1; received ${String(localMaqamVersion)}`);
     }
-    const expectedMaqamVersion = localMaqamVersion ?? registryMaqamBaseline;
+    const expectedMaqamVersion = localMaqamVersion ?? registryMaqamVersion;
     const tarballs = packageNames.map((name) => {
       const entry = packedByName.get(name);
       if (!entry || typeof entry.filename !== "string") {
@@ -186,7 +206,7 @@ async function main() {
         "--no-save",
         "--omit=dev",
         ...tarballs,
-        ...(maqamPackageDirectory ? [] : [`maqam@${registryMaqamBaseline}`]),
+        ...(maqamPackageDirectory ? [] : [`maqam@${registryMaqamVersion}`]),
       ],
       consumerDirectory,
     );
@@ -223,7 +243,7 @@ async function main() {
         "export const browserSigningOptions: Pick<SignResearchProvenanceOptions, \"privateKey\"> = {",
         '  privateKey: "browser-private-key",',
         "};",
-        'export const productLoopVersion: "0.2.1" = PRODUCTLOOP_OS_VERSION;',
+        'export const productLoopVersion: "0.2.2" = PRODUCTLOOP_OS_VERSION;',
         "",
       ].join("\n"),
       "utf8",

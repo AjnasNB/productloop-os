@@ -32,10 +32,10 @@ describe("package readiness", () => {
     expect(licenseAudit).toContain("No third-party implementation code was copied");
 
     const manifest = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
-    expect(manifest.version).toBe("0.1.3");
+    expect(manifest.version).toBe("0.1.4");
     expect(manifest.peerDependencies).toEqual({
-      "ajnas-runtime": "^0.2.1",
-      "ajnas-skills-registry": "^0.2.1"
+      "ajnas-runtime": "^0.2.2",
+      "ajnas-skills-registry": "^0.2.2"
     });
 
     const fixture = JSON.parse(await readFile(join(root, "fixtures/release-gate.bundle.json"), "utf8"));

@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.1.4 - 2026-07-20
 
 - Dropped the end-of-life Node 20 runtime line; supported runtimes are maintained Node 22 LTS, Node 24 LTS, and Node 26 Current releases.
+- Raised peer floors to runtime `^0.2.2`, approvals, connectors, and policy `^0.1.3`, and provenance `^0.1.4`.
 
 ## 0.1.3 - 2026-07-17
 

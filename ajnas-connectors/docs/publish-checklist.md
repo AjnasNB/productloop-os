@@ -1,6 +1,6 @@
 # Publish Checklist
 
-Selected release: `ajnas-connectors@0.1.2`
+Selected release: `ajnas-connectors@0.1.3`
 
 This checklist prepares the coordinated patch; it is not a publication record until the protected workflow and post-publish checks succeed.
 

@@ -20,7 +20,7 @@ describe("productloop-os CLI", () => {
       externalCapabilities: { checked: boolean };
     };
     expect(report.ok).toBe(true);
-    expect(report.version).toBe("0.2.1");
+    expect(report.version).toBe("0.2.2");
     expect(report.node).toEqual({
       version: process.versions.node,
       supported: true,
