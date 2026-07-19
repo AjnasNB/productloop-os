@@ -105,7 +105,7 @@ See the [Maqam and ProductLoop guide](https://github.com/AjnasNB/productloop-os/
 
 For participation and support, use the [community hub](https://maqamagent.com/community/), [GitHub Discussions](https://github.com/AjnasNB/productloop-os/discussions), [contribution guide](https://github.com/AjnasNB/productloop-os/blob/main/CONTRIBUTING.md), [governance policy](https://github.com/AjnasNB/productloop-os/blob/main/GOVERNANCE.md), [Code of Conduct](https://github.com/AjnasNB/productloop-os/blob/main/CODE_OF_CONDUCT.md), [support guide](https://github.com/AjnasNB/productloop-os/blob/main/SUPPORT.md), and [security policy](https://github.com/AjnasNB/productloop-os/blob/main/SECURITY.md).
 
-The coordinated umbrella patch selected for protected release is `productloop-os@0.2.2`. It is not a public release until the trusted workflow and registry verification succeed.
+This package metadata is `productloop-os@0.2.3`, an umbrella-only documentation patch. Its eight ProductLoop dependency versions are intentionally unchanged. The npm registry and its provenance records are the source of truth for publication; selecting a version in source, merging a commit, or creating a tag does not publish it.
 
 ## License
 

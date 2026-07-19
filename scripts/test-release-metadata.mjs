@@ -17,7 +17,7 @@ const selected = Object.freeze([
   Object.freeze({
     name: "productloop-os",
     directory: "productloop-os",
-    version: "0.2.2",
+    version: "0.2.3",
     peers: {},
     dependencies: {
       maqam: "^0.2.4 || ^0.3.1",
@@ -46,7 +46,7 @@ const lock = await readJson("package-lock.json");
 const npmConfig = await readFile(join(repoRoot, ".npmrc"), "utf8");
 
 assert.equal(rootManifest.private, true);
-assert.equal(rootManifest.version, "0.2.2");
+assert.equal(rootManifest.version, "0.2.3");
 assert.equal(rootManifest.engines?.node, engineRequirement);
 assert.deepEqual(rootManifest.allowScripts, { esbuild: true });
 assert.match(npmConfig, /^strict-allow-scripts=true\r?\n?$/);

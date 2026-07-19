@@ -31,7 +31,7 @@ const expectedLocalVersions = new Map([
   ["ajnas-connectors", "0.1.3"],
   ["ajnas-approvals", "0.1.3"],
   ["ajnas-browser-research", "0.1.4"],
-  ["productloop-os", "0.2.2"],
+  ["productloop-os", "0.2.3"],
 ]);
 const packageNames = maqamPackageDirectory ? ["maqam", ...localPackageNames] : localPackageNames;
 
@@ -243,7 +243,7 @@ async function main() {
         "export const browserSigningOptions: Pick<SignResearchProvenanceOptions, \"privateKey\"> = {",
         '  privateKey: "browser-private-key",',
         "};",
-        'export const productLoopVersion: "0.2.2" = PRODUCTLOOP_OS_VERSION;',
+        'export const productLoopVersion: "0.2.3" = PRODUCTLOOP_OS_VERSION;',
         "",
       ].join("\n"),
       "utf8",

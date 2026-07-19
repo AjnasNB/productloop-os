@@ -1,0 +1,133 @@
+name: Prepare npm release (trusted Linux)
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_commit:
+        description: Exact 40-character main commit to prepare
+        required: true
+        type: string
+      confirmation:
+        description: Type prepare productloop-os release from COMMIT
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-prepare-productloop-os-${{ inputs.expected_commit }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Verify and pack on Ubuntu
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+      CONFIRMATION: ${{ inputs.confirmation }}
+    steps:
+      - name: Validate dispatch boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "Release preparation must be dispatched from main." >&2
+            exit 1
+          fi
+          if [[ ! "${EXPECTED_COMMIT}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "expected_commit must be a lowercase 40-character Git commit." >&2
+            exit 1
+          fi
+          if [[ "${GITHUB_SHA}" != "${EXPECTED_COMMIT}" ]]; then
+            echo "The dispatched main commit does not match expected_commit." >&2
+            exit 1
+          fi
+          if [[ "${CONFIRMATION}" != "prepare productloop-os release from ${EXPECTED_COMMIT}" ]]; then
+            echo "Confirmation must exactly equal: prepare productloop-os release from ${EXPECTED_COMMIT}" >&2
+            exit 1
+          fi
+
+      - name: Checkout exact commit
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ inputs.expected_commit }}
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.18.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Setup release npm CLI
+        run: npm install --global npm@11.18.0 --ignore-scripts
+
+      - name: Verify toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$(node --version)" == "v24.18.0" ]]
+          [[ "$(npm --version)" == "11.18.0" ]]
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Run full monorepo verification
+        run: npm run verify
+
+      - name: Audit complete dependency graph
+        run: npm audit --audit-level=high
+
+      - name: Audit production dependency graph
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Require committed generated state
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code
+          if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
+            git status --short >&2
+            echo "Verification generated uncommitted files." >&2
+            exit 1
+          fi
+
+      - name: Pack canonical Linux artifacts
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_dir="${RUNNER_TEMP}/productloop-release"
+          mkdir -p "${release_dir}"
+          node scripts/release-manifest.mjs \
+            --compact \
+            --output "${release_dir}" \
+            > "${release_dir}/release-manifest.json"
+          manifest_sha256="$(sha256sum "${release_dir}/release-manifest.json" | awk '{print $1}')"
+          echo "manifest_sha256=${manifest_sha256}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload canonical manifest and tarballs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: productloop-release-preparation-${{ github.sha }}
+          path: ${{ runner.temp }}/productloop-release
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Summarize prepared release
+        shell: bash
+        run: |
+          {
+            echo "## Prepared ProductLoop npm release"
+            echo
+            echo "- Commit: \`${EXPECTED_COMMIT}\`"
+            echo "- Builder: \`ubuntu-24.04\`, Node \`24.18.0\`, npm \`11.18.0\`"
+            echo "- Manifest SHA-256: \`${{ steps.pack.outputs.manifest_sha256 }}\`"
+            echo "- Package count: 9"
+            echo "- Retention: 1 day"
+            echo
+            echo "Copy \`release-manifest.json\` from the workflow artifact only after reviewing this run."
+          } >> "${GITHUB_STEP_SUMMARY}"

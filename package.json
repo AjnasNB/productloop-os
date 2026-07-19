@@ -1,6 +1,6 @@
 {
   "name": "productloop-os-monorepo",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "description": "Workspace for ProductLoop OS governance primitives and its public umbrella package.",
   "license": "MIT",

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3 - 2026-07-20
+
+- Corrected the public-release status and package version shown on npm and in repository documentation.
+- Added a trusted Linux preparation workflow for canonical release manifests and tarballs.
+- Kept all eight leaf packages at their existing public versions; the protected publisher verifies and skips only exact, unchanged leaf artifacts.
+
 ## 0.2.2 - 2026-07-20
 
 - Dropped the end-of-life Node 20 runtime line; supported runtimes are maintained Node 22 LTS, Node 24 LTS, and Node 26 Current releases.

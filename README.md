@@ -10,11 +10,11 @@ The ecosystem is a governance toolkit, not a claim of autonomous intelligence. I
 
 ## Packages
 
-The table below records the coordinated patch versions and dependency ranges selected in source. They are not public releases until the protected workflow verifies and publishes the exact registry artifacts.
+The eight leaf-package versions below are already public and intentionally unchanged. This source selects `productloop-os@0.2.3` as an umbrella-only documentation patch. The npm registry and its provenance records are the source of truth for whether a selected source version has completed protected publication.
 
 | Package | Release version or range | Responsibility |
 | --- | ---: | --- |
-| [`productloop-os`](./productloop-os) | `0.2.2` | One install, named namespaces, tested adapters, and composition helpers |
+| [`productloop-os`](./productloop-os) | `0.2.3` | One install, named namespaces, tested adapters, and composition helpers |
 | [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4 || ^0.3.1` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
 | [`ajnas-runtime`](./ajnas-runtime) | `0.2.2` | Ordered workflows and policy-gated tool calls |
 | [`ajnas-policy`](./ajnas-policy) | `0.1.3` | Declarative allow, deny, and approval decisions |
