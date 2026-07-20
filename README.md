@@ -8,6 +8,21 @@ The projects form one ecosystem, not one silently merged runtime. `createProduct
 
 The ecosystem is a governance toolkit, not a claim of autonomous intelligence. It does not ship a model, a hosted control plane, a secret manager, a production browser, or a distributed job system. `ajnas-browser-research` supplies a governed adapter contract and deterministic replay harness. Real browser, search, connector, model, and storage implementations remain explicit deployment choices.
 
+## One governed agent stack
+
+The wider product direction is one installable control plane with replaceable execution layers, not one package that silently owns every capability.
+
+| Layer | Product | Responsibility | Current boundary |
+| --- | --- | --- | --- |
+| Compose | ProductLoop OS | Workflow runtime, policy, approvals, connectors, skills, evaluations, provenance, and research plans | Public package; external services stay explicit |
+| Govern | [Maqam](https://github.com/AjnasNB/maqam) | Registered tool policy, exact one-use approvals, browser-action contracts, traces, and evidence | Public package; direct calls bypass it |
+| Reach | [Cockroach Crawler](https://github.com/AjnasNB/cockroach-crawler) | Bounded public-web reads, provider capability checks, normalized records, and a restricted serverless profile | Separate package and opt-in adapter |
+| Remember | Qarinah | Local event ledger, deterministic graph/index, and compact cited context packs | Private alpha; not a public dependency or install claim |
+
+The composition supports public web and GitHub reads without a developer API key, known-video metadata, configured RSS/caption/search adapters, exact approval, deterministic workflow evidence, and compact local context. It does not bundle a model, browser engine, cookie extractor, proxy fleet, CAPTCHA bypass, secret manager, or operating-system sandbox.
+
+See the [agent-stack capability map](./docs/agent-stack.md) for the end-to-end flow, current status, adapter contracts, and launch gates.
+
 ## Packages
 
 The eight leaf-package versions below are already public and intentionally unchanged. This source selects `productloop-os@0.2.3` as an umbrella-only documentation patch. The npm registry and its provenance records are the source of truth for whether a selected source version has completed protected publication.
@@ -84,7 +99,7 @@ npm run pack
 
 Maqam `^0.2.4 || ^0.3.1` is the supported compatibility range. The canonical workspace lockfile and default clean-consumer test resolve the public `maqam@0.3.1` artifact. The full release gate also installs exact `maqam@0.2.4` in a separate clean consumer to preserve the older compatibility floor. Maintainers can point `MAQAM_PACKAGE_DIR` at another exact clean Maqam candidate for pre-release qualification, but a sibling checkout or filesystem dependency must never be committed or included in a release manifest.
 
-See [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), [release process](./docs/releasing.md), and the [ecosystem launch runbook](./docs/launch-runbook.md).
+See the [agent-stack capability map](./docs/agent-stack.md), [Maqam and ProductLoop](./docs/maqam-and-productloop.md), [architecture](./docs/architecture.md), [comparison](./docs/comparison.md), [release process](./docs/releasing.md), and the [ecosystem launch runbook](./docs/launch-runbook.md).
 
 ## Open source and community
 
