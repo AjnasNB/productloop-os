@@ -17,9 +17,16 @@ The wider product direction is one installable control plane with replaceable ex
 | Compose | ProductLoop OS | Workflow runtime, policy, approvals, connectors, skills, evaluations, provenance, and research plans | Public package; external services stay explicit |
 | Govern | [Maqam](https://github.com/AjnasNB/maqam) | Registered tool policy, exact one-use approvals, browser-action contracts, traces, and evidence | Public package; direct calls bypass it |
 | Reach | [Cockroach Crawler](https://github.com/AjnasNB/cockroach-crawler) | Bounded public-web reads, provider capability checks, normalized records, and a restricted serverless profile | Separate package and opt-in adapter |
+| Browse | [Cockroach Browser](https://github.com/AjnasNB/cockroach-browser) | Authorized browser sessions, observations, evidence, and Maqam-routable action plans | Separate AGPL package; ProductLoop reads structural metadata only |
 | Remember | Qarinah | Local event ledger, deterministic graph/index, and compact cited context packs | Private alpha; not a public dependency or install claim |
 
 The composition supports public web and GitHub reads without a developer API key, known-video metadata, configured RSS/caption/search adapters, exact approval, deterministic workflow evidence, and compact local context. It does not bundle a model, browser engine, cookie extractor, proxy fleet, CAPTCHA bypass, secret manager, or operating-system sandbox.
+
+For Cockroach Browser interoperability, ProductLoop exposes a strict,
+read-only adapter for
+`cockroach.productloop-capability-snapshot.v1`. This adds no browser runtime
+dependency and grants no execution authority. See
+[the interop guide](./docs/cockroach-browser-interop.md).
 
 See the [agent-stack capability map](./docs/agent-stack.md) for the end-to-end flow, current status, adapter contracts, and launch gates.
 

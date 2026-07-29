@@ -21,6 +21,14 @@ export {
 } from "./adapters.js";
 export type { MaqamCrawlerToolOptions } from "./adapters.js";
 
+export {
+  COCKROACH_BROWSER_CAPABILITY_SNAPSHOT_SCHEMA,
+  adaptCockroachBrowserCapabilitySnapshot
+} from "./browser-capability-snapshot.js";
+export type {
+  CockroachBrowserCapabilitySnapshot
+} from "./browser-capability-snapshot.js";
+
 export { createDefaultPolicyBundle, createProductLoopOS } from "./composition.js";
 export type {
   ProductLoopOS,

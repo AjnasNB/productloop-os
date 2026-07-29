@@ -6,6 +6,7 @@ ProductLoop OS is the composition layer for a system with four explicit responsi
 2. Qarinah compiles approved project history into bounded, cited context.
 3. Maqam governs registered operations at the real side-effect boundary.
 4. Cockroach Crawler collects bounded public evidence through declared source contracts.
+5. Cockroach Browser provides separately installed authorized browser sessions and evidence; ProductLoop reads only its structural capability snapshot.
 
 The order is logical, not a forced call sequence. A workflow may query context before planning, collect public evidence during execution, or record an approved outcome afterward. The invariant is that the real operation must pass through the boundary that claims to govern it.
 
@@ -15,7 +16,7 @@ flowchart LR
   Loop --> Context["Qarinah context query"]
   Loop --> Gateway["Maqam ToolGateway"]
   Gateway --> Crawler["Cockroach Crawler"]
-  Gateway --> Browser["Host browser driver"]
+  Gateway --> Browser["Cockroach Browser through a reviewed Maqam adapter"]
   Gateway --> Connector["Host connector or worker"]
   Crawler --> Records["Normalized source records"]
   Browser --> Records
@@ -35,6 +36,7 @@ flowchart LR
 | Read available YouTube captions | Maqam | No developer key when a reviewed `yt-dlp` executable is available | Explicit executable path and host controls | Availability depends on the video, region, and upstream tool |
 | Hosted-anonymous web search | Maqam adapter contract | Can be available without a developer-owned key | Explicit host-selected adapter and terms review | Not a universal free-search guarantee |
 | Natural-language browser action | Maqam browser contract plus host driver | No built-in model or driver | Browser engine, model provider, allowed origins, structural preview/apply contract | Browser isolation and credentials remain host responsibilities |
+| Browser capability discovery | Cockroach Browser snapshot plus ProductLoop adapter | Yes, as structural metadata | Install Cockroach Browser separately to obtain its snapshot | No runtime import, tool registration, permission grant, or health claim |
 | Exact approval and one-use execution | Maqam | Yes | Registered tool route and approval store | Direct calls bypass the boundary |
 | Workflow, policy, approvals, evals, and provenance | ProductLoop OS | Yes | Application policy and durable stores for production | In-process records are not an OS sandbox |
 | Compact evidence-linked project context | Qarinah | Yes in local alpha | Explicit workspace consent and machine trust | Private alpha; no public package claim yet |

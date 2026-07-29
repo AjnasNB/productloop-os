@@ -82,8 +82,35 @@ The exported `adapters` include:
 - policy/connector to approval subjects and approval tickets back to runtime decisions;
 - connector trust to runtime policy decisions;
 - `createMaqamCrawlerTool()`, an explicit high-risk live-network tool that is never registered automatically.
+- `adaptCockroachBrowserCapabilitySnapshot()`, a strict data-only reader for Cockroach Browser's published ProductLoop capability snapshot.
 
 These adapters convert documented records or tool shapes; they are not native integrations with external orchestrators, providers, or hosted services. A direct client call outside the selected runtime bypasses its policy, approval, and evidence path unless the host application explicitly wraps that call.
+
+### Cockroach Browser capability discovery
+
+Applications that install Cockroach Browser separately can inspect its declared
+capabilities without giving ProductLoop its runtime or any browser authority:
+
+```js
+import { productLoopBrowserCapabilitySnapshot } from "cockroach-browser/productloop";
+import { adaptCockroachBrowserCapabilitySnapshot } from "productloop-os";
+
+const browser = adaptCockroachBrowserCapabilitySnapshot(
+  productLoopBrowserCapabilitySnapshot()
+);
+
+console.log(browser.scope); // structural-only
+console.log(browser.capabilities.includes("page.snapshot"));
+```
+
+The adapter accepts only
+`cockroach.productloop-capability-snapshot.v1`, rejects unknown fields and
+authority changes, copies the capability identifiers, and freezes the accepted
+view. It does not import Cockroach Browser, register tools, create sessions,
+grant origins or effects, or route actions. Keep lifecycle and raw-runtime
+policy in the browser host. Route consequential browser actions through Maqam
+when Maqam governance is required. See the
+[Cockroach Browser interop guide](https://github.com/AjnasNB/productloop-os/blob/main/docs/cockroach-browser-interop.md).
 
 ## CLI
 
@@ -98,6 +125,10 @@ npx productloop-os demo
 ## Capability boundary
 
 This package is not a model, browser engine, hosted crawler fleet, identity system, secret manager, sandbox, database, distributed scheduler, or guarantee of safety. `ajnas-browser-research` includes deterministic replay, not a live browser. Maqam has a real HTTP crawler and process-backed CLI-agent adapters, which require network, command, filesystem, and credential controls at deployment time.
+
+The Cockroach Browser capability snapshot is discovery metadata, not a live
+browser check or permission grant. ProductLoop intentionally has no required
+`cockroach-browser` runtime dependency.
 
 `createMaqamCrawlerTool({ defaults })` treats every supplied default as a deployment-enforced value: per-call input cannot override those network or resource limits. Put seeds and ordinary request-specific fields in tool input; put private-network policy, allowlists, robots behavior, and ceilings in `defaults`.
 
