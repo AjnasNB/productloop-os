@@ -8,6 +8,9 @@ import {
   provenance,
   runtime
 } from "./namespaces.js";
+import {
+  adaptCockroachBrowserCapabilitySnapshot
+} from "./browser-capability-snapshot.js";
 
 export function adaptPolicyEngine(engine: policy.RuntimePolicyEngine): runtime.PolicyEngine {
   return {
@@ -141,6 +144,7 @@ export function browserReportToEvalArtifact(
 export const adapters = Object.freeze({
   policyEngine: adaptPolicyEngine,
   maqamCrawlerTool: createMaqamCrawlerTool,
+  cockroachBrowserCapabilitySnapshot: adaptCockroachBrowserCapabilitySnapshot,
   runtimeSnapshotToEvalArtifact,
   browserReportToEvalArtifact,
   policyDecisionToApprovalSubject: approvals.createApprovalSubjectFromPolicyDecision,
