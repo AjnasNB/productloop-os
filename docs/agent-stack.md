@@ -18,8 +18,9 @@ flowchart LR
   Host --> Loop["ProductLoop OS"]
   Loop --> Context["Qarinah context query"]
   Loop --> Gateway["Maqam ToolGateway"]
+  Loop -->|"read-only snapshots"| Browser["Cockroach Browser authenticated daemon"]
   Gateway --> Crawler["Cockroach Crawler"]
-  Gateway --> Browser["Cockroach Browser through a reviewed Maqam adapter"]
+  Gateway -->|"reviewed consequential actions"| Browser
   Gateway --> Connector["Host connector or worker"]
   Crawler --> Records["Normalized source records"]
   Browser --> Records

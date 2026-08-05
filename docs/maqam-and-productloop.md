@@ -58,13 +58,16 @@ The default ProductLoop policy denies tool calls. Registering this adapter does 
 
 ProductLoop adapters convert documented records or tool shapes. They are not native integrations with every orchestrator, provider, browser, connector, model SDK, or hosted service.
 
-Cockroach Browser publishes a structural-only ProductLoop capability snapshot.
-`adaptCockroachBrowserCapabilitySnapshot()` validates and freezes that metadata
-without importing the browser runtime or registering any tool. See the
-[Cockroach Browser interop guide](./cockroach-browser-interop.md). Browser
-lifecycle and direct-runtime authority remain with the host; exact Maqam
-governance exists only when the host routes a consequential action through
-Maqam's registered browser adapter.
+Cockroach Browser publishes a structural-only capability snapshot and an
+authenticated client contract. `adaptCockroachBrowserCapabilitySnapshot()`
+validates discovery metadata without granting authority.
+`createCockroachBrowserResearchAdapter()` uses an explicitly supplied client to
+run real, short-lived, origin-scoped Chromium observations for ProductLoop
+`open` and `extract` steps. It permits only semantic snapshots and read effects.
+See the [Cockroach Browser interop guide](./cockroach-browser-interop.md).
+Browser daemon lifecycle and direct-runtime authority remain with the host;
+exact Maqam governance exists only when the host routes a consequential action
+through Maqam's registered browser adapter.
 
 A direct call outside the selected governed runtime bypasses that runtime's policy, approval, and evidence path. To preserve governance, the host application must route the real side effect through Maqam's gateway or a ProductLoop-registered tool, keep approval binding intact, and enforce network, process, filesystem, identity, credential, and sandbox controls where the effect actually occurs.
 

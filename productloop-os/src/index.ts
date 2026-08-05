@@ -29,6 +29,18 @@ export type {
   CockroachBrowserCapabilitySnapshot
 } from "./browser-capability-snapshot.js";
 
+export {
+  COCKROACH_BROWSER_CONNECTION_SCHEMA,
+  checkCockroachBrowserConnection,
+  createCockroachBrowserResearchAdapter
+} from "./cockroach-browser.js";
+export type {
+  CockroachBrowserClientLike,
+  CockroachBrowserConnectionReport,
+  CockroachBrowserResearchAdapterOptions,
+  CockroachBrowserSessionCreateInput
+} from "./cockroach-browser.js";
+
 export { createDefaultPolicyBundle, createProductLoopOS } from "./composition.js";
 export type {
   ProductLoopOS,
@@ -39,4 +51,4 @@ export type {
 export { runDeterministicDemo } from "./demo.js";
 export type { ProductLoopDemoResult } from "./demo.js";
 
-export const PRODUCTLOOP_OS_VERSION = "0.2.3";
+export const PRODUCTLOOP_OS_VERSION = "0.2.4";

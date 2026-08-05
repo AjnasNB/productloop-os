@@ -24,7 +24,7 @@ const maqamPackage = JSON.parse(
 
 describe("productloop-os", () => {
   it("exports the published package version", () => {
-    expect(PRODUCTLOOP_OS_VERSION).toBe("0.2.3");
+    expect(PRODUCTLOOP_OS_VERSION).toBe("0.2.4");
   });
 
   it("loads Maqam and every Ajnas package namespace", () => {

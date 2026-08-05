@@ -34,12 +34,12 @@ See the [agent-stack capability map](./docs/agent-stack.md) for the end-to-end f
 
 ## Packages
 
-The eight leaf-package versions and `productloop-os@0.2.3` below are already public and intentionally unchanged. `productloop-workbench@0.1.0` is a new source candidate and must not be described as published until the registry artifact, provenance, Git tag, and GitHub release all match the reviewed commit. The npm registry and its provenance records are the source of truth for publication.
+The eight leaf-package versions below are already public and intentionally unchanged. `productloop-os@0.2.4` and `productloop-workbench@0.1.0` are source candidates and must not be described as published until their registry artifacts, provenance, Git tags, and GitHub releases match the reviewed commit. The npm registry and its provenance records are the source of truth for publication.
 
 | Package | Release version or range | Responsibility |
 | --- | ---: | --- |
 | [`productloop-workbench`](./productloop-workbench) | `0.1.0` source candidate | Durable local runs, approval inbox, evidence and memory views, policy explanations, proof export, and no-key stack demo |
-| [`productloop-os`](./productloop-os) | `0.2.3` | One install, named namespaces, tested adapters, and composition helpers |
+| [`productloop-os`](./productloop-os) | `0.2.4` source candidate | One install, named namespaces, tested adapters, live browser observations, and composition helpers |
 | [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4 || ^0.3.1` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
 | [`ajnas-runtime`](./ajnas-runtime) | `0.2.2` | Ordered workflows and policy-gated tool calls |
 | [`ajnas-policy`](./ajnas-policy) | `0.1.3` | Declarative allow, deny, and approval decisions |

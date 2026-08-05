@@ -11,6 +11,10 @@ import {
 import {
   adaptCockroachBrowserCapabilitySnapshot
 } from "./browser-capability-snapshot.js";
+import {
+  checkCockroachBrowserConnection,
+  createCockroachBrowserResearchAdapter
+} from "./cockroach-browser.js";
 
 export function adaptPolicyEngine(engine: policy.RuntimePolicyEngine): runtime.PolicyEngine {
   return {
@@ -145,6 +149,8 @@ export const adapters = Object.freeze({
   policyEngine: adaptPolicyEngine,
   maqamCrawlerTool: createMaqamCrawlerTool,
   cockroachBrowserCapabilitySnapshot: adaptCockroachBrowserCapabilitySnapshot,
+  cockroachBrowserConnection: checkCockroachBrowserConnection,
+  cockroachBrowserResearch: createCockroachBrowserResearchAdapter,
   runtimeSnapshotToEvalArtifact,
   browserReportToEvalArtifact,
   policyDecisionToApprovalSubject: approvals.createApprovalSubjectFromPolicyDecision,
