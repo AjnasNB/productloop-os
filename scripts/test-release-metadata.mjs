@@ -31,6 +31,15 @@ const selected = Object.freeze([
       "ajnas-browser-research": "^0.1.4",
     },
   }),
+  Object.freeze({
+    name: "productloop-workbench",
+    directory: "productloop-workbench",
+    version: "0.1.0",
+    peers: {},
+    dependencies: {
+      "productloop-os": "^0.2.3",
+    },
+  }),
 ]);
 
 async function readJson(relativePath) {
@@ -38,14 +47,17 @@ async function readJson(relativePath) {
 }
 
 function firstPartyEntries(value = {}) {
-  return Object.fromEntries(Object.entries(value).filter(([name]) => name.startsWith("ajnas-") || name === "maqam"));
+  return Object.fromEntries(Object.entries(value).filter(([name]) => name.startsWith("ajnas-") || name.startsWith("productloop-") || name === "maqam"));
 }
 
 const rootManifest = await readJson("package.json");
 const lock = await readJson("package-lock.json");
 const npmConfig = await readFile(join(repoRoot, ".npmrc"), "utf8");
+const publishWorkflow = await readFile(join(repoRoot, ".github", "workflows", "publish-npm.yml"), "utf8");
+const prepareWorkflow = await readFile(join(repoRoot, ".github", "workflows", "prepare-npm-release.yml"), "utf8");
 
 assert.equal(rootManifest.private, true);
+assert.equal(selected.length, 10);
 assert.equal(rootManifest.version, "0.2.3");
 assert.equal(rootManifest.engines?.node, engineRequirement);
 assert.deepEqual(rootManifest.allowScripts, { esbuild: true });
@@ -73,5 +85,10 @@ for (const entry of selected) {
 assert.equal(lock.packages?.["node_modules/maqam"]?.version, "0.3.1", "canonical lock must resolve maqam@0.3.1");
 assert.match(lock.packages?.["node_modules/maqam"]?.resolved ?? "", /\/maqam-0\.3\.1\.tgz$/);
 assert.match(lock.packages?.["node_modules/maqam"]?.integrity ?? "", /^sha512-/);
+assert.match(publishWorkflow, /Verify ten approved artifacts/);
+assert.match(publishWorkflow, /Publish and verify ten packages in dependency order/);
+assert.match(publishWorkflow, /productloop-os\s+productloop-workbench/);
+assert.match(publishWorkflow, /Package count: 10/);
+assert.match(prepareWorkflow, /Package count: 10/);
 
-console.log("Release metadata is coordinated for Node 22/24/26, Maqam 0.3.1, and all nine selected package versions.");
+console.log("Release metadata is coordinated for Node 22/24/26, Maqam 0.3.1, and all ten selected package versions.");

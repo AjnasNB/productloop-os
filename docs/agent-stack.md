@@ -1,17 +1,20 @@
 # Governed agent stack
 
-ProductLoop OS is the composition layer for a system with four explicit responsibilities:
+The public stack has five explicit responsibilities:
 
-1. ProductLoop OS composes workflows and portable governance records.
-2. Qarinah compiles approved project history into bounded, cited context.
-3. Maqam governs registered operations at the real side-effect boundary.
-4. Cockroach Crawler collects bounded public evidence through declared source contracts.
+1. ProductLoop Workbench gives one operator a durable local run, approval, evidence, memory, and policy interface.
+2. ProductLoop OS composes workflows and portable governance records.
+3. Qarinah compiles approved project history into bounded, cited context.
+4. Maqam governs registered operations at the real side-effect boundary.
+5. Cockroach Crawler collects bounded public evidence through declared source contracts.
 
 The order is logical, not a forced call sequence. A workflow may query context before planning, collect public evidence during execution, or record an approved outcome afterward. The invariant is that the real operation must pass through the boundary that claims to govern it.
 
 ```mermaid
 flowchart LR
-  Host["Agent host"] --> Loop["ProductLoop OS"]
+  Operator["Operator"] --> Workbench["ProductLoop Workbench"]
+  Workbench --> Host["Agent host"]
+  Host --> Loop["ProductLoop OS"]
   Loop --> Context["Qarinah context query"]
   Loop --> Gateway["Maqam ToolGateway"]
   Gateway --> Crawler["Cockroach Crawler"]
@@ -28,6 +31,7 @@ flowchart LR
 
 | Capability | Provider | No-key baseline | Configuration needed | Claim limit |
 | --- | --- | --- | --- | --- |
+| Durable local runs, review inbox, and proof export | ProductLoop Workbench | Yes | Local SQLite data root | One operator; not team sync or external tool execution |
 | Crawl explicit public HTTP(S) URLs | Cockroach Crawler | Yes | None | Not general web search and not access-control bypass |
 | Search/read public GitHub data | Cockroach Crawler prerelease | Yes | Token optional for higher documented REST limits | Read-only and rate-limited |
 | Read a known YouTube video | Cockroach Crawler prerelease | Public metadata | API key for search and richer metadata | No transcript support in Cockroach Crawler |
@@ -37,7 +41,7 @@ flowchart LR
 | Natural-language browser action | Maqam browser contract plus host driver | No built-in model or driver | Browser engine, model provider, allowed origins, structural preview/apply contract | Browser isolation and credentials remain host responsibilities |
 | Exact approval and one-use execution | Maqam | Yes | Registered tool route and approval store | Direct calls bypass the boundary |
 | Workflow, policy, approvals, evals, and provenance | ProductLoop OS | Yes | Application policy and durable stores for production | In-process records are not an OS sandbox |
-| Compact evidence-linked project context | Qarinah | Yes in local alpha | Explicit workspace consent and machine trust | Private alpha; no public package claim yet |
+| Compact evidence-linked project context | Qarinah | Yes | Explicit workspace consent and machine trust | Public Apache-2.0 package; not silent or universal host capture |
 
 ## What was learned from adjacent open-source tools
 
@@ -55,19 +59,19 @@ No upstream implementation is a dependency of ProductLoop OS, Maqam, Cockroach C
 
 ## Installation truth
 
-The public components are installed independently today:
+The runtime components are public and installed independently today:
 
 ```sh
-npm install productloop-os maqam cockroach-crawler
+npm install productloop-os maqam cockroach-crawler qarinah
 ```
 
-Qarinah must not be added to public install instructions while its repository remains private and unlicensed. A future single installer may validate and connect the packages, but it must keep every capability opt-in, print the exact status of external dependencies, and never capture context or credentials by default.
+`productloop-workbench@0.1.0` is a source candidate until protected npm publication completes. From this repository it supplies the versioned stack-facing doctor, deterministic no-key demo, local dashboard, and explicit optional-adapter status. It keeps every capability opt-in and never captures context or credentials by default.
 
-## Launch gates for one-install distribution
+## Remaining launch gates for the Workbench distribution
 
-- publish one versioned stack manifest that names component versions and compatibility ranges;
-- add a doctor that distinguishes installed modules from live external capabilities;
-- ship one deterministic demo that performs a bounded read, exact approval, replay rejection, evidence import, and context query;
+- publish the reviewed Workbench tarball with a versioned stack manifest and compatibility ranges;
+- expand the shipped doctor from installed-module checks to opt-in live external capability checks;
+- preserve the deterministic no-key demo and add registry-only clean-consumer verification for the final tarball;
 - preserve separate read, write, browser, credential, and context-disclosure permissions;
 - provide clean install, upgrade, uninstall, and rollback checks on Node 22, 24, and 26;
 - keep Qarinah opt-in and metadata-only by default;

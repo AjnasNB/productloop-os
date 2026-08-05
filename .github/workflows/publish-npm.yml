@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       release_manifest:
-        description: JSON object containing exact version, SHA-256, and sha512 integrity for all nine packages
+        description: JSON object containing exact version, SHA-256, and sha512 integrity for all ten packages
         required: true
         type: string
       confirmation:
@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Verify nine approved artifacts
+    name: Verify ten approved artifacts
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -120,7 +120,8 @@ jobs:
             "ajnas-connectors",
             "ajnas-approvals",
             "ajnas-browser-research",
-            "productloop-os"
+            "productloop-os",
+            "productloop-workbench"
           ];
           for (const name of order) {
             const entry = manifest[name];
@@ -139,14 +140,7 @@ jobs:
                 echo "Existing ${package_name}@${package_version} does not match the approved integrity and provenance." >&2
                 exit 1
               fi
-              if [[ "${package_name}" == "productloop-os" \
-                && -n "${published_git_head}" \
-                && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
-                echo "Existing ${package_name}@${package_version} has unexpected gitHead ${published_git_head}." >&2
-                exit 1
-              fi
-              if [[ "${package_name}" != "productloop-os" \
-                && -n "${published_git_head}" \
+              if [[ -n "${published_git_head}" \
                 && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
                 echo "${package_name}@${package_version} retains prior publication gitHead ${published_git_head}; exact artifact identity is required before reuse."
               fi
@@ -185,7 +179,7 @@ jobs:
             echo
             echo "- Commit: \`${EXPECTED_COMMIT}\`"
             echo "- Manifest SHA-256: \`${{ steps.pack.outputs.manifest_sha256 }}\`"
-            echo "- Package count: 9"
+            echo "- Package count: 10"
             echo "- Registry state: every version is unpublished or already has the exact approved identity"
             echo "- Next boundary: protected \`npm-publish\` environment approval"
           } >> "${GITHUB_STEP_SUMMARY}"
@@ -244,7 +238,7 @@ jobs:
             exit 1
           fi
 
-      - name: Publish and verify nine packages in dependency order
+      - name: Publish and verify ten packages in dependency order
         shell: bash
         run: |
           set -euo pipefail
@@ -259,6 +253,7 @@ jobs:
             ajnas-approvals
             ajnas-browser-research
             productloop-os
+            productloop-workbench
           )
           for package_name in "${order[@]}"; do
             package_version="$(node --input-type=module -e 'const value=JSON.parse(process.env.RELEASE_MANIFEST); process.stdout.write(value[process.argv[1]].version)' "${package_name}")"
@@ -306,14 +301,13 @@ jobs:
               echo "Registry metadata verification failed for ${package_name}@${package_version}." >&2
               exit 1
             fi
-            if [[ "${package_name}" == "productloop-os" \
+            if [[ "${already_published}" != "true" \
               && -n "${published_git_head}" \
               && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
               echo "Unexpected gitHead for ${package_name}@${package_version}: ${published_git_head}" >&2
               exit 1
             fi
-            if [[ "${package_name}" != "productloop-os" \
-              && "${already_published}" == "true" \
+            if [[ "${already_published}" == "true" \
               && -n "${published_git_head}" \
               && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
               echo "${package_name}@${package_version} retains prior publication gitHead ${published_git_head}; exact artifact identity was verified."
@@ -386,6 +380,6 @@ jobs:
             echo
             echo "- Commit: \`${EXPECTED_COMMIT}\`"
             echo "- Authentication: npm Trusted Publishing (OIDC)"
-            echo "- Order: eight leaf packages, then \`productloop-os\`"
+            echo "- Order: eight leaf packages, then \`productloop-os\`, then \`productloop-workbench\`"
             echo "- Registry tarballs, integrity, provenance, and installed signatures verified"
           } >> "${GITHUB_STEP_SUMMARY}"

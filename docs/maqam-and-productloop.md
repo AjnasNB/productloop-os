@@ -4,6 +4,7 @@
 
 | Layer | Job | Use it when |
 | --- | --- | --- |
+| ProductLoop Workbench | Local operator control center for durable runs, exact approval review, evidence, memory links, policy inspection, and proof export | One developer needs to operate and inspect the public stack from a loopback-only dashboard without adopting a hosted account |
 | Maqam | Governed execution kernel that binds policy, exact approvals, tool execution, and source-linked evidence | A side effect must execute through an approval- and evidence-aware gateway, or an application needs Maqam's workflow, CLI-agent, skill, or HTTP-crawler capabilities |
 | ProductLoop packages | Composable surrounding capabilities for runtime orchestration, declarative policy, approval operations, provenance, connectors, skill manifests, evaluations, and browser-research records | An application wants small packages with explicit records and interfaces, independently or alongside Maqam |
 | `productloop-os` | Umbrella package that exposes Maqam and all eight Ajnas namespaces, creates both subsystems, and supplies a small set of tested adapters | An application wants one install and a coordinated composition without hiding package boundaries |
@@ -23,6 +24,14 @@ npm install productloop-os
 ```
 
 Each Ajnas package can also be installed independently. The [package atlas](https://maqamagent.com/docs/productloop/) lists their responsibilities and copy-paste examples.
+
+`productloop-workbench@0.1.0` is currently a source candidate in this monorepo. It depends on the published `productloop-os@^0.2.3` package and keeps Qarinah, Cockroach Browser, and Cockroach Crawler optional. Do not advertise its npm install command until protected publication is complete.
+
+## What Workbench adds
+
+Workbench owns a single-operator SQLite database and loopback UI for the records around a governed operation. Approval consumption is transactional and one-use. A dashboard decision does not execute an external operation: the host must still verify the exact binding and dispatch the real effect through Maqam or another enforcement boundary.
+
+The open-source package exports an interface for team synchronization but contains no hosted implementation. SSO/RBAC, managed workers, multi-tenant storage, centralized reviewer identity, billing, and enterprise retention remain a separately reviewed private control-plane boundary.
 
 ## What the umbrella actually composes
 

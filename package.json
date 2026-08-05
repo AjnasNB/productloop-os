@@ -16,7 +16,8 @@
     "ajnas-connectors",
     "ajnas-approvals",
     "ajnas-browser-research",
-    "productloop-os"
+    "productloop-os",
+    "productloop-workbench"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

@@ -21,7 +21,8 @@ const releasePackages = Object.freeze([
   Object.freeze({ name: "ajnas-connectors", directory: "ajnas-connectors" }),
   Object.freeze({ name: "ajnas-approvals", directory: "ajnas-approvals" }),
   Object.freeze({ name: "ajnas-browser-research", directory: "ajnas-browser-research" }),
-  Object.freeze({ name: "productloop-os", directory: "productloop-os" })
+  Object.freeze({ name: "productloop-os", directory: "productloop-os" }),
+  Object.freeze({ name: "productloop-workbench", directory: "productloop-workbench" })
 ]);
 
 function parseArguments(argv) {

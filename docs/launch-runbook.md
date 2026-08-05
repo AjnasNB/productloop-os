@@ -1,7 +1,7 @@
 # ProductLoop Ecosystem Launch Runbook
 
 This runbook coordinates truthful, reversible launches for Maqam, Cockroach
-Crawler, a private context-ledger prototype, and ProductLoop OS. It is a release
+Crawler, Qarinah, ProductLoop OS, and ProductLoop Workbench. It is a release
 gate, not announcement copy. Each public post must link to evidence that a
 signed-out user can verify.
 
@@ -11,8 +11,9 @@ signed-out user can verify.
 | --- | --- | --- |
 | Maqam | Govern registered agent operations with policy, exact approvals, traces, and evidence. | Governance kernel; do not claim control over calls that bypass registered adapters. |
 | Cockroach Crawler | Collect bounded public-source records for agent workflows. | Collection connector; do not call a prerelease stable or promise access around login, paywall, robots, or provider restrictions. |
-| Context Ledger | Compile consented, provenance-linked agent activity into small cited context packs. | Private context and memory prototype; do not enable capture without machine-local trust or publish before the license and public-name decisions. |
+| Qarinah | Compile consented, provenance-linked agent activity into small cited context packs. | Public Apache-2.0 memory package; do not enable capture without machine-local trust or imply silent, universal host capture. |
 | ProductLoop OS | Compose the public packages into reviewable product and agent workflows. | Umbrella and adapters; keep package ledgers and trust boundaries explicit. |
+| ProductLoop Workbench | Give one local operator durable runs, review records, evidence, memory links, policy inspection, and proof export. | Open-source source candidate; a review click is not external dispatch and hosted team services remain separate. |
 
 The long-term direction is a cross-platform governed agent control plane for
 Linux, macOS, and Windows. The near-term product is user-space software; do not
@@ -41,22 +42,14 @@ Every release must satisfy all applicable gates before an announcement:
    boundaries are visible before users install or enable an integration.
 10. A rollback or correction owner is available for the first 24 hours.
 
-## Required Decisions Before a Context-Ledger Release
+## Qarinah Public Boundary
 
-The private context-ledger prototype remains private and unlicensed until its
-commercialization model and public product name are chosen. These two goals
-cannot both be guaranteed by one license:
-
-- OSI open source permits commercial use.
-- A license that prohibits commercial use is source-available, not open source.
-
-The recommended open-source route for a future context-ledger release is
-AGPL-3.0-or-later, a separately registered trademark for the eventual public
-name after appropriate clearance, a contributor license agreement (CLA), and an
-optional dual/commercial license for organizations that do not want AGPL
-obligations. If commercial use must be prohibited, choose a lawyer-reviewed
-source-available license and describe it accurately. Existing MIT releases in
-the ecosystem remain usable under the MIT terms under which they were received.
+Qarinah is already public under Apache-2.0. Its release gate is therefore about
+artifact identity, explicit workspace consent, redaction, deterministic rebuilds,
+evidence links, and truthful benchmark claims—not a pending license or public-name
+decision. ProductLoop and Workbench may store cited Qarinah references, but they
+must not bypass Qarinah's capture policy, retention, supersession, or disclosure
+boundary.
 
 ## Staged Release Order
 
@@ -80,12 +73,12 @@ and feedback for the next stage.
 - Demonstrate bounded crawling, normalized `SourceRecord` output, source
   conformance, SSRF denial, and serverless dry-run checks.
 
-### Stage 3: Context Ledger Technical Preview
+### Stage 3: Qarinah Memory Layer
 
-- Resolve the license gate and choose and clear a public name before making the
-  repository public.
+- Verify the exact public Apache-2.0 package, source release, provenance, and
+  benchmark evidence before announcing an updated Qarinah release.
 - Publish only after tamper, rollback, consent, path, redaction, concurrency,
-  type-consumer, and cross-platform CI checks pass.
+  type-consumer, and cross-platform checks pass.
 - Demonstrate a cited, token-budgeted context pack rebuilt from a consented
   append-only ledger. Never market it as hidden surveillance or perfect memory.
 - Ask users to review hooks, grant workspace trust, and start a new agent task;
@@ -98,6 +91,16 @@ and feedback for the next stage.
   orchestrating the workflow through public adapter contracts.
 - Verify that composition does not merge independent ledgers or bypass any
   package's policy and approval boundary.
+
+### Stage 5: ProductLoop Workbench
+
+- Keep `0.1.0` labeled as a source candidate until the protected ten-package
+  workflow publishes and verifies the exact tarball, provenance, tag, and release.
+- Demonstrate local `init`, no-key `demo`, exact review, one-use consumption, and
+  per-run proof export without claiming that Workbench dispatched an external tool.
+- Keep team synchronization, SSO/RBAC, managed workers, central approvals,
+  billing, and multi-tenant retention behind the separately reviewed private
+  `TeamControlPlaneAdapter` boundary.
 
 ## Launch Asset Kit
 

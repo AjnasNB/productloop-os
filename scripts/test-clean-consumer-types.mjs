@@ -21,6 +21,7 @@ const localPackageNames = [
   "ajnas-approvals",
   "ajnas-browser-research",
   "productloop-os",
+  "productloop-workbench",
 ];
 const expectedLocalVersions = new Map([
   ["ajnas-runtime", "0.2.2"],
@@ -32,6 +33,7 @@ const expectedLocalVersions = new Map([
   ["ajnas-approvals", "0.1.3"],
   ["ajnas-browser-research", "0.1.4"],
   ["productloop-os", "0.2.3"],
+  ["productloop-workbench", "0.1.0"],
 ]);
 const packageNames = maqamPackageDirectory ? ["maqam", ...localPackageNames] : localPackageNames;
 
@@ -231,6 +233,7 @@ async function main() {
         'import type { SignResearchProvenanceOptions } from "ajnas-browser-research";',
         'import type { CrawlOptions } from "maqam";',
         'import { PRODUCTLOOP_OS_VERSION } from "productloop-os";',
+        'import { PRODUCTLOOP_WORKBENCH_VERSION, PRIVATE_CONTROL_PLANE_BOUNDARY } from "productloop-workbench";',
         "",
         'export const registryKey: RegistryKeyMaterial = "registry-public-key";',
         'export const provenanceKey: ProvenanceKeyMaterial = "provenance-public-key";',
@@ -244,6 +247,8 @@ async function main() {
         '  privateKey: "browser-private-key",',
         "};",
         'export const productLoopVersion: "0.2.3" = PRODUCTLOOP_OS_VERSION;',
+        'export const workbenchVersion: "0.1.0" = PRODUCTLOOP_WORKBENCH_VERSION;',
+        'export const hostedImplementationIncluded: false = PRIVATE_CONTROL_PLANE_BOUNDARY.implementationIncluded;',
         "",
       ].join("\n"),
       "utf8",
@@ -326,7 +331,7 @@ async function main() {
     );
     await run(process.execPath, ["consumer.mjs"], consumerDirectory);
 
-    console.log(`Clean external TypeScript and runtime consumer passed for all nine workspace packages using maqam@${expectedMaqamVersion}.`);
+    console.log(`Clean external TypeScript and runtime consumer passed for all ten workspace packages using maqam@${expectedMaqamVersion}.`);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
   }

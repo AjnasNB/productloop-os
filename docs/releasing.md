@@ -2,7 +2,7 @@
 
 Publishing is a human-authorized external side effect. Normal builds, tests, pull requests, Dependabot updates, and merges never publish npm packages.
 
-The canonical lock and default integration tests use public `maqam@0.3.1`; the umbrella declares `^0.2.4 || ^0.3.1` and verifies exact `0.2.4` separately. All eight leaf versions below and `productloop-os@0.2.2` are public and immutable. This source selects only `productloop-os@0.2.3`; a selected source version is not public unless the protected workflow and registry checks succeed.
+The canonical lock and default integration tests use public `maqam@0.3.1`; the umbrella declares `^0.2.4 || ^0.3.1` and verifies exact `0.2.4` separately. All eight leaf versions below and `productloop-os@0.2.3` are public and immutable. This source adds `productloop-workbench@0.1.0` as an unpublished candidate; a selected source version is not public unless the protected workflow and registry checks succeed.
 
 | Package | Public baseline | Selected source version |
 | --- | ---: | ---: |
@@ -14,7 +14,8 @@ The canonical lock and default integration tests use public `maqam@0.3.1`; the u
 | `ajnas-connectors` | `0.1.3` | `0.1.3` (unchanged) |
 | `ajnas-approvals` | `0.1.3` | `0.1.3` (unchanged) |
 | `ajnas-browser-research` | `0.1.4` | `0.1.4` (unchanged) |
-| `productloop-os` | `0.2.2` | `0.2.3` |
+| `productloop-os` | `0.2.3` | `0.2.3` (unchanged) |
+| `productloop-workbench` | Not published | `0.1.0` candidate |
 
 ## Qualify the Maqam release and compatibility floor
 
@@ -38,7 +39,7 @@ An exact clean Maqam release-candidate checkout can be tested without committing
 MAQAM_PACKAGE_DIR=/absolute/path/to/clean/maqam-candidate npm run test:consumer-types
 ```
 
-The candidate test packs Maqam outside this repository, installs it with all nine ProductLoop tarballs in a temporary consumer, typechecks the public declarations, and runs the same offline gateway adapter fixture used for registry releases. It accepts only versions covered by the declared range and removes the temporary consumer afterward.
+The candidate test packs Maqam outside this repository, installs it with all ten ProductLoop tarballs in a temporary consumer, typechecks the public declarations, and runs the same offline gateway adapter fixture used for registry releases. It accepts only versions covered by the declared range and removes the temporary consumer afterward.
 
 Do not publish ProductLoop against an unpublished Maqam version or a filesystem link. Before dispatch, confirm the canonical lock resolves exact public `maqam@0.3.1` and the separate `0.2.4` floor test passes. For an umbrella-only patch, the eight selected leaf versions must already exist with the exact approved registry identity and only the new umbrella version should be absent. A protected retry may also encounter the umbrella version, but it is skipped only after the same exact-identity checks.
 
@@ -57,6 +58,7 @@ Configure a Trusted Publisher separately on npm for each package:
 - `ajnas-approvals`
 - `ajnas-browser-research`
 - `productloop-os`
+- `productloop-workbench`
 
 Every npm publisher entry must use these exact values:
 
@@ -70,7 +72,7 @@ Every npm publisher entry must use these exact values:
 
 Create the GitHub `npm-publish` environment with required maintainer review and deployment restricted to protected `main`. Disable or avoid administrator bypass. The workflow stores no npm token and does not use a recovery code, automation token, `NODE_AUTH_TOKEN`, or repository secret. Revoke any reusable npm credential that has appeared in chat, logs, or shell history.
 
-Only the protected publish job receives `id-token: write`. The unprivileged verify job installs dependencies, runs all tests and audits, builds the packages, creates nine tarballs, checks their exact hashes, and uploads them as a one-day workflow artifact. After environment approval, the OIDC job downloads those same tarballs; it does not install workspace dependencies or run package lifecycle scripts. An unchanged leaf is skipped only when its locally rebuilt tarball and downloaded registry tarball have the approved integrity and exact SHA-256 and the registry reports SLSA provenance; a changed package is never hidden behind an old version.
+Only the protected publish job receives `id-token: write`. The unprivileged verify job installs dependencies, runs all tests and audits, builds the packages, creates ten tarballs, checks their exact hashes, and uploads them as a one-day workflow artifact. After environment approval, the OIDC job downloads those same tarballs; it does not install workspace dependencies or run package lifecycle scripts. An unchanged package is skipped only when its locally rebuilt tarball and downloaded registry tarball have the approved integrity and exact SHA-256 and the registry reports SLSA provenance; a changed package is never hidden behind an old version.
 
 ## Prepare an exact release
 
@@ -94,7 +96,7 @@ Open **Actions → Prepare npm release (trusted Linux) → Run workflow** from `
 1. `expected_commit`: the full lowercase 40-character output of `git rev-parse HEAD`.
 2. `confirmation`: `prepare productloop-os release from COMMIT`, replacing `COMMIT` with the same full hash.
 
-The preparation workflow binds to that exact `main` commit, installs Node `24.18.0` and npm `11.18.0`, runs the full verification and both audits, and packs all nine packages on Ubuntu with lifecycle scripts disabled. It uploads a one-day artifact containing the canonical compact manifest and tarballs and reports the manifest SHA-256 in the run summary. Each manifest entry contains only `version`, `sha256`, and npm `sha512` integrity.
+The preparation workflow binds to that exact `main` commit, installs Node `24.18.0` and npm `11.18.0`, runs the full verification and both audits, and packs all ten packages on Ubuntu with lifecycle scripts disabled. It uploads a one-day artifact containing the canonical compact manifest and tarballs and reports the manifest SHA-256 in the run summary. Each manifest entry contains only `version`, `sha256`, and npm `sha512` integrity.
 
 Before dispatching, confirm that the commit and working tree are exact:
 
@@ -124,14 +126,15 @@ The protected job publishes and verifies one exact tarball at a time:
 7. `ajnas-approvals`
 8. `ajnas-browser-research`
 9. `productloop-os`
+10. `productloop-workbench`
 
-For every package, the workflow verifies registry version, integrity, SLSA provenance, downloaded tarball SHA-256, and installed registry signatures. `productloop-os` is always last.
+For every package, the workflow verifies registry version, integrity, SLSA provenance, downloaded tarball SHA-256, and installed registry signatures. `productloop-workbench` is last because it depends on `productloop-os`.
 
-npm has no multi-package transaction. If a run stops after publishing a package, fix the external cause and rerun the same approved commit and manifest. A previously published package is skipped only when its registry integrity, provenance, and downloaded SHA-256 match the approved identity exactly. npm does not consistently expose `gitHead`; when it does, a reused exact leaf may retain the commit of its earlier publication, while a previously published umbrella must report the approved commit. Any artifact-identity difference fails closed.
+npm has no multi-package transaction. If a run stops after publishing a package, fix the external cause and rerun the same approved commit and manifest. A previously published package is skipped only when its registry integrity, provenance, and downloaded SHA-256 match the approved identity exactly. npm does not consistently expose `gitHead`; when it does, an exact prior publication may retain its earlier commit, while a newly published artifact must report the approved commit. Any artifact-identity difference fails closed.
 
 ## Post-release
 
-After all nine registry checks pass:
+After all ten registry checks pass:
 
 1. Install the exact public versions in a fresh consumer and run `productloop-os doctor` and the deterministic example.
 2. Create signed or annotated Git tags only after npm success.
