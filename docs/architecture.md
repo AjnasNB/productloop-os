@@ -6,6 +6,9 @@ See the [Maqam and ProductLoop guide](./maqam-and-productloop.md) for the produc
 
 ```mermaid
 flowchart LR
+  Operator["Local operator"] --> Workbench["ProductLoop Workbench"]
+  Workbench -->|durable run and approval records| Runtime
+  Workbench -->|proof views| Provenance
   Input["Workflow input"] --> Runtime["ajnas-runtime"]
   Policy["ajnas-policy"] -->|allow / deny / approval| Runtime
   Approvals["ajnas-approvals"] -->|reviewed decision| Runtime
@@ -17,6 +20,14 @@ flowchart LR
   Skills -->|registry audit events| Provenance
   Runtime --> Evals
 ```
+
+## Workbench operator layer
+
+`productloop-workbench` is a separate open-source package in this monorepo. It adds a local SQLite record system, loopback-only dashboard, CLI, deterministic proof, and review-bundle export. Its event ledger is hash-linked and its approval consumption uses a single immediate transaction so two local consumers cannot consume the same approved record.
+
+Workbench records coordination state. It does not turn a UI approval into a Maqam approval receipt and does not dispatch tools directly. A trusted host must bind the Workbench proposal to the exact governed runtime request, execute through the real side-effect boundary, and attach the resulting external receipt as evidence.
+
+The package exports `TeamControlPlaneAdapter` only as a boundary. No hosted tenant service, identity directory, managed worker, synchronization backend, secret broker, billing service, or multi-tenant retention implementation ships in the public repository.
 
 ## Default composition
 
@@ -56,7 +67,7 @@ The following capabilities are deliberately provided by callers or deployment in
 - a live browser or search provider for `ajnas-browser-research`;
 - connector transport implementations and secret resolution;
 - sandboxing and operating-system permissions;
-- durable queues, databases, locks, and distributed scheduling;
+- distributed queues, shared databases, cross-process locks, and distributed scheduling beyond Workbench's single-operator SQLite store;
 - identity, authentication, authorization, and reviewer directories;
 - telemetry export, retention, and incident response.
 

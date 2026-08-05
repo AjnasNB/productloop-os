@@ -3,12 +3,20 @@ name: Publish npm packages (trusted)
 on:
   workflow_dispatch:
     inputs:
+      release_scope:
+        description: Package scope to publish
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - productloop-workbench
       expected_commit:
         description: Exact 40-character main commit approved for release
         required: true
         type: string
       release_manifest:
-        description: JSON object containing exact version, SHA-256, and sha512 integrity for all nine packages
+        description: JSON object containing exact version, SHA-256, and sha512 integrity for all ten packages
         required: true
         type: string
       confirmation:
@@ -25,7 +33,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Verify nine approved artifacts
+    name: Verify ten approved artifacts
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -33,6 +41,7 @@ jobs:
     env:
       EXPECTED_COMMIT: ${{ inputs.expected_commit }}
       RELEASE_MANIFEST: ${{ inputs.release_manifest }}
+      RELEASE_SCOPE: ${{ inputs.release_scope }}
       CONFIRMATION: ${{ inputs.confirmation }}
     steps:
       - name: Validate dispatch boundary
@@ -49,6 +58,10 @@ jobs:
           fi
           if [[ "${GITHUB_SHA}" != "${EXPECTED_COMMIT}" ]]; then
             echo "The dispatched main commit does not match expected_commit." >&2
+            exit 1
+          fi
+          if [[ "${RELEASE_SCOPE}" != "all" && "${RELEASE_SCOPE}" != "productloop-workbench" ]]; then
+            echo "release_scope must be all or productloop-workbench." >&2
             exit 1
           fi
           if [[ "${CONFIRMATION}" != "publish productloop-os packages from ${EXPECTED_COMMIT}" ]]; then
@@ -111,7 +124,7 @@ jobs:
           set -euo pipefail
           node --input-type=module <<'NODE' > "${RUNNER_TEMP}/release-packages.tsv"
           const manifest = JSON.parse(process.env.RELEASE_MANIFEST);
-          const order = [
+          const allPackages = [
             "ajnas-runtime",
             "ajnas-skills-registry",
             "ajnas-provenance",
@@ -120,8 +133,12 @@ jobs:
             "ajnas-connectors",
             "ajnas-approvals",
             "ajnas-browser-research",
-            "productloop-os"
+            "productloop-os",
+            "productloop-workbench"
           ];
+          const order = process.env.RELEASE_SCOPE === "productloop-workbench"
+            ? ["productloop-workbench"]
+            : allPackages;
           for (const name of order) {
             const entry = manifest[name];
             console.log(`${name}\t${entry.version}\t${entry.sha256}\t${entry.integrity}`);
@@ -139,14 +156,7 @@ jobs:
                 echo "Existing ${package_name}@${package_version} does not match the approved integrity and provenance." >&2
                 exit 1
               fi
-              if [[ "${package_name}" == "productloop-os" \
-                && -n "${published_git_head}" \
-                && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
-                echo "Existing ${package_name}@${package_version} has unexpected gitHead ${published_git_head}." >&2
-                exit 1
-              fi
-              if [[ "${package_name}" != "productloop-os" \
-                && -n "${published_git_head}" \
+              if [[ -n "${published_git_head}" \
                 && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
                 echo "${package_name}@${package_version} retains prior publication gitHead ${published_git_head}; exact artifact identity is required before reuse."
               fi
@@ -185,25 +195,31 @@ jobs:
             echo
             echo "- Commit: \`${EXPECTED_COMMIT}\`"
             echo "- Manifest SHA-256: \`${{ steps.pack.outputs.manifest_sha256 }}\`"
-            echo "- Package count: 9"
+            echo "- Release scope: \`${RELEASE_SCOPE}\`"
+            if [[ "${RELEASE_SCOPE}" == "productloop-workbench" ]]; then
+              echo "- Package count: 1"
+            else
+              echo "- Package count: 10"
+            fi
             echo "- Registry state: every version is unpublished or already has the exact approved identity"
             echo "- Next boundary: protected \`npm-publish\` environment approval"
           } >> "${GITHUB_STEP_SUMMARY}"
 
   publish:
-    name: Publish leaf-first after maintainer approval
+    name: Publish selected packages after maintainer approval
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 45
     environment:
       name: npm-publish
-      url: https://www.npmjs.com/package/productloop-os
+      url: ${{ inputs.release_scope == 'productloop-workbench' && 'https://www.npmjs.com/package/productloop-workbench' || 'https://www.npmjs.com/package/productloop-os' }}
     permissions:
       contents: read
       id-token: write
     env:
       EXPECTED_COMMIT: ${{ inputs.expected_commit }}
       RELEASE_MANIFEST: ${{ inputs.release_manifest }}
+      RELEASE_SCOPE: ${{ inputs.release_scope }}
     steps:
       - name: Checkout verified commit
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -244,22 +260,27 @@ jobs:
             exit 1
           fi
 
-      - name: Publish and verify nine packages in dependency order
+      - name: Publish and verify ten packages in dependency order
         shell: bash
         run: |
           set -euo pipefail
           expected_predicate="https://slsa.dev/provenance/v1"
-          order=(
-            ajnas-runtime
-            ajnas-skills-registry
-            ajnas-provenance
-            ajnas-policy
-            ajnas-evals
-            ajnas-connectors
-            ajnas-approvals
-            ajnas-browser-research
-            productloop-os
-          )
+          if [[ "${RELEASE_SCOPE}" == "productloop-workbench" ]]; then
+            order=(productloop-workbench)
+          else
+            order=(
+              ajnas-runtime
+              ajnas-skills-registry
+              ajnas-provenance
+              ajnas-policy
+              ajnas-evals
+              ajnas-connectors
+              ajnas-approvals
+              ajnas-browser-research
+              productloop-os
+              productloop-workbench
+            )
+          fi
           for package_name in "${order[@]}"; do
             package_version="$(node --input-type=module -e 'const value=JSON.parse(process.env.RELEASE_MANIFEST); process.stdout.write(value[process.argv[1]].version)' "${package_name}")"
             expected_sha256="$(node --input-type=module -e 'const value=JSON.parse(process.env.RELEASE_MANIFEST); process.stdout.write(value[process.argv[1]].sha256)' "${package_name}")"
@@ -306,14 +327,13 @@ jobs:
               echo "Registry metadata verification failed for ${package_name}@${package_version}." >&2
               exit 1
             fi
-            if [[ "${package_name}" == "productloop-os" \
+            if [[ "${already_published}" != "true" \
               && -n "${published_git_head}" \
               && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
               echo "Unexpected gitHead for ${package_name}@${package_version}: ${published_git_head}" >&2
               exit 1
             fi
-            if [[ "${package_name}" != "productloop-os" \
-              && "${already_published}" == "true" \
+            if [[ "${already_published}" == "true" \
               && -n "${published_git_head}" \
               && "${published_git_head}" != "${EXPECTED_COMMIT}" ]]; then
               echo "${package_name}@${package_version} retains prior publication gitHead ${published_git_head}; exact artifact identity was verified."
@@ -360,7 +380,13 @@ jobs:
           npm init --yes >/dev/null
           mapfile -t exact_packages < <(node --input-type=module <<'NODE'
           const manifest = JSON.parse(process.env.RELEASE_MANIFEST);
-          for (const [name, entry] of Object.entries(manifest)) console.log(`${name}@${entry.version}`);
+          const names = process.env.RELEASE_SCOPE === "productloop-workbench"
+            ? ["productloop-workbench"]
+            : Object.keys(manifest);
+          for (const name of names) {
+            const entry = manifest[name];
+            console.log(`${name}@${entry.version}`);
+          }
           NODE
           )
           installed="false"
@@ -386,6 +412,11 @@ jobs:
             echo
             echo "- Commit: \`${EXPECTED_COMMIT}\`"
             echo "- Authentication: npm Trusted Publishing (OIDC)"
-            echo "- Order: eight leaf packages, then \`productloop-os\`"
+            echo "- Release scope: \`${RELEASE_SCOPE}\`"
+            if [[ "${RELEASE_SCOPE}" == "productloop-workbench" ]]; then
+              echo "- Order: \`productloop-workbench\` only"
+            else
+              echo "- Order: eight leaf packages, then \`productloop-os\`, then \`productloop-workbench\`"
+            fi
             echo "- Registry tarballs, integrity, provenance, and installed signatures verified"
           } >> "${GITHUB_STEP_SUMMARY}"

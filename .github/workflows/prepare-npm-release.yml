@@ -126,7 +126,7 @@ jobs:
             echo "- Commit: \`${EXPECTED_COMMIT}\`"
             echo "- Builder: \`ubuntu-24.04\`, Node \`24.18.0\`, npm \`11.18.0\`"
             echo "- Manifest SHA-256: \`${{ steps.pack.outputs.manifest_sha256 }}\`"
-            echo "- Package count: 9"
+            echo "- Package count: 10"
             echo "- Retention: 1 day"
             echo
             echo "Copy \`release-manifest.json\` from the workflow artifact only after reviewing this run."

@@ -6,7 +6,7 @@ Use the [Maqam website](https://maqamagent.com) for the product overview and the
 
 The projects form one ecosystem, not one silently merged runtime. `createProductLoopOS()` exposes the Maqam namespace and creates both Maqam and Ajnas package components, while their contracts and ledgers remain distinct. The bundled Maqam crawler bridge is opt-in and is never registered automatically. Direct calls to a provider, browser, connector, model SDK, or Maqam tool outside a governed runtime path are not intercepted by ProductLoop.
 
-The ecosystem is a governance toolkit, not a claim of autonomous intelligence. It does not ship a model, a hosted control plane, a secret manager, a production browser, or a distributed job system. `ajnas-browser-research` supplies a governed adapter contract and deterministic replay harness. Real browser, search, connector, model, and storage implementations remain explicit deployment choices.
+The ecosystem is a governance toolkit, not a claim of autonomous intelligence. It does not ship a model, a hosted team control plane, a secret manager, a production browser, or a distributed job system. `ajnas-browser-research` supplies a governed adapter contract and deterministic replay harness. ProductLoop Workbench adds a durable single-operator SQLite store and local dashboard; real browser, search, connector, model, distributed storage, identity, and hosted service implementations remain explicit deployment choices.
 
 ## One governed agent stack
 
@@ -14,10 +14,11 @@ The wider product direction is one installable control plane with replaceable ex
 
 | Layer | Product | Responsibility | Current boundary |
 | --- | --- | --- | --- |
+| Operate | [ProductLoop Workbench](./productloop-workbench) | Durable local runs, exact approval review, evidence, memory links, policy inspection, and proof export | Open-source `0.1.0` source candidate; hosted team control plane not included |
 | Compose | ProductLoop OS | Workflow runtime, policy, approvals, connectors, skills, evaluations, provenance, and research plans | Public package; external services stay explicit |
 | Govern | [Maqam](https://github.com/AjnasNB/maqam) | Registered tool policy, exact one-use approvals, browser-action contracts, traces, and evidence | Public package; direct calls bypass it |
 | Reach | [Cockroach Crawler](https://github.com/AjnasNB/cockroach-crawler) | Bounded public-web reads, provider capability checks, normalized records, and a restricted serverless profile | Separate package and opt-in adapter |
-| Remember | Qarinah | Local event ledger, deterministic graph/index, and compact cited context packs | Private alpha; not a public dependency or install claim |
+| Remember | [Qarinah](https://github.com/AjnasNB/qarinah) | Local event ledger, deterministic graph/index, and compact cited context packs | Public Apache-2.0 package; capture remains explicit and metadata-only by default |
 
 The composition supports public web and GitHub reads without a developer API key, known-video metadata, configured RSS/caption/search adapters, exact approval, deterministic workflow evidence, and compact local context. It does not bundle a model, browser engine, cookie extractor, proxy fleet, CAPTCHA bypass, secret manager, or operating-system sandbox.
 
@@ -25,10 +26,11 @@ See the [agent-stack capability map](./docs/agent-stack.md) for the end-to-end f
 
 ## Packages
 
-The eight leaf-package versions below are already public and intentionally unchanged. This source selects `productloop-os@0.2.3` as an umbrella-only documentation patch. The npm registry and its provenance records are the source of truth for whether a selected source version has completed protected publication.
+The eight leaf-package versions and `productloop-os@0.2.3` below are already public and intentionally unchanged. `productloop-workbench@0.1.0` is a new source candidate and must not be described as published until the registry artifact, provenance, Git tag, and GitHub release all match the reviewed commit. The npm registry and its provenance records are the source of truth for publication.
 
 | Package | Release version or range | Responsibility |
 | --- | ---: | --- |
+| [`productloop-workbench`](./productloop-workbench) | `0.1.0` source candidate | Durable local runs, approval inbox, evidence and memory views, policy explanations, proof export, and no-key stack demo |
 | [`productloop-os`](./productloop-os) | `0.2.3` | One install, named namespaces, tested adapters, and composition helpers |
 | [`maqam`](https://github.com/AjnasNB/maqam) | `^0.2.4 || ^0.3.1` dependency | Governed execution kernel, exact approvals, evidence, provider-neutral tool adapters, CLI-agent tools, and crawler-backed research |
 | [`ajnas-runtime`](./ajnas-runtime) | `0.2.2` | Ordered workflows and policy-gated tool calls |
@@ -42,8 +44,20 @@ The eight leaf-package versions below are already public and intentionally uncha
 
 ## Install
 
+Use the published ProductLoop OS umbrella today:
+
 ```sh
 npm install productloop-os
+```
+
+From this repository, the Workbench source candidate can be exercised before publication:
+
+```sh
+npm ci
+npm run build --workspace=productloop-workbench
+node productloop-workbench/bin/productloop-workbench.js init
+node productloop-workbench/bin/productloop-workbench.js demo
+node productloop-workbench/bin/productloop-workbench.js serve
 ```
 
 ```js
