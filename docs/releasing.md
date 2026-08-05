@@ -2,7 +2,7 @@
 
 Publishing is a human-authorized external side effect. Normal builds, tests, pull requests, Dependabot updates, and merges never publish npm packages.
 
-The canonical lock and default integration tests use public `maqam@0.3.1`; the umbrella declares `^0.2.4 || ^0.3.1` and verifies exact `0.2.4` separately. All eight leaf versions below and `productloop-os@0.2.3` are public and immutable. This source adds `productloop-workbench@0.1.0` as an unpublished candidate; a selected source version is not public unless the protected workflow and registry checks succeed.
+The canonical lock and default integration tests use public `maqam@0.3.1`; the umbrella declares `^0.2.4 || ^0.3.1` and verifies exact `0.2.4` separately. All eight leaf versions below and `productloop-os@0.2.3` are public and immutable. This source selects `productloop-os@0.2.4` and `productloop-workbench@0.1.0` as unpublished candidates; a selected source version is not public unless the protected workflow and registry checks succeed.
 
 | Package | Public baseline | Selected source version |
 | --- | ---: | ---: |
@@ -14,7 +14,7 @@ The canonical lock and default integration tests use public `maqam@0.3.1`; the u
 | `ajnas-connectors` | `0.1.3` | `0.1.3` (unchanged) |
 | `ajnas-approvals` | `0.1.3` | `0.1.3` (unchanged) |
 | `ajnas-browser-research` | `0.1.4` | `0.1.4` (unchanged) |
-| `productloop-os` | `0.2.3` | `0.2.3` (unchanged) |
+| `productloop-os` | `0.2.3` | `0.2.4` candidate |
 | `productloop-workbench` | Not published | `0.1.0` candidate |
 
 ## Qualify the Maqam release and compatibility floor
