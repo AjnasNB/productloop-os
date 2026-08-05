@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.4 - 2026-08-05
+
+- Added a live, authenticated Cockroach Browser adapter for ProductLoop browser-research `open` and `extract` steps.
+- Added an explicit daemon health and capability check without bundling or starting the separately installed browser runtime.
+- Constrained every browser observation to deployment-owned exact origins, short-lived sessions, semantic snapshots, read-only effects, finite budgets, and guaranteed session cleanup.
+- Retained the strict structural capability snapshot for discovery-only integrations and documented the Maqam boundary for consequential browser actions.
+
 ## 0.2.3 - 2026-07-20
 
 - Corrected the public-release status and package version shown on npm and in repository documentation.

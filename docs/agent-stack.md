@@ -1,12 +1,13 @@
 # Governed agent stack
 
-The public stack has five explicit responsibilities:
+The public stack has six explicit responsibilities:
 
 1. ProductLoop Workbench gives one operator a durable local run, approval, evidence, memory, and policy interface.
 2. ProductLoop OS composes workflows and portable governance records.
 3. Qarinah compiles approved project history into bounded, cited context.
 4. Maqam governs registered operations at the real side-effect boundary.
 5. Cockroach Crawler collects bounded public evidence through declared source contracts.
+6. Cockroach Browser provides separately installed authorized Chromium sessions and evidence; ProductLoop can route bounded live reads through an explicit authenticated client.
 
 The order is logical, not a forced call sequence. A workflow may query context before planning, collect public evidence during execution, or record an approved outcome afterward. The invariant is that the real operation must pass through the boundary that claims to govern it.
 
@@ -17,8 +18,9 @@ flowchart LR
   Host --> Loop["ProductLoop OS"]
   Loop --> Context["Qarinah context query"]
   Loop --> Gateway["Maqam ToolGateway"]
+  Loop -->|"read-only snapshots"| Browser["Cockroach Browser authenticated daemon"]
   Gateway --> Crawler["Cockroach Crawler"]
-  Gateway --> Browser["Host browser driver"]
+  Gateway -->|"reviewed consequential actions"| Browser
   Gateway --> Connector["Host connector or worker"]
   Crawler --> Records["Normalized source records"]
   Browser --> Records
@@ -39,6 +41,7 @@ flowchart LR
 | Read available YouTube captions | Maqam | No developer key when a reviewed `yt-dlp` executable is available | Explicit executable path and host controls | Availability depends on the video, region, and upstream tool |
 | Hosted-anonymous web search | Maqam adapter contract | Can be available without a developer-owned key | Explicit host-selected adapter and terms review | Not a universal free-search guarantee |
 | Natural-language browser action | Maqam browser contract plus host driver | No built-in model or driver | Browser engine, model provider, allowed origins, structural preview/apply contract | Browser isolation and credentials remain host responsibilities |
+| Real browser observation | Cockroach Browser daemon plus ProductLoop adapter | Yes for explicitly admitted public origins | Install and start Cockroach Browser, supply its authenticated client, and configure a deployment-owned origin allowlist | Short-lived read-only sessions; no profile, credential, mutation, or daemon lifecycle authority |
 | Exact approval and one-use execution | Maqam | Yes | Registered tool route and approval store | Direct calls bypass the boundary |
 | Workflow, policy, approvals, evals, and provenance | ProductLoop OS | Yes | Application policy and durable stores for production | In-process records are not an OS sandbox |
 | Compact evidence-linked project context | Qarinah | Yes | Explicit workspace consent and machine trust | Public Apache-2.0 package; not silent or universal host capture |

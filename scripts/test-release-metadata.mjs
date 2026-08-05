@@ -17,7 +17,7 @@ const selected = Object.freeze([
   Object.freeze({
     name: "productloop-os",
     directory: "productloop-os",
-    version: "0.2.3",
+    version: "0.2.4",
     peers: {},
     dependencies: {
       maqam: "^0.2.4 || ^0.3.1",
@@ -58,7 +58,7 @@ const prepareWorkflow = await readFile(join(repoRoot, ".github", "workflows", "p
 
 assert.equal(rootManifest.private, true);
 assert.equal(selected.length, 10);
-assert.equal(rootManifest.version, "0.2.3");
+assert.equal(rootManifest.version, "0.2.4");
 assert.equal(rootManifest.engines?.node, engineRequirement);
 assert.deepEqual(rootManifest.allowScripts, { esbuild: true });
 assert.match(npmConfig, /^strict-allow-scripts=true\r?\n?$/);

@@ -1,7 +1,7 @@
 {
   "name": "productloop-os",
-  "version": "0.2.3",
-  "description": "Composable governance, policy, approvals, provenance, evals, connectors, skills, browser research, and Maqam agent tooling.",
+  "version": "0.2.4",
+  "description": "Composable governance, policy, approvals, provenance, evals, connectors, skills, live browser research, and Maqam agent tooling.",
   "type": "module",
   "license": "MIT",
   "author": "Ajnas NB",
@@ -27,6 +27,8 @@
     "evals",
     "connectors",
     "skills",
+    "browser-automation",
+    "cockroach-browser",
     "crawler",
     "human-in-the-loop"
   ],
